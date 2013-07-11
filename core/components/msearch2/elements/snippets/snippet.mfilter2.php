@@ -81,6 +81,8 @@ if (empty($ids)) {
 	if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 		$log = '<pre class="mFilterLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';
 	}
+	else {$log = '';}
+
 	$output = array(
 		'filters' => $modx->lexicon('mse2_err_no_filters')
 		,'results' => $modx->lexicon('mse2_err_no_results')
