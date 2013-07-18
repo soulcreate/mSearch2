@@ -193,13 +193,19 @@ mSearch2.Message = {
 
 mSearch2.Hash = {
 	get: function() {
-		var vars = {}, hash;
-		var pos = window.location.href.indexOf('?');
-		if (pos < 0) {return vars;}
+		var vars = {}, hash, splitter;
+		if (this.oldbrowser()) {
+			var pos = window.location.href.indexOf('?');
+			hashes = decodeURIComponent(window.location.href.substr(pos + 1));
+			splitter = '&';
+		}
+		else {
+			hashes = decodeURIComponent(window.location.hash.substr(1));
+			splitter = '/'
+		}
 
-		var hashes = decodeURIComponent(window.location.href.substr(pos + 1));
 		if (hashes.length == 0) {return vars;}
-		else {hashes = hashes.split('&');}
+		else {hashes = hashes.split(splitter);}
 
 		for (var i in hashes) {
 			if (hashes.hasOwnProperty(i)) {
@@ -222,10 +228,15 @@ mSearch2.Hash = {
 			}
 		}
 
-		if (hash.length != 0) {
-			hash = '?' + hash.substr(1);
+		if (this.oldbrowser()) {
+			if (hash.length != 0) {
+				hash = '?' + hash.substr(1);
+			}
+			window.history.pushState(hash, '', document.location.pathname + hash);
 		}
-		window.history.pushState(hash, '', document.location.pathname + hash);
+		else {
+			window.location.hash = hash.substr(1);
+		}
 	}
 	,add: function(key, val) {
 		var hash = this.get();
@@ -240,6 +251,14 @@ mSearch2.Hash = {
 	,clear: function() {
 		this.set({});
 	}
+	,oldbrowser: function() {
+		return !!(window.history && history.pushState);
+	}
 };
+
+if (window.location.hash != '' && !mSearch2.Hash.oldbrowser()) {
+	var uri = window.location.hash.replace('#', '?');
+	window.location.href = document.location.pathname + uri;
+}
 
 mSearch2.initialize('#mse2_mfilter');

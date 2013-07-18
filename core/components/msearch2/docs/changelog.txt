@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.6.1 pl
+==============
+- [mFilter2] Added support of old browsers without history api. They will use hash in url.
+
 0.6.1 rc1
 ==============
 - Added method mse2FiltersHandler::buildCategoriesFilter().
