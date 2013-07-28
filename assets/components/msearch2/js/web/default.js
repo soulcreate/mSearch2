@@ -84,8 +84,19 @@ mSearch2 = {
 		if (mSearch2Config.sort != '') {params.sort = mSearch2Config.sort;}
 		if (mSearch2Config.page > 0) {params.page = mSearch2Config.page;}
 		if (mSearch2Config.limit > 0) {params.limit = mSearch2Config.limit;}
-		this.Hash.set(params);
 
+		// Adding existing GET params
+		if (mSearch2.get_params) {
+			for (var i in mSearch2.get_params) {
+				if (mSearch2.get_params.hasOwnProperty(i)) {
+					if (!params[i]) {
+						params[i] = mSearch2.get_params[i];
+					}
+				}
+			}
+		}
+
+		this.Hash.set(params);
 		params.action = 'filter';
 		params.pageId = mSearch2Config.pageId;
 
@@ -193,15 +204,15 @@ mSearch2.Message = {
 
 mSearch2.Hash = {
 	get: function() {
-		var vars = {}, hash, splitter;
-		if (this.oldbrowser()) {
+		var vars = {}, hash, splitter, hashes;
+		if (!this.oldbrowser()) {
 			var pos = window.location.href.indexOf('?');
-			hashes = decodeURIComponent(window.location.href.substr(pos + 1));
+			hashes = (pos != -1) ? decodeURIComponent(window.location.href.substr(pos + 1)) : '';
 			splitter = '&';
 		}
 		else {
 			hashes = decodeURIComponent(window.location.hash.substr(1));
-			splitter = '/'
+			splitter = '/';
 		}
 
 		if (hashes.length == 0) {return vars;}
@@ -228,7 +239,7 @@ mSearch2.Hash = {
 			}
 		}
 
-		if (this.oldbrowser()) {
+		if (!this.oldbrowser()) {
 			if (hash.length != 0) {
 				hash = '?' + hash.substr(1);
 			}
@@ -252,13 +263,16 @@ mSearch2.Hash = {
 		this.set({});
 	}
 	,oldbrowser: function() {
-		return !!(window.history && history.pushState);
+		return !(window.history && history.pushState);
 	}
 };
 
-if (window.location.hash != '' && !mSearch2.Hash.oldbrowser()) {
+if (window.location.hash != '' && mSearch2.Hash.oldbrowser()) {
 	var uri = window.location.hash.replace('#', '?');
 	window.location.href = document.location.pathname + uri;
+}
+else {
+	mSearch2.get_params = mSearch2.Hash.get();
 }
 
 mSearch2.initialize('#mse2_mfilter');

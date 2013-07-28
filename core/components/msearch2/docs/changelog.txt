@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.6.2 beta
+==============
+- [mFilter] The existing $_GET parameters are saved in url.
+
 0.6.1 pl
 ==============
 - [mFilter2] Added support of old browsers without history api. They will use hash in url.
