@@ -13,6 +13,13 @@
 			<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
 		</div>
 
+		[[+tpls:notempty=`
+		<div id="mse2_tpl">
+			<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a>
+			<a href="#" data-tpl="1" class="[[+tpl1]]">[[%mse2_chunk_alternate]]</a>
+		</div>
+		`]]
+
 		<div id="mse2_results">
 			[[+results]]
 		</div>

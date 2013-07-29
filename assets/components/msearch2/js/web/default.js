@@ -8,9 +8,10 @@ mSearch2 = {
 
 		,pagination_link: '#mse2_pagination a'
 		,sort_link: '#mse2_sort a'
+		,tpl_link: '#mse2_tpl a'
+
 		,active_class: 'active'
 		,disabled_class: 'disabled'
-
 		,delimeter: '/'
 		,prefix: 'mse2_'
 		,suggestion: 'sup' // inside filter item, e.g. #mse2_filters
@@ -29,6 +30,7 @@ mSearch2 = {
 
 		this.handlePagination();
 		this.handleSort();
+		this.handleTpl();
 
 		$(document).on('submit', this.options.filters, function(e) {
 			mSearch2Config.page = '';
@@ -78,23 +80,29 @@ mSearch2 = {
 		});
 	}
 
+	,handleTpl: function() {
+		$(document).on('click', this.options.tpl_link, function(e) {
+			if (!$(this).hasClass(mSearch2.options.active_class)) {
+				$(mSearch2.options.tpl_link).removeClass(mSearch2.options.active_class);
+				$(this).addClass(mSearch2.options.active_class);
+
+				var tpl = $(this).data('tpl');
+				mSearch2Config.tpl = (tpl != mSearch2Config.start_tpl && tpl != 0) ? tpl : '';
+
+				mSearch2.load();
+			}
+
+			return false;
+		});
+	}
+
 	,load: function() {
 		var params = this.getFilters();
 		if (mSearch2Config.query != '') {params.query = mSearch2Config.query;}
 		if (mSearch2Config.sort != '') {params.sort = mSearch2Config.sort;}
+		if (mSearch2Config.tpl != '') {params.tpl = mSearch2Config.tpl;}
 		if (mSearch2Config.page > 0) {params.page = mSearch2Config.page;}
 		if (mSearch2Config.limit > 0) {params.limit = mSearch2Config.limit;}
-
-		// Adding existing GET params
-		if (mSearch2.get_params) {
-			for (var i in mSearch2.get_params) {
-				if (mSearch2.get_params.hasOwnProperty(i)) {
-					if (!params[i]) {
-						params[i] = mSearch2.get_params[i];
-					}
-				}
-			}
-		}
 
 		this.Hash.set(params);
 		params.action = 'filter';
@@ -270,9 +278,6 @@ mSearch2.Hash = {
 if (window.location.hash != '' && mSearch2.Hash.oldbrowser()) {
 	var uri = window.location.hash.replace('#', '?');
 	window.location.href = document.location.pathname + uri;
-}
-else {
-	mSearch2.get_params = mSearch2.Hash.get();
 }
 
 mSearch2.initialize('#mse2_mfilter');

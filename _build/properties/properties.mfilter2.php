@@ -112,6 +112,10 @@ $tmp = array(
 		'type' => 'textfield'
 		,'value' => ','
 	)
+	,'tpls' => array(
+		'type' => 'textfield'
+		,'value' => ''
+	)
 
 );
 

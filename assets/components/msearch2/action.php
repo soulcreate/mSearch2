@@ -50,6 +50,14 @@ switch ($action) {
 			$paginatorProperties['sortdir'] = '';
 		}
 
+		// Switching chunk for rows, if specified
+		if (!empty($paginatorProperties['tpls']) && is_array($paginatorProperties['tpls'])) {
+			$tmp = isset($_REQUEST['tpl']) ? (integer) $_REQUEST['tpl'] : 0;
+			if (isset($paginatorProperties['tpls'][$tmp])) {
+				$paginatorProperties['tpl'] = $paginatorProperties['tpls'][$tmp];
+			}
+		}
+
 		// Processing filters
 		if (strpos($paginatorProperties['resources'], '{') === 0) {
 			$found = $modx->fromJSON($paginatorProperties['resources']);

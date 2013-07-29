@@ -1,4 +1,4 @@
-#mse2_sort a.active {
+#mse2_sort a.active, #mse2_tpl a.active {
 	color: black;
 	text-decoration:none;
 	cursor: default;

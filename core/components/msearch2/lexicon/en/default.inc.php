@@ -56,3 +56,6 @@ $_lang['mse2_sort_publishedon'] = 'Published on';
 $_lang['mse2_sort_price'] = 'Price';
 
 $_lang['mse2_err_no_filters'] = 'Nothing to filter';
+
+$_lang['mse2_chunk_default'] = 'Default view';
+$_lang['mse2_chunk_alternate'] = 'Alternate view';

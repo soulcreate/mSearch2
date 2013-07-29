@@ -55,3 +55,5 @@ $_lang['mse2_prop_values_delimeter'] = 'Delimiter of filter values in the addres
 $_lang['mse2_prop_tplOuter'] = 'Chunk for the whole block of filters and the results.';
 $_lang['mse2_prop_tplFilter.outer.default'] = 'Standard chunk of one filters group.';
 $_lang['mse2_prop_tplFilter.row.default'] = 'Standard chunk of a filter in the group. By default it look as checkbox.';
+
+$_lang['mse2_prop_tpls'] = 'Comma-separated list of available chunks for rows template. You can switch these chunks by specify parameter "tpl" in $_REQUEST. 0 is a chunk default, and then in order. For example: "&tpls=`default,chunk1,chunk2`", for output of goods by "chunk1" you need to send a "$_REQUEST[tpl] = 1".';

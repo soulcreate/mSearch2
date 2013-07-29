@@ -56,3 +56,6 @@ $_lang['mse2_sort_publishedon'] = 'Дата публикации';
 $_lang['mse2_sort_price'] = 'Цена';
 
 $_lang['mse2_err_no_filters'] = 'Нечего фильтровать';
+
+$_lang['mse2_chunk_default'] = 'Стандартный вид';
+$_lang['mse2_chunk_alternate'] = 'Алтернативный вид';

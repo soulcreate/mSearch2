@@ -1,8 +1,8 @@
 Changelog for mSearch2.
 
-0.6.2 beta
+0.6.2 pl
 ==============
-- [mFilter] The existing $_GET parameters are saved in url.
+- [mFilter] New parameter "tpls" for change tpl of rows in request.
 
 0.6.1 pl
 ==============

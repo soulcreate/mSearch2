@@ -23,7 +23,7 @@ $ids = $found = $log = array();
 
 
 // ---------------------- Retrieving ids of resources for filter
-$query = @$_REQUEST[$queryVar];
+$query = isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
 if (!empty($resources)) {
 	$ids = array_map('trim', explode(',', $resources));
 	$pdoFetch->addTime('Received ids: ('.implode(',',$ids).')');
@@ -174,11 +174,22 @@ if (!empty($ids)) {
 			)
 		);
 
+		// Switching chunk for rows, if specified
+		if (!empty($scriptProperties['tpls'])) {
+			$tmp = isset($_REQUEST['tpl']) ? (integer) $_REQUEST['tpl'] : 0;
+			$tpls = array_map('trim', explode(',', $scriptProperties['tpls']));
+			$paginatorProperties['tpls'] = $tpls;
+			if (isset($tpls[$tmp])) {
+				$paginatorProperties['tpl'] = $tpls[$tmp];
+				$paginatorProperties['tpl_idx'] = $tmp;
+			}
+		}
+
 		// Trying to save weight of found ids if using mSearch2
 		$weight = false;
 		if (!empty($found) && strtolower($paginatorProperties['element']) == 'msearch2') {
 			$tmp = array();
-			foreach ($ids as $v) {$tmp[$v] = @$found[$v];}
+			foreach ($ids as $v) {$tmp[$v] = isset($found[$v]) ? $found[$v] : 0;}
 			$paginatorProperties['resources'] = $modx->toJSON($tmp);
 			$weight = true;
 		}
@@ -214,7 +225,7 @@ if (!empty($ids)) {
 			// Trying to save weight of found ids again
 			if ($weight) {
 				$tmp = array();
-				foreach ($matched as $v) {$tmp[$v] = @$found[$v];}
+				foreach ($matched as $v) {$tmp[$v] = isset($found[$v]) ? $found[$v] : 0;}
 				$paginatorProperties['resources'] = $modx->toJSON($tmp);
 			}
 			else {
@@ -270,7 +281,7 @@ else {
 		$idx = 0;
 		foreach ($data as $v) {
 			if (empty($v)) {continue;}
-			$checked = isset($request[$filter]) && in_array($v['value'], $request[$filter]) && @$v['type'] != 'number';
+			$checked = isset($request[$filter]) && in_array($v['value'], $request[$filter]) && isset($v['type']) && $v['type'] != 'number';
 			if ($scriptProperties['suggestions']) {
 				if ($checked) {$num = ''; $has_active = 'has_active';}
 				else if (isset($suggestions[$filter][$v['value']])) {
@@ -297,7 +308,6 @@ else {
 		}
 
 		$tpl = empty($rows) ? $tplEmpty : $tplOuter;
-		$pdoFetch->getChunk($tpl);
 		$output['filters'] .= $pdoFetch->getChunk($tpl, array(
 			'filter' => $filter2
 			,'table' => $table
@@ -321,16 +331,22 @@ $_SESSION['mFilter2'][$modx->resource->id]['scriptProperties'] = $scriptProperti
 
 // Active class for sort links
 if (!empty($sort)) {$output[$sort] = $classActive;}
+if (isset($paginatorProperties['tpl_idx'])) {
+	$output['tpl'.$paginatorProperties['tpl_idx']] = $classActive;
+	$output['tpls'] = 1;
+}
 
 // Setting values for frontend javascript
 $modx->regClientStartupScript('<script type="text/javascript">
 	mSearch2Config.start_sort = "'.$start_sort.'";
 	mSearch2Config.start_limit= "'.$start_limit.'";
 	mSearch2Config.start_page = "1";
+	mSearch2Config.start_tpl = "";
 	mSearch2Config.sort = "'.($sort == $start_sort ? '' : $sort).'";
 	mSearch2Config.limit = "'.($limit == $start_limit ? '' : $limit).'";
 	mSearch2Config.page = "'.$page.'";
-	mSearch2Config.query = "'.@$_REQUEST[$queryVar].'";
+	mSearch2Config.tpl = "'.(!empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '').'";
+	mSearch2Config.query = "'.(isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '').'";
 </script>');
 
 $pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
