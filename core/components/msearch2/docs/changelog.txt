@@ -1,8 +1,9 @@
 Changelog for mSearch2.
 
-0.6.2 pl
+0.6.2 pl1
 ==============
 - [mFilter] New parameter "tpls" for change tpl of rows in request.
+- [mFilter] Fixed warning in log when no MS2 installed.
 
 0.6.1 pl
 ==============

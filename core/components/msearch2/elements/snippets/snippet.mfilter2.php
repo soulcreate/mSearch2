@@ -62,7 +62,7 @@ if (!empty($parents) && $parents > 0) {
 	$ids = !empty($ids) ? array_intersect($ids,$parents) : $parents;
 
 	// Support for ms2 multi categories
-	if ($modx->loadClass('msProduct')) {
+	if (class_exists('msProduct') && $modx->loadClass('msCategoryMember')) {
 		$q = $modx->newQuery('msCategoryMember', array('category_id:IN' => $pids));
 		$q->select('product_id');
 		if ($q->prepare() && $q->stmt->execute()) {
