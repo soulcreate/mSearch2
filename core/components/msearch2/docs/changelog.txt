@@ -1,9 +1,10 @@
 Changelog for mSearch2.
 
-0.6.2 pl1
+0.6.2 pl2
 ==============
 - [mFilter] New parameter "tpls" for change tpl of rows in request.
 - [mFilter] Fixed warning in log when no MS2 installed.
+- [mFilter] Fixed cache problem when retrieving products in multicategories, again.
 
 0.6.1 pl
 ==============

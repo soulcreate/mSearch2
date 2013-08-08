@@ -758,4 +758,14 @@ class mSearch2 {
 		return true;
 	}
 
+
+	/**
+	 * Checks for exists of miniShop2
+	 *
+	 * @return bool
+	 */
+	public function checkMS2() {
+		return file_exists(MODX_CORE_PATH . 'components/minishop2/model/minishop2/msproduct.class.php');
+	}
+
 }

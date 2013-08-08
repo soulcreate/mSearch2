@@ -143,7 +143,7 @@ class mse2FiltersHandler {
 		$q = $this->modx->newQuery('modResource');
 		$q->select('id,' . implode(',', $fields));
 		$q->where(array('modResource.id:IN' => $ids));
-		if (in_array('parent', $fields) && class_exists('msProduct') && $this->modx->loadClass('msCategoryMember')) {
+		if (in_array('parent', $fields) && $this->mse2->checkMS2()) {
 			$q->leftJoin('msCategoryMember','Member', '`Member`.`product_id` = `modResource`.`id`');
 			$q->orCondition(array('Member.product_id:IN' => $ids));
 			$q->select('category_id');
