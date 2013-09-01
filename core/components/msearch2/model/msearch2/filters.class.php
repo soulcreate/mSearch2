@@ -43,13 +43,18 @@ class mse2FiltersHandler {
 		$q->select('`name`,`contentid`,`value`');
 		if ($q->prepare() && $q->stmt->execute()) {
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
-				$row['value'] = trim($row['value']);
-				if ($row['value'] == '') {continue;}
-				if (isset($filters[$row['name']][$row['value']])) {
-					$filters[$row['name']][$row['value']][] = $row['contentid'];
-				}
-				else {
-					$filters[$row['name']][$row['value']] = array($row['contentid']);
+				$tmp = strpos($row['value'], '||') !== false
+					? explode('||', $row['value'])
+					: array($row['value']);
+				foreach ($tmp as $v) {
+					$v = trim($v);
+					if ($v == '') {continue;}
+					if (isset($filters[$row['name']][$v])) {
+						$filters[$row['name']][$v][] = $row['contentid'];
+					}
+					else {
+						$filters[$row['name']][$v] = array($row['contentid']);
+					}
 				}
 			}
 		}
