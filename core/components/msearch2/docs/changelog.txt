@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.8.0 pl
+==============
+- Accelerated method mse2FiltersHandler::filterNumber().
+
 0.7.0 pl
 ==============
 - Added support for list-style TVs.

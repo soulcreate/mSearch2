@@ -520,10 +520,11 @@ class mse2FiltersHandler {
 		$min = floor(array_shift($requested));
 		$max = ceil(array_pop($requested));
 
+		$tmp = array_flip($ids);
 		foreach ($values as $number => $resources) {
 			if ($number >= $min && $number <= $max) {
 				foreach ($resources as $id) {
-					if (in_array($id, $ids)) {
+					if (isset($tmp[$id])) {
 						$matched[] = $id;
 					}
 				}
