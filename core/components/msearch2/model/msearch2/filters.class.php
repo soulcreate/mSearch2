@@ -49,11 +49,12 @@ class mse2FiltersHandler {
 				foreach ($tmp as $v) {
 					$v = trim($v);
 					if ($v == '') {continue;}
-					if (isset($filters[$row['name']][$v])) {
-						$filters[$row['name']][$v][] = $row['contentid'];
+					$name = strtolower($row['name']);
+					if (isset($filters[$name][$v])) {
+						$filters[$name][$v][] = $row['contentid'];
 					}
 					else {
-						$filters[$row['name']][$v] = array($row['contentid']);
+						$filters[$name][$v] = array($row['contentid']);
 					}
 				}
 			}
