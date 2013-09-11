@@ -1,14 +1,17 @@
 <?php
-/* @var mSearch2 $mSearch2 */
-$mSearch2 = $modx->getService('msearch2','mSearch2',$modx->getOption('msearch2.core_path',null,$modx->getOption('core_path').'components/msearch2/').'model/msearch2/',$scriptProperties);
-/* @var pdoFetch $pdoFetch */
-$pdoFetch = $modx->getService('pdofetch','pdoFetch', MODX_CORE_PATH.'components/pdotools/model/pdotools/',$scriptProperties);
+/** @var array $scriptProperties */
+/** @var mSearch2 $mSearch2 */
+if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
+$mSearch2 = new mSearch2($modx, $scriptProperties);
+/** @var pdoFetch $pdoFetch */
+if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
+$pdoFetch = new pdoFetch($modx, $scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
 
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
 if (empty($minQuery)) {$minQuery = $modx->getOption('index_min_words_length', null, 3, true);}
-if (empty($depth)) {$depth = 10;}
+if ($depth == '') {$depth = 10;}
 if (empty($htagOpen)) {$htagOpen = '<b>';}
 if (empty($htagClose)) {$htagClose = '</b>';}
 if (empty($outputSeparator)) {$outputSeparator = "\n";}
@@ -22,10 +25,12 @@ $found = array();
 $query = !empty($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
 if (empty($resources)) {
 	if (empty($query) && isset($_REQUEST[$queryVar])) {
-		return $modx->lexicon('mse2_err_no_query');
+		$query = '';
+		$output = $modx->lexicon('mse2_err_no_query');
 	}
 	else if (!empty($query) && !preg_match('/^[0-9]{2,}$/', $query) && mb_strlen($query,'UTF-8') < $minQuery) {
-		return $modx->lexicon('mse2_err_min_query');
+		$query = '';
+		$output = $modx->lexicon('mse2_err_min_query');
 	}
 	else if (empty($query)) {
 		return;
@@ -35,15 +40,14 @@ if (empty($resources)) {
 		$modx->setPlaceholder($plPrefix.$queryVar, $query);
 	}
 
-	$found = $mSearch2->Search($query);
-	$ids = array_keys($found);
-	$resources = implode(',', $ids);
-
-	if ($returnIds) {
-		return !empty($resources) ? $resources : '0';
+	if (!empty($query)) {
+		$found = $mSearch2->Search($query);
+		$ids = array_keys($found);
+		$resources = implode(',', $ids);
 	}
-	else if (empty($found)) {
-		$output = $modx->lexicon('mse2_err_no_results');
+
+	if (empty($found)) {
+		if (!empty($query)) {$output = $modx->lexicon('mse2_err_no_results');}
 		if (!empty($tplWrapper) && !empty($wrapIfEmpty)) {
 			$output = $pdoFetch->getChunk(
 				$tplWrapper,
@@ -62,6 +66,9 @@ if (empty($resources)) {
 		else {
 			return $output;
 		}
+	}
+	elseif ($returnIds) {
+		return !empty($resources) ? $resources : '0';
 	}
 }
 else if (strpos($resources, '{') === 0) {
@@ -102,12 +109,14 @@ if (!empty($parents)) {
 			$pids[$row['id']] = $row['context_key'];
 		}
 	}
-	foreach ($pids as $k => $v) {
-		if (in_array($k, $parents_in)) {
-			$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
-		}
-		else {
-			$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
+	if (!empty($depth) && $depth > 0) {
+		foreach ($pids as $k => $v) {
+			if (in_array($k, $parents_in)) {
+				$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
+			}
+			else {
+				$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
+			}
 		}
 	}
 

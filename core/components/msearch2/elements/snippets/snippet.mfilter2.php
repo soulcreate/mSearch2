@@ -1,19 +1,19 @@
 <?php
-/* @var array $scriptProperties */
-/* @var mSearch2 $mSearch2 */
-$mSearch2 = $modx->getService('msearch2','mSearch2',$modx->getOption('msearch2.core_path',null,$modx->getOption('core_path').'components/msearch2/').'model/msearch2/',$scriptProperties);
-$mSearch2->initialize($modx->context->key);
-/* @var pdoFetch $pdoFetch */
-$pdoFetch = $modx->getService('pdofetch','pdoFetch', MODX_CORE_PATH.'components/pdotools/model/pdotools/',$scriptProperties);
-$pdoFetch->setConfig($scriptProperties);
+/** @var array $scriptProperties */
+/** @var mSearch2 $mSearch2 */
+if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
+$mSearch2 = new mSearch2($modx, $scriptProperties);
+/** @var pdoFetch $pdoFetch */
+if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
+$pdoFetch = new pdoFetch($modx, $scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
 $_SESSION['mFilter2'][$modx->resource->id] = array();
 
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
 if (empty($minQuery)) {$minQuery = $modx->getOption('index_min_words_length', null, 3, true);}
-if (empty($depth)) {$depth = 10;}
-if (empty($limit)) {$limit = 10;}
+if ($depth == '') {$depth = 10;}
+if ($limit == '') {$limit = 10;}
 if (empty($classActive)) {$classActive = 'active';}
 if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggestions'] = empty($scriptProperties['disableSuggestions']);}
 if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlaceholder;}
@@ -76,12 +76,14 @@ if (!empty($parents)) {
 			$pids[$row['id']] = $row['context_key'];
 		}
 	}
-	foreach ($pids as $k => $v) {
-		if (in_array($k, $parents_in)) {
-			$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
-		}
-		else {
-			$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
+	if (!empty($depth) && $depth > 0) {
+		foreach ($pids as $k => $v) {
+			if (in_array($k, $parents_in)) {
+				$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
+			}
+			else {
+				$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
+			}
 		}
 	}
 
@@ -405,11 +407,15 @@ if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 if (!empty($toSeparatePlaceholders)) {
 	$modx->setPlaceholders($output['filters'], $toSeparatePlaceholders);
 	$output['log'] = $log;
-	$output['filters'] = implode($output['filters']);
+	if (is_array($output['filters'])) {
+		$output['filters'] = implode($output['filters']);
+	}
 	$modx->setPlaceholders($output, $toSeparatePlaceholders);
 }
 else {
-	$output['filters'] = implode($output['filters']);
+	if (is_array($output['filters'])) {
+		$output['filters'] = implode($output['filters']);
+	}
 	if (!empty($toPlaceholders)) {
 		$output['log'] = $log;
 		$modx->setPlaceholders($output, $toPlaceholders);
