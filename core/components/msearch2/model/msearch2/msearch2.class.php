@@ -6,19 +6,23 @@
  */
 
 class mSearch2 {
-	/* @var modX $modx */
+	/** @var modX $modx */
 	public $modx;
-	/* @var mSearch2ControllerRequest $request */
+	/** @var array $config */
+	public $config = array();
+	/** @var mSearch2ControllerRequest $request */
 	protected $request;
-	/* @var mse2FiltersHandler $filtersHandler */
+	/** @var mse2FiltersHandler $filtersHandler */
 	public $filtersHandler = null;
+	/** @var array $phpMorphy */
 	public $phpMorphy = array();
+	/** @var array $initialized */
 	public $initialized = array();
-	/* Cache for filters methods */
+	/** Cache for filters methods */
 	public $methods = array();
-	/* Cache for filters values */
+	/** Cache for filters values */
 	public $filters = array();
-	/* Total number of filter operations */
+	/** Total number of filter operations */
 	public $filter_operations = 0;
 
 
@@ -485,6 +489,7 @@ class mSearch2 {
 
 		// Return results from cache
 		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']))) {
+			echo 111;die;
 			return $prepared;
 		}
 		else if (!$build && !empty($this->filters)) {
