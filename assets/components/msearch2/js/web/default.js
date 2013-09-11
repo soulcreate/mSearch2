@@ -5,6 +5,7 @@ mSearch2 = {
 		,total: '#mse2_total'
 		,pagination: '#mse2_pagination'
 		,sort: '#mse2_sort'
+		,limit: '#mse2_limit'
 
 		,pagination_link: '#mse2_pagination a'
 		,sort_link: '#mse2_sort a'
@@ -31,6 +32,7 @@ mSearch2 = {
 		this.handlePagination();
 		this.handleSort();
 		this.handleTpl();
+		this.handleLimit();
 
 		$(document).on('submit', this.options.filters, function(e) {
 			mSearch2Config.page = '';
@@ -93,6 +95,20 @@ mSearch2 = {
 			}
 
 			return false;
+		});
+	}
+
+	,handleLimit: function() {
+		$(document).on('change', this.options.limit, function(e) {
+			var limit = $(this).val();
+			mSearch2Config.page = '';
+			if (limit == mSearch2Config.start_limit) {
+				mSearch2Config.limit = '';
+			}
+			else {
+				mSearch2Config.limit = limit;
+			}
+			mSearch2.load();
 		});
 	}
 
@@ -275,9 +291,24 @@ mSearch2.Hash = {
 	}
 };
 
+mSearch2.Slider = {
+	initialize: function(element) {
+		if (!$.ui || !$.ui.slider) {
+			return $.getScript(mSearch2Config.jsUrl + 'lib/jquery-ui.min.js', function() {
+				mSearch2.Slider.initialize(element);
+			});
+		}
+
+		console.log($.ui.version);
+
+		return true;
+	}
+};
+
 if (window.location.hash != '' && mSearch2.Hash.oldbrowser()) {
 	var uri = window.location.hash.replace('#', '?');
 	window.location.href = document.location.pathname + uri;
 }
 
 mSearch2.initialize('#mse2_mfilter');
+mSearch2.Slider.initialize('#mse2_mfilter');

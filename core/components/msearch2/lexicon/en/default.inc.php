@@ -54,6 +54,7 @@ $_lang['mse2_sort_asc'] = 'ascending';
 $_lang['mse2_sort_desc'] = 'descending';
 $_lang['mse2_sort_publishedon'] = 'Published on';
 $_lang['mse2_sort_price'] = 'Price';
+$_lang['mse2_limit'] = 'Display on page';
 
 $_lang['mse2_err_no_filters'] = 'Nothing to filter';
 

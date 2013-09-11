@@ -3,6 +3,7 @@
 /** @var mSearch2 $mSearch2 */
 if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
 $mSearch2 = new mSearch2($modx, $scriptProperties);
+$mSearch2->initialize($modx->context->key);
 /** @var pdoFetch $pdoFetch */
 if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
 $pdoFetch = new pdoFetch($modx, $scriptProperties);
@@ -13,14 +14,19 @@ if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
 if (empty($minQuery)) {$minQuery = $modx->getOption('index_min_words_length', null, 3, true);}
 if ($depth == '') {$depth = 10;}
-if ($limit == '') {$limit = 10;}
 if (empty($classActive)) {$classActive = 'active';}
 if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggestions'] = empty($scriptProperties['disableSuggestions']);}
 if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlaceholder;}
+if (!empty($_REQUEST['limit'])) {$limit = (integer) $_REQUEST['limit'];}
+elseif ($limit == '') {$limit = 10;}
+
+//$maxLimit = 100;
+//if ($limit > $maxLimit) {$limit = $maxLimit;}
+
 $fastMode = !empty($fastMode);
 
 $class = 'modResource';
-$output = array('filters' => '', 'results' => '', 'total' => 0);
+$output = array('filters' => '', 'results' => '', 'total' => 0, 'limit' => $limit);
 $ids = $found = $log = $where = array();
 
 // ---------------------- Retrieving ids of resources for filter
@@ -150,11 +156,10 @@ if (empty($ids)) {
 	}
 	else {$log = '';}
 
-	$output = array(
+	$output = array_merge($output, array(
 		'filters' => $modx->lexicon('mse2_err_no_filters')
 		,'results' => $modx->lexicon('mse2_err_no_results')
-		,'total' => 0
-	);
+	));
 	if (!empty($toPlaceholders)) {
 		$output['log'] = $log;
 		$modx->setPlaceholders($output, $toPlaceholders);
@@ -179,7 +184,7 @@ else {
 }
 
 // Then get filters
-$pdoFetch->addTime('Getting filters for ids: "'.implode(',',$ids).'"'); 
+$pdoFetch->addTime('Getting filters for ids: "'.implode(',',$ids).'"');
 $filters = '';
 if (!empty($ids)) {
 	$filters = $mSearch2->getFilters($ids);
@@ -202,7 +207,9 @@ if (!empty($ids)) {
 
 // ---------------------- Loading results
 $start_sort = implode(',', array_map('trim' , explode(',', $scriptProperties['sort'])));
-$start_limit = $limit;
+$start_limit = isset($scriptProperties['limit']) && $scriptProperties['limit'] != ''
+	? $scriptProperties['limit']
+	: 10;
 $suggestions = array();
 $page = $sort = '';
 if (!empty($ids)) {
@@ -217,6 +224,7 @@ if (!empty($ids)) {
 				,'element' => $scriptProperties['element']
 				,'defaultSort' => $start_sort
 				,'toPlaceholder' => false
+				,'limit' => $limit
 			)
 		);
 
@@ -252,7 +260,6 @@ if (!empty($ids)) {
 		if (!empty($_REQUEST[$paginatorProperties['pageVarKey']])) {
 			$page = (int) $_REQUEST[$paginatorProperties['pageVarKey']];
 		}
-		if (!empty($_REQUEST['limit'])) {$limit = $_REQUEST['limit'];}
 		if (!empty($sort)) {
 			$paginatorProperties['sortby'] = $mSearch2->getSortFields($sort);
 			$paginatorProperties['sortdir'] = '';

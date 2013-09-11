@@ -13,6 +13,7 @@
 			<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
 		</div>
 
+
 		[[+tpls:notempty=`
 		<div id="mse2_tpl">
 			<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a>
@@ -23,6 +24,15 @@
 		<div id="mse2_results">
 			[[+results]]
 		</div>
+
+		<label class="inline">[[%mse2_limit]]<br/>
+			<select name="mse_limit" id="mse2_limit">
+				<option value="10" [[+limit:is=`10`:then=`selected`]]>10</option>
+				<option value="25" [[+limit:is=`25`:then=`selected`]]>25</option>
+				<option value="50" [[+limit:is=`50`:then=`selected`]]>50</option>
+				<option value="100" [[+limit:is=`100`:then=`selected`]]>100</option>
+			</select>
+		</label>
 
 		<div class="pagination">
 			<ul id="mse2_pagination">
