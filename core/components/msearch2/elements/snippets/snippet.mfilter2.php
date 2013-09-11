@@ -403,9 +403,9 @@ if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 }
 
 if (!empty($toSeparatePlaceholders)) {
-	$output['log'] = $log;
 	$modx->setPlaceholders($output['filters'], $toSeparatePlaceholders);
-	unset($output['filters']);
+	$output['log'] = $log;
+	$output['filters'] = implode($output['filters']);
 	$modx->setPlaceholders($output, $toSeparatePlaceholders);
 }
 else {

@@ -489,7 +489,6 @@ class mSearch2 {
 
 		// Return results from cache
 		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']))) {
-			echo 111;die;
 			return $prepared;
 		}
 		else if (!$build && !empty($this->filters)) {
