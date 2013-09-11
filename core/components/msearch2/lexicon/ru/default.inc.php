@@ -55,6 +55,7 @@ $_lang['mse2_sort_desc'] = 'по убыванию';
 $_lang['mse2_sort_publishedon'] = 'Дата публикации';
 $_lang['mse2_sort_price'] = 'Цена';
 $_lang['mse2_limit'] = 'Показывать на странице результатов';
+$_lang['mse2_selected'] = 'Вы выбрали';
 
 $_lang['mse2_err_no_filters'] = 'Нечего фильтровать';
 

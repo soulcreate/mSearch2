@@ -8,18 +8,24 @@
 	</div>
 
 	<div class="span9">
-		<div id="mse2_sort">
-			<a href="#" data-sort="resource|publishedon:desc" class="[[+resource|publishedon:desc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_desc]]</a> /
-			<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
-		</div>
+		<div class="row">
+			<div id="mse2_sort" class="span5">
+				<a href="#" data-sort="resource|publishedon:desc" class="[[+resource|publishedon:desc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_desc]]</a> /
+				<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
+			</div>
 
 
-		[[+tpls:notempty=`
-		<div id="mse2_tpl">
-			<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a>
-			<a href="#" data-tpl="1" class="[[+tpl1]]">[[%mse2_chunk_alternate]]</a>
+			[[+tpls:notempty=`
+			<div id="mse2_tpl" class="span4">
+				<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a> /
+				<a href="#" data-tpl="1" class="[[+tpl1]]">[[%mse2_chunk_alternate]]</a>
+			</div>
+			`]]
 		</div>
-		`]]
+
+		<div id="mse2_selected">[[%mse2_selected]]:
+			<span></span>
+		</div>
 
 		<div id="mse2_results">
 			[[+results]]

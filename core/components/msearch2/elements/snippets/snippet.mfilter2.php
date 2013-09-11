@@ -207,9 +207,7 @@ if (!empty($ids)) {
 
 // ---------------------- Loading results
 $start_sort = implode(',', array_map('trim' , explode(',', $scriptProperties['sort'])));
-$start_limit = isset($scriptProperties['limit']) && $scriptProperties['limit'] != ''
-	? $scriptProperties['limit']
-	: 10;
+$start_limit = $limit;
 $suggestions = array();
 $page = $sort = '';
 if (!empty($ids)) {

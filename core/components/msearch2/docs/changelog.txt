@@ -11,6 +11,7 @@ Changelog for mSearch2.
 - Fixed bug in filters, when TVs has capital letters in the name.
 - [mFilter2] Added default implementation of "limit" parameter.
 - [mFilter2] Added default implementation of range slider.
+- [mFilter2] Added default implementation of list of selected inputs.
 
 0.7.0 pl
 ==============

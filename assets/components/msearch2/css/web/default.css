@@ -25,6 +25,11 @@
 	margin-left: 20px;
 }
 
+#mse2_selected {
+	display: none;
+	margin: 10px 0;
+}
+
 .mSearchLog, .mFilterLog {
 	width: 100%;
 	overflow: auto;

@@ -7,21 +7,22 @@ mSearch2 = {
 		,sort: '#mse2_sort'
 		,limit: '#mse2_limit'
 		,slider: '.mse2_number_slider'
+		,selected: '#mse2_selected'
 
 		,pagination_link: '#mse2_pagination a'
 		,sort_link: '#mse2_sort a'
 		,tpl_link: '#mse2_tpl a'
+		,selected_tpl: '<a href="#" data-id="[[+id]]" class="mse2_selected_link">[[+title]]</a>'
 
 		,active_class: 'active'
 		,disabled_class: 'disabled'
-		,delimeter: '/'
 		,prefix: 'mse2_'
 		,suggestion: 'sup' // inside filter item, e.g. #mse2_filters
 	}
 	,sliders: {}
 	,initialize: function(selector) {
-		var elements = ['filters','results','pagination','total','sort'];
-		for (i in elements) {
+		var elements = ['filters','results','pagination','total','sort','selected'];
+		for (var i in elements) {
 			if (elements.hasOwnProperty(i)) {
 				var elem = elements[i];
 				this[elem] = $(selector).find(this.options[elem]);
@@ -46,6 +47,22 @@ mSearch2 = {
 		$(document).on('change', this.options.filters, function(e) {
 			return $(this).submit();
 		});
+
+		if (this.selected) {
+			$(document).on('change', this.options.filters + ' input', function(e) {
+				mSearch2.handleSelected($(this));
+			});
+
+			this.filters.find(':checked').each(function(e) {
+				mSearch2.handleSelected($(this));
+			});
+
+			$(document).on('click', this.options.selected + ' a', function(e) {
+				var id = $(this).data('id').replace(mSearch2Config.filter_delimeter, "\\" + mSearch2Config.filter_delimeter);
+				$('#' + id).trigger('click');
+				return false;
+			});
+		}
 
 		mSearch2.setTotal(this.total.text());
 		return true;
@@ -163,6 +180,26 @@ mSearch2 = {
 		});
 	}
 
+	,handleSelected: function(input) {
+		var id = input.prop('id');
+		var label = input.parents('label');
+		var match = label.html().match(/>(.*?)</);
+		if (match[1]) {
+			var title = match[1];
+		}
+		else {return;}
+
+		if (input.is(':checked')) {
+			var elem = this.options.selected_tpl.replace('[[+id]]', id).replace('[[+title]]', title);
+			this.selected.find('span').append(elem);
+		}
+		else {
+			$('[data-id="' + id + '"]', this.selected).remove();
+		}
+		if (this.selected.find('a').length) {this.selected.show();}
+		else {this.selected.hide();}
+	}
+
 	,load: function() {
 		var params = this.getFilters();
 		if (mSearch2Config.query != '') {params.query = mSearch2Config.query;}
@@ -217,10 +254,10 @@ mSearch2 = {
 	}
 
 	,setSuggestions: function(suggestions) {
-		for (filter in suggestions) {
+		for (var filter in suggestions) {
 			if (suggestions.hasOwnProperty(filter)) {
 				var arr = suggestions[filter];
-				for (value in arr) {
+				for (var value in arr) {
 					if (arr.hasOwnProperty(value)) {
 						var count = arr[value];
 						var selector = filter.replace(mSearch2Config.filter_delimeter, "\\" + mSearch2Config.filter_delimeter);
