@@ -6,6 +6,7 @@ mSearch2 = {
 		,pagination: '#mse2_pagination'
 		,sort: '#mse2_sort'
 		,limit: '#mse2_limit'
+		,slider: '.mse2_number_slider'
 
 		,pagination_link: '#mse2_pagination a'
 		,sort_link: '#mse2_sort a'
@@ -17,6 +18,7 @@ mSearch2 = {
 		,prefix: 'mse2_'
 		,suggestion: 'sup' // inside filter item, e.g. #mse2_filters
 	}
+	,sliders: {}
 	,initialize: function(selector) {
 		var elements = ['filters','results','pagination','total','sort'];
 		for (i in elements) {
@@ -32,6 +34,7 @@ mSearch2 = {
 		this.handlePagination();
 		this.handleSort();
 		this.handleTpl();
+		this.handleSlider();
 		this.handleLimit();
 
 		$(document).on('submit', this.options.filters, function(e) {
@@ -98,6 +101,54 @@ mSearch2 = {
 		});
 	}
 
+	,handleSlider: function() {
+		if (!$.ui || !$.ui.slider) {
+			return $.getScript(mSearch2Config.jsUrl + 'lib/jquery-ui.min.js', function() {
+				mSearch2.handleSlider();
+			});
+		}
+
+		$(this.options.slider).each(function() {
+			var fieldset = $(this).parents('fieldset');
+			var imin = fieldset.find('input:first');
+			var imax = fieldset.find('input:last');
+			var vmin = Number(imin.val());
+			var vmax = Number(imax.val());
+			var $this = $(this);
+
+			$this.slider({
+				min: vmin
+				,max: vmax
+				,values: [vmin, vmax]
+				,range: true
+				,stop: function(event, ui) {
+					imin.val($this.slider('values',0));
+					imax.val($this.slider('values',1));
+					imin.trigger('change');
+				},
+				slide: function(event, ui){
+					imin.val($this.slider('values',0));
+					imax.val($this.slider('values',1));
+				}
+			});
+
+			var name = imin.prop('name');
+			var values = mSearch2.Hash.get();
+			if (values[name]) {
+				var tmp = values[name].split(mSearch2Config.values_delimeter);
+				$this.slider('values', 0, tmp[0]);
+				$this.slider('values', 1, tmp[1]);
+				imin.val(tmp[0]);
+				imax.val(tmp[1]);
+			}
+
+			imin.attr('readonly', true);
+			imax.attr('readonly', true);
+			mSearch2.sliders[imin.prop('name')] = [vmin,vmax];
+		});
+		return true;
+	}
+
 	,handleLimit: function() {
 		$(document).on('change', this.options.limit, function(e) {
 			var limit = $(this).val();
@@ -119,6 +170,14 @@ mSearch2 = {
 		if (mSearch2Config.tpl != '') {params.tpl = mSearch2Config.tpl;}
 		if (mSearch2Config.page > 0) {params.page = mSearch2Config.page;}
 		if (mSearch2Config.limit > 0) {params.limit = mSearch2Config.limit;}
+
+		for (var i in this.sliders) {
+			if (this.sliders.hasOwnProperty(i) && params[i]) {
+				if (this.sliders[i].join(mSearch2Config.values_delimeter) == params[i]) {
+					delete params[i];
+				}
+			}
+		}
 
 		this.Hash.set(params);
 		params.action = 'filter';
@@ -291,24 +350,9 @@ mSearch2.Hash = {
 	}
 };
 
-mSearch2.Slider = {
-	initialize: function(element) {
-		if (!$.ui || !$.ui.slider) {
-			return $.getScript(mSearch2Config.jsUrl + 'lib/jquery-ui.min.js', function() {
-				mSearch2.Slider.initialize(element);
-			});
-		}
-
-		console.log($.ui.version);
-
-		return true;
-	}
-};
-
 if (window.location.hash != '' && mSearch2.Hash.oldbrowser()) {
 	var uri = window.location.hash.replace('#', '?');
 	window.location.href = document.location.pathname + uri;
 }
 
 mSearch2.initialize('#mse2_mfilter');
-mSearch2.Slider.initialize('#mse2_mfilter');

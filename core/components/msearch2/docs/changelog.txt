@@ -10,6 +10,7 @@ Changelog for mSearch2.
 - Accelerated method mse2FiltersHandler::filterNumber().
 - Fixed bug in filters, when TVs has capital letters in the name.
 - [mFilter2] Added default implementation of "limit" parameter.
+- [mFilter2] Added default implementation of range slider.
 
 0.7.0 pl
 ==============

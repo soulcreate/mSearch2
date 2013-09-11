@@ -27,6 +27,10 @@ $tmp = array(
 		'file' => 'mfilter2.filter.radio'
 		,'description' => ''
 	)
+	,'tpl.mFilter2.filter.slider' => array(
+		'file' => 'mfilter2.filter.slider'
+		,'description' => ''
+	)
 );
 
 foreach ($tmp as $k => $v) {

@@ -1,3 +1,5 @@
+@import "redmond/jquery-ui-1.10.3.custom.min.css";
+
 #mse2_sort a.active, #mse2_tpl a.active {
 	color: black;
 	text-decoration:none;
@@ -6,6 +8,21 @@
 
 #mse2_filters .disabled {
 	color: #AAA;
+}
+
+#mse2_results {
+	margin-bottom: 20px;
+}
+
+#mse2_filters .mse2_number_slider {
+	font-size: .7em;
+	margin-bottom: 10px;
+}
+#mse2_filters .mse2_number_inputs label {
+	display: inline-block;
+}
+#mse2_filters .mse2_number_inputs label:last-child {
+	margin-left: 20px;
 }
 
 .mSearchLog, .mFilterLog {
