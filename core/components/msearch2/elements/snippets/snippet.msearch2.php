@@ -5,12 +5,10 @@ $mSearch2 = $modx->getService('msearch2','mSearch2',$modx->getOption('msearch2.c
 $pdoFetch = $modx->getService('pdofetch','pdoFetch', MODX_CORE_PATH.'components/pdotools/model/pdotools/',$scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
 
-$class = 'modResource';
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
 if (empty($minQuery)) {$minQuery = $modx->getOption('index_min_words_length', null, 3, true);}
 if (empty($depth)) {$depth = 10;}
-if (empty($offset)) {$offset = 0;}
 if (empty($htagOpen)) {$htagOpen = '<b>';}
 if (empty($htagClose)) {$htagClose = '</b>';}
 if (empty($outputSeparator)) {$outputSeparator = "\n";}
@@ -19,6 +17,7 @@ $returnIds = !empty($returnIds);
 $fastMode = !empty($fastMode);
 $output = null;
 
+$class = 'modResource';
 $found = array();
 $query = !empty($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
 if (empty($resources)) {
@@ -169,7 +168,7 @@ if (!empty($rows) && is_array($rows)) {
 		$tplRow = $pdoFetch->defineChunk($row);
 		$output[] .= empty($tplRow)
 			? $pdoFetch->getChunk('', $row)
-			: $pdoFetch->getChunk($tplRow, $row, $pdoFetch->config['fastMode']);
+			: $pdoFetch->getChunk($tplRow, $row, $fastMode);
 	}
 	$pdoFetch->addTime('Returning processed chunks');
 	if (!empty($output)) {

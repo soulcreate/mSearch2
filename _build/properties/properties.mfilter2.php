@@ -99,9 +99,13 @@ $tmp = array(
 		,'value' => ''
 	)
 
-	,'toPlaceholder' => array(
-		'type' => 'combo-boolean'
-		,'value' => false
+	,'toPlaceholders' => array(
+		'type' => 'textfield'
+		,'value' => ''
+	)
+	,'toSeparatePlaceholders' => array(
+		'type' => 'textfield'
+		,'value' => ''
 	)
 
 	,'filter_delimeter' => array(

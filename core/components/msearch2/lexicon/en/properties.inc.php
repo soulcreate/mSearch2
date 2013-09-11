@@ -10,7 +10,10 @@ $_lang['mse2_prop_tpl'] = 'The chunk tpl to use for each row.';
 $_lang['mse2_prop_limit'] = 'The number of results to limit.';
 $_lang['mse2_prop_offset'] = 'An offset of resources returned by the criteria to skip.';
 $_lang['mse2_prop_outputSeparator'] = 'An optional string to separate each tpl instance.';
-$_lang['mse2_prop_toPlaceholder'] = 'If not empty, the snippet will save output to placeholder with that name, instead of return it to screen. Snippet mFilter2 will save data in placeholders: [[+filters]], [[+results]] and [[+total]].';
+$_lang['mse2_prop_toPlaceholder'] = 'If not empty, the snippet will save output to placeholder with that name, instead of return it to screen.';
+$_lang['mse2_prop_toPlaceholders'] = 'If not empty, mFilter2 will save data in placeholders: "filters", "results" and "total" with prefix specified in this parameter. For example, you set &toPlaceholders=`my.` and will receive: [[+my.filters]], [[+my.results]] and [[+my.total]]';
+$_lang['mse2_prop_toSeparatePlaceholders'] = 'Work the same as "&toPlaceholders" but placeholder "filters" split to separate placeholders with name of filter. For example, you set &toSeparatePlaceholders=`my.` and &filters=`tv|test,resource|pagetitle` - you receive placeholders: [[+my.results]], [[+my.total]], [[+my.tv|test]] and [[+my.resource|pagetitle]].';
+//$_lang['mse2_prop_plPrefix'] = 'Used when placeholders set to global context by modX::setPlaceholder(). For example, snippet mSearch2 set placeolders "query" and "parents", that can be renamed by &queryVar=``, &parentsVar=`` and prefixed by &plPrefix. Parameters "&toPlaceholder" and such ignores this parameter, because there you specify its name.';
 
 $_lang['mse2_prop_returnIds'] = 'Return comma-separated list of ids of matched resources.';
 $_lang['mse2_prop_showLog'] = 'Display additional information about snippet work. Only for authenticated in context "mgr".';

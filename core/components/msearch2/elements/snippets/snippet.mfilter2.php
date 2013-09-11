@@ -11,16 +11,16 @@ $_SESSION['mFilter2'][$modx->resource->id] = array();
 
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
-if (empty($totalVar)) {$totalVar = 'total';}
 if (empty($minQuery)) {$minQuery = $modx->getOption('index_min_words_length', null, 3, true);}
-if (!isset($plPrefix)) {$plPrefix = '';}
 if (empty($depth)) {$depth = 10;}
 if (empty($limit)) {$limit = 10;}
 if (empty($classActive)) {$classActive = 'active';}
 if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggestions'] = empty($scriptProperties['disableSuggestions']);}
-$class = 'modResource';
+if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlaceholder;}
+$fastMode = !empty($fastMode);
 
-$output = array('filters' => '', 'results' => '');
+$class = 'modResource';
+$output = array('filters' => '', 'results' => '', 'total' => 0);
 $ids = $found = $log = $where = array();
 
 // ---------------------- Retrieving ids of resources for filter
@@ -151,15 +151,15 @@ if (empty($ids)) {
 	$output = array(
 		'filters' => $modx->lexicon('mse2_err_no_filters')
 		,'results' => $modx->lexicon('mse2_err_no_results')
-		,$totalVar => 0
+		,'total' => 0
 	);
-	if (!empty($toPlaceholder)) {
+	if (!empty($toPlaceholders)) {
 		$output['log'] = $log;
-		$modx->setPlaceholders($output, $plPrefix);
+		$modx->setPlaceholders($output, $toPlaceholders);
 		return;
 	}
 	else {
-		$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $pdoFetch->config['fastMode']);
+		$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
 		$output .= $log;
 
 		return $output;
@@ -283,8 +283,10 @@ if (!empty($ids)) {
 		$log = $pdoFetch->timings;
 		$pdoFetch->timings = array();
 
-		$output['results'] = !empty($paginatorProperties['resources']) ? $paginator->process() : $modx->lexicon('mse2_err_no_results');
-
+		$output['results'] = !empty($paginatorProperties['resources'])
+			? $paginator->process()
+			: $modx->lexicon('mse2_err_no_results');
+		$output['total'] = $modx->getPlaceholder($pdoFetch->config['totalVar']);
 	}
 	else {
 		$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find pagination snippet with name: "'.$scriptProperties['paginator'].'"');
@@ -348,17 +350,17 @@ else {
 				,'delimeter' => $mSearch2->config['filter_delimeter']
 				,'idx' => $idx++
 				,'num' => $num
-			), $pdoFetch->config['fastMode']);
+			), $fastMode);
 		}
 
 		$tpl = empty($rows) ? $tplEmpty : $tplOuter;
-		$output['filters'] .= $pdoFetch->getChunk($tpl, array(
+		$output['filters'][$filter] .= $pdoFetch->getChunk($tpl, array(
 			'filter' => $filter2
 			,'table' => $table
 			,'rows' => $rows
 			,'has_active' => $has_active
 			,'delimeter' => $mSearch2->config['filter_delimeter']
-		), $pdoFetch->config['fastMode']);
+		), $fastMode);
 	}
 
 	if (empty($output['filters'])) {
@@ -400,13 +402,22 @@ if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 	$log = '<pre class="mFilterLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';
 }
 
-if (!empty($toPlaceholder)) {
+if (!empty($toSeparatePlaceholders)) {
 	$output['log'] = $log;
-	$modx->setPlaceholders($output, $plPrefix);
+	$modx->setPlaceholders($output['filters'], $toSeparatePlaceholders);
+	unset($output['filters']);
+	$modx->setPlaceholders($output, $toSeparatePlaceholders);
 }
 else {
-	$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $pdoFetch->config['fastMode']);
-	$output .= $log;
+	$output['filters'] = implode($output['filters']);
+	if (!empty($toPlaceholders)) {
+		$output['log'] = $log;
+		$modx->setPlaceholders($output, $toPlaceholders);
+	}
+	else {
+		$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
+		$output .= $log;
 
-	return $output;
+		return $output;
+	}
 }

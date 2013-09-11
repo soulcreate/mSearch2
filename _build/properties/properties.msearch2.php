@@ -41,10 +41,16 @@ $tmp = array(
 		'type' => 'textfield'
 		,'value' => "\n"
 	)
+	/*
+	,'plPrefix' => array(
+		'type' => 'textfield'
+		,'value' => 'mse2_'
+	)*/
 	,'toPlaceholder' => array(
-		'type' => 'combo-boolean'
-		,'value' => false
+		'type' => 'textfield'
+		,'value' => ''
 	)
+
 	,'parents' => array(
 		'type' => 'textfield'
 		,'value' => ''
