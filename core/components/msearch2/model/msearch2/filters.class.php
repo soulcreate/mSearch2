@@ -438,8 +438,9 @@ class mse2FiltersHandler {
 		$data = array();
 
 		$sort = explode(',', strtolower(trim($sort)));
+		$resource_fields = array_keys($this->modx->getFieldMeta('modResource'));
 		foreach ($sort as $string) {
-			$table = 'resource';
+			$table = '';
 			$order = 'asc';
 
 			$tmp = explode($this->config['filter_delimeter'], $string);
@@ -466,11 +467,16 @@ class mse2FiltersHandler {
 					$table = $this->config['sortAliases'][$table];
 				}
 			}
-			else {
+			elseif (in_array($field, $resource_fields)) {
 				$table = $this->config['sortAliases']['resource'];
 			}
+			else {
+				$table = '';
+			}
 
-			$data[] = "`$table`.`$field` $order";
+			$data[] = !empty($table)
+				? "`$table`.`$field` $order"
+				: "$field $order";
 		}
 
 		return implode(',', $data);

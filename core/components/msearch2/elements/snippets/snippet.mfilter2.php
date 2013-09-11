@@ -252,7 +252,7 @@ if (!empty($ids)) {
 			$sortby = !empty($scriptProperties['sortby']) ? $scriptProperties['sortby'] : '';
 			if (!empty($sortby)) {
 				$sortdir = !empty($scriptProperties['sortdir']) ? $scriptProperties['sortdir'] : 'asc';
-				$sort = 'resource'.$mSearch2->config['filter_delimeter'].$sortby.$mSearch2->config['method_delimeter'].$sortdir;
+				$sort = $sortby.$mSearch2->config['method_delimeter'].$sortdir;
 			}
 		}
 		if (!empty($_REQUEST[$paginatorProperties['pageVarKey']])) {
