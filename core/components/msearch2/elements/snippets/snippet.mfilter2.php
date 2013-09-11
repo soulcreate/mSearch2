@@ -18,15 +18,25 @@ if (empty($depth)) {$depth = 10;}
 if (empty($limit)) {$limit = 10;}
 if (empty($classActive)) {$classActive = 'active';}
 if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggestions'] = empty($scriptProperties['disableSuggestions']);}
-$output = array('filters' => '', 'results' => '');
-$ids = $found = $log = array();
+$class = 'modResource';
 
+$output = array('filters' => '', 'results' => '');
+$ids = $found = $log = $where = array();
 
 // ---------------------- Retrieving ids of resources for filter
 $query = isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
+// Filter by ids
 if (!empty($resources)) {
-	$ids = array_map('trim', explode(',', $resources));
-	$pdoFetch->addTime('Received ids: ('.implode(',',$ids).')');
+	$resources = array_map('trim', explode(',', $resources));
+	$in = $out = array();
+	foreach ($resources as $v) {
+		if (!is_numeric($v)) {continue;}
+		if ($v < 0) {$out[] = abs($v);}
+		else {$in[] = $v;}
+	}
+	if (!empty($in)) {$ids = $where['id:IN'] = $in;}
+	if (!empty($out)) {$where['id:NOT IN'] = $out;}
+	$pdoFetch->addTime('Recieved ids for include: "'.implode(',',$in).'" and exclude: "'.implode(',', $out).'"');
 }
 else if (isset($_REQUEST[$queryVar]) && empty($query)) {
 	return $modx->lexicon('mse2_err_no_query');
@@ -44,36 +54,91 @@ else if (isset($_REQUEST[$queryVar])) {
 	if (empty($ids)) {
 		return $modx->lexicon('mse2_err_no_results');
 	}
-	$pdoFetch->addTime('Found ids: ('.implode(',',$ids).')');
+	$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
 }
 
 // Filter ids by parents
 if (empty($scriptProperties[$parentsVar]) && !empty($_REQUEST[$parentsVar])) {$parents = $_REQUEST[$parentsVar];}
 else {$parents = $scriptProperties[$parentsVar];}
-if (!empty($parents) && $parents > 0) {
-	$pids = array_map('trim', explode(',', $parents));
-	$parents = array();
-	if (!empty($depth) && $depth > 0) {
-		foreach ($pids as $v) {
-			if (!is_numeric($v)) {continue;}
-			$parents = array_merge($parents, $modx->getChildIds($v, $depth));
+if (!empty($parents)) {
+	$pids = array();
+	$parents = array_map('trim', explode(',', $parents));
+	$parents_in = $parents_out = array();
+	foreach ($parents as $v) {
+		if (!is_numeric($v)) {continue;}
+		if ($v < 0) {$parents_out[] = abs($v);}
+		else {$parents_in[] = $v;}
+	}
+	$q = $modx->newQuery($class, array('id:IN' => array_merge($parents_in, $parents_out)));
+	$q->select('id,context_key');
+	if ($q->prepare() && $q->stmt->execute()) {
+		while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+			$pids[$row['id']] = $row['context_key'];
 		}
 	}
-	$ids = !empty($ids) ? array_intersect($ids,$parents) : $parents;
+	foreach ($pids as $k => $v) {
+		if (in_array($k, $parents_in)) {
+			$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
+		}
+		else {
+			$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
+		}
+	}
 
 	// Support for ms2 multi categories
-	if ($mSearch2->checkMS2()) {
-		$q = $modx->newQuery('msCategoryMember', array('category_id:IN' => $pids));
+	$members = array();
+	if ($mSearch2->checkMS2() && (!empty($parents_in) || !empty($parents_out))) {
+		$q = $modx->newQuery('msCategoryMember');
+		if (!empty($parents_in)) {$q->where(array('parent:IN' => $parents_in));}
+		if (!empty($parents_out)) {$q->where(array('parent:NOT IN' => $parents_out));}
 		$q->select('product_id');
 		if ($q->prepare() && $q->stmt->execute()) {
 			$members = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
-			if (!empty($members)) {
-				$pdoFetch->addTime('Added ids by ms2 category members: ('.implode(',',$members).')');
-				$ids = array_unique(array_merge($members, $ids));
-			}
 		}
 	}
-	$pdoFetch->addTime('Filtered ids by parents: ('.implode(',',$ids).')');
+
+	if (!empty($members) && !empty($parents_in)) {
+		$where[] = '(`'.$class.'`.`parent` IN ('.implode(',',$parents_in).') OR `'.$class.'`.`id` IN ('.implode(',',$members).'))';
+	}
+	elseif (!empty($parents_in)) {
+		$where['parent:IN'] = $parents_in;
+	}
+	elseif (!empty($members)) {
+		$where['id:IN'] = $members;
+	}
+	if (!empty($parents_out)) {
+		$where['parent:NOT IN'] = $parents_out;
+	}
+
+	$pdoFetch->addTime('Received parents for include "'.implode(',',$parents_in).'" and exclude: "'.implode(',', $parents_out).'"');
+}
+
+// ---------------------- Checking resources by status and custom "where" parameter
+if (!empty($where)) {
+	if (!empty($ids) && !empty($where['id:IN'])) {
+		$where['id:IN'] = array_merge($ids, $where['id:IN']);
+	}
+	elseif(!empty($ids)) {
+		$where['id:IN'] = $ids;
+	}
+	if (empty($showUnpublished)) {$where['published'] = 1;}
+	if (empty($showHidden)) {$where['hidemenu'] = 0;}
+	if (empty($showDeleted)) {$where['deleted'] = 0;}
+	if (!empty($hideContainers)) {$where['isfolder'] = 0;}
+	if (!empty($scriptProperties['where'])) {
+		$tmp = $modx->fromJSON($scriptProperties['where']);
+		if (!empty($tmp) && is_array($tmp)) {
+			$where = array_merge($where, $tmp);
+		}
+	}
+	unset($scriptProperties['where']);
+	$q = $modx->newQuery($class, $where);
+	$q->select('id');
+	if ($q->prepare() && $q->stmt->execute()) {
+		$tmp = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
+		$ids = !empty($ids) ? array_intersect($ids, $tmp) : $tmp;
+		$pdoFetch->addTime('Fetched ids for building filters: "'.implode(',',$ids).'"');
+	}
 }
 
 // ---------------------- Nothing to filter, exit
@@ -101,27 +166,6 @@ if (empty($ids)) {
 	}
 }
 
-
-// ---------------------- Checking resources by status and custom "where" parameter
-$where = array('id:IN' => $ids);
-if (empty($showUnpublished)) {$where['published'] = 1;}
-if (empty($showHidden)) {$where['hidemenu'] = 0;}
-if (empty($showDeleted)) {$where['deleted'] = 0;}
-if (!empty($scriptProperties['where'])) {
-	$tmp = $modx->fromJSON($scriptProperties['where']);
-	if (!empty($tmp) && is_array($tmp)) {
-		$where = array_merge($where, $tmp);
-	}
-}
-unset($scriptProperties['where']);
-$q = $modx->newQuery('modResource', $where);
-$q->select('id');
-if ($q->prepare() && $q->stmt->execute()) {
-	$tmp = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
-	$ids = array_intersect($ids, $tmp);
-}
-$pdoFetch->addTime('Filtered ids by status and custom "where" param: ('.implode(',',$ids).')');
-
 // ---------------------- Checking for suggestions processing
 // Checking by results count
 if (!empty($scriptProperties['suggestionsMaxResults']) && count($ids) > $scriptProperties['suggestionsMaxResults']) {
@@ -133,7 +177,7 @@ else {
 }
 
 // Then get filters
-$pdoFetch->addTime('Getting filters for ids: ('.implode(',',$ids).')');
+$pdoFetch->addTime('Getting filters for ids: "'.implode(',',$ids).'"'); 
 $filters = '';
 if (!empty($ids)) {
 	$filters = $mSearch2->getFilters($ids);

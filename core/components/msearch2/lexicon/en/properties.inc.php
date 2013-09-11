@@ -26,6 +26,7 @@ $_lang['mse2_prop_where'] = 'A JSON-style expression of criteria to build any ad
 $_lang['mse2_prop_showUnpublished'] = 'Show unpublished resources.';
 $_lang['mse2_prop_showDeleted'] = 'Show deleted resources.';
 $_lang['mse2_prop_showHidden'] = 'Show resources, that hidden in menu.';
+$_lang['mse2_prop_hideContainers'] = 'Hide containers.';
 
 $_lang['mse2_prop_introCutBefore'] = 'Specify the number of characters to be output in placeholder [[+intro]] before the first match in the text. The default value of "50".';
 $_lang['mse2_prop_introCutAfter'] = 'Specify the number of characters to be output in placeholder [[+intro]] after the first match in the text. Default - "250".';
@@ -57,3 +58,5 @@ $_lang['mse2_prop_tplFilter.outer.default'] = 'Standard chunk of one filters gro
 $_lang['mse2_prop_tplFilter.row.default'] = 'Standard chunk of a filter in the group. By default it look as checkbox.';
 
 $_lang['mse2_prop_tpls'] = 'Comma-separated list of available chunks for rows template. You can switch these chunks by specify parameter "tpl" in $_REQUEST. 0 is a chunk default, and then in order. For example: "&tpls=`default,chunk1,chunk2`", for output of goods by "chunk1" you need to send a "$_REQUEST[tpl] = 1".';
+$_lang['mse2_prop_tplWrapper'] = 'Name of a chunk serving as a wrapper template for the output. Placeholders: [[+output]], [[+total]], [[+query]] and [[+parents]].';
+$_lang['mse2_prop_wrapIfEmpty'] = 'If true, will output the wrapper specified in &tplWrapper even if the output is empty.';

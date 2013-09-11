@@ -14,11 +14,13 @@ if (empty($offset)) {$offset = 0;}
 if (empty($htagOpen)) {$htagOpen = '<b>';}
 if (empty($htagClose)) {$htagClose = '</b>';}
 if (empty($outputSeparator)) {$outputSeparator = "\n";}
+if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 $returnIds = !empty($returnIds);
 $fastMode = !empty($fastMode);
+$output = null;
 
 $found = array();
-$query = @$_REQUEST[$queryVar];
+$query = !empty($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
 if (empty($resources)) {
 	if (empty($query) && isset($_REQUEST[$queryVar])) {
 		return $modx->lexicon('mse2_err_no_query');
@@ -31,7 +33,7 @@ if (empty($resources)) {
 	}
 	else {
 		$query = htmlspecialchars(strip_tags(trim($query)));
-		$modx->setPlaceholder('mse2_'.$queryVar, $query);
+		$modx->setPlaceholder($plPrefix.$queryVar, $query);
 	}
 
 	$found = $mSearch2->Search($query);
@@ -42,7 +44,25 @@ if (empty($resources)) {
 		return !empty($resources) ? $resources : '0';
 	}
 	else if (empty($found)) {
-		return $modx->lexicon('mse2_err_no_results');
+		$output = $modx->lexicon('mse2_err_no_results');
+		if (!empty($tplWrapper) && !empty($wrapIfEmpty)) {
+			$output = $pdoFetch->getChunk(
+				$tplWrapper,
+				array(
+					'output' => $output,
+					'total' => 0,
+					'query' => $query,
+					'parents' => $modx->getPlaceholder($plPrefix.$parentsVar),
+				),
+				$fastMode
+			);
+		}
+		if (!empty($toPlaceholder)) {
+			$modx->setPlaceholder($toPlaceholder, $output);
+		}
+		else {
+			return $output;
+		}
 	}
 }
 else if (strpos($resources, '{') === 0) {
@@ -57,29 +77,45 @@ $where = array($class.".id IN ({$resources})");
 if (empty($showUnpublished)) {$where['published'] = 1;}
 if (empty($showHidden)) {$where['hidemenu'] = 0;}
 if (empty($showDeleted)) {$where['deleted'] = 0;}
+if (!empty($hideContainers)) {$where['isfolder'] = 0;}
 
 // Filter by parents
-if (!empty($scriptProperties[$parentsVar]) && $scriptProperties[$parentsVar] > 0) {
-	$parents = $scriptProperties[$parentsVar];
-}
-else if (!empty($_REQUEST[$parentsVar])) {
-	$parents = $modx->stripTags($_REQUEST[$parentsVar]);
-}
-else {$parents = 0;}
+$parents = !empty($scriptProperties[$parentsVar])
+	? $scriptProperties[$parentsVar]
+	: !empty($_REQUEST[$parentsVar])
+		? $modx->stripTags($_REQUEST[$parentsVar])
+		: '';
+$modx->setPlaceholder($plPrefix.$parentsVar, $parents);
 
-if (!empty($parents) && $parents > 0) {
-	$pids = array_map('trim', explode(',', $parents));
-	$parents = $pids;
-	if (!empty($depth) && $depth > 0) {
-		foreach ($pids as $v) {
-			if (!is_numeric($v)) {continue;}
-			$parents = array_merge($parents, $modx->getChildIds($v, $depth));
+if (!empty($parents)) {
+	$pids = array();
+	$parents = array_map('trim', explode(',', $parents));
+	$parents_in = $parents_out = array();
+	foreach ($parents as $v) {
+		if (!is_numeric($v)) {continue;}
+		if ($v < 0) {$parents_out[] = abs($v);}
+		else {$parents_in[] = $v;}
+	}
+	$q = $modx->newQuery($class, array('id:IN' => array_merge($parents_in, $parents_out)));
+	$q->select('id,context_key');
+	if ($q->prepare() && $q->stmt->execute()) {
+		while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+			$pids[$row['id']] = $row['context_key'];
+		}
+	}
+	foreach ($pids as $k => $v) {
+		if (in_array($k, $parents_in)) {
+			$parents_in = array_merge($parents_in, $modx->getChildIds($k, $depth, array('context' => $v)));
+		}
+		else {
+			$parents_out = array_merge($parents_out, $modx->getChildIds($k, $depth, array('context' => $v)));
 		}
 	}
 
-	if (!empty($parents)) {
-		$where['parent:IN'] = $parents;
-	}
+	if (!empty($parents_in)) {$where['parent:IN'] = $parents_in;}
+	if (!empty($parents_out)) {$where['parent:NOT IN'] = $parents_out;}
+
+	$pdoFetch->addTime('Received parents for include "'.implode(',',$parents_in).'" and exclude: "'.implode(',', $parents_out).'"');
 }
 
 // Adding custom where parameters
@@ -122,22 +158,18 @@ $pdoFetch->setConfig(array_merge($default,$scriptProperties));
 $pdoFetch->addTime('Query parameters are prepared.');
 $rows = $pdoFetch->run();
 
-// Initializing chunk for template rows
-if (!empty($tpl)) {$pdoFetch->getChunk($tpl);}
-
 // Processing rows
-$output = null; $offset++;
 if (!empty($rows) && is_array($rows)) {
 	foreach ($rows as $k => $row) {
 		// Processing main fields
-		$row['weight'] = @$found[$row['id']];
+		$row['weight'] = isset($found[$row['id']]) ? $found[$row['id']] : '';
 		$row['intro'] = $mSearch2->Highlight($row['intro'], $query, $htagOpen, $htagClose);
-		$row['idx'] = $offset++;
 
-		// Processing chunk
-		$output[] = empty($tpl)
-			? '<pre>'.str_replace(array('[',']','`'), array('&#91;','&#93;','&#96;'), htmlentities(print_r($row, true), ENT_QUOTES, 'UTF-8')).'</pre>'
-			: $pdoFetch->getChunk($tpl, $row, $pdoFetch->config['fastMode']);
+		$row['idx'] = $pdoFetch->idx++;
+		$tplRow = $pdoFetch->defineChunk($row);
+		$output[] .= empty($tplRow)
+			? $pdoFetch->getChunk('', $row)
+			: $pdoFetch->getChunk($tplRow, $row, $pdoFetch->config['fastMode']);
 	}
 	$pdoFetch->addTime('Returning processed chunks');
 	if (!empty($output)) {
@@ -150,6 +182,19 @@ if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 }
 
 // Return output
+if (!empty($tplWrapper) && (!empty($wrapIfEmpty) || !empty($output))) {
+	$output = $pdoFetch->getChunk(
+		$tplWrapper,
+		array(
+			'output' => $output,
+			'total' => $modx->getPlaceholder($pdoFetch->config['totalVar']),
+			'query' => $modx->getPlaceholder($plPrefix.$queryVar),
+			'parents' => $modx->getPlaceholder($plPrefix.$parentsVar),
+		),
+		$fastMode
+	);
+}
+
 if (!empty($toPlaceholder)) {
 	$modx->setPlaceholder($toPlaceholder, $output);
 }

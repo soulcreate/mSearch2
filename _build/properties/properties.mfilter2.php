@@ -69,6 +69,10 @@ $tmp = array(
 		'type' => 'combo-boolean'
 		,'value' => false
 	)
+	,'hideContainers' => array(
+		'type' => 'combo-boolean'
+		,'value' => false
+	)
 
 	,'showLog' => array(
 		'type' => 'combo-boolean'

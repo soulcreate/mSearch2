@@ -2,6 +2,10 @@ Changelog for mSearch2.
 
 0.8.0 pl
 ==============
+- [#7] You can prefix ids in "&resources=``" and "&parents=``" with dash for excluding from query.
+- Fixed issues when parents not in current contexts.
+- Added parameter "&hideContainers=``" to both snippets.
+- Added parameters "&tplWrapper=``" and "&wrapIfEmpty=``" to snippet mSearch2.
 - Accelerated method mse2FiltersHandler::filterNumber().
 
 0.7.0 pl

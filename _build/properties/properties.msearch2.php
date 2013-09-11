@@ -73,6 +73,10 @@ $tmp = array(
 		'type' => 'combo-boolean'
 		,'value' => true
 	)
+	,'hideContainers' => array(
+		'type' => 'combo-boolean'
+		,'value' => false
+	)
 	,'introCutBefore' => array(
 		'type' => 'numberfield'
 		,'value' => 50
@@ -96,6 +100,14 @@ $tmp = array(
 	,'queryVar' => array(
 		'type' => 'textfield'
 		,'value' => 'query'
+	)
+	,'tplWrapper' => array(
+		'type' => 'textfield'
+		,'value' => ''
+	)
+	,'wrapIfEmpty' => array(
+		'type' => 'combo-boolean'
+		,'value' => false
 	)
 
 );
