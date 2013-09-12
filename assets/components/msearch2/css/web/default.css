@@ -25,10 +25,18 @@
 	margin-left: 20px;
 }
 
-#mse2_selected {
-	display: none;
+#mse2_selected_wrapper {
+	min-height: 2em;
 	margin: 10px 0;
 }
+#mse2_selected {
+	display: none;
+	background: #f9f9f9;
+	padding: 5px 0 5px 5px;
+	border-radius: 3px;
+}
+
+#mse2_selected .mse2_selected_link em {color: #000;}
 
 .mSearchLog, .mFilterLog {
 	width: 100%;

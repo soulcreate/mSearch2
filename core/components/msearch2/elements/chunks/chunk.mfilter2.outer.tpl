@@ -14,7 +14,6 @@
 				<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
 			</div>
 
-
 			[[+tpls:notempty=`
 			<div id="mse2_tpl" class="span4">
 				<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a> /
@@ -23,8 +22,10 @@
 			`]]
 		</div>
 
-		<div id="mse2_selected">[[%mse2_selected]]:
-			<span></span>
+		<div id="mse2_selected_wrapper">
+			<div id="mse2_selected">[[%mse2_selected]]:
+				<span></span>
+			</div>
 		</div>
 
 		<div id="mse2_results">

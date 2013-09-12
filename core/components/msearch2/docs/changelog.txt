@@ -12,6 +12,7 @@ Changelog for mSearch2.
 - [mFilter2] Added default implementation of "limit" parameter.
 - [mFilter2] Added default implementation of range slider.
 - [mFilter2] Added default implementation of list of selected inputs.
+- Method "mSearch2.load()" in default javascript can receive filter parameters and callback function.
 
 0.7.0 pl
 ==============
