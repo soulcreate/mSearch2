@@ -1,6 +1,7 @@
 mSearch2 = {
 	options: {
-		filters: '#mse2_filters'
+		wrapper: '#mse2_mfilter'
+		,filters: '#mse2_filters'
 		,results: '#mse2_results'
 		,total: '#mse2_total'
 		,pagination: '#mse2_pagination'
@@ -12,7 +13,7 @@ mSearch2 = {
 		,pagination_link: '#mse2_pagination a'
 		,sort_link: '#mse2_sort a'
 		,tpl_link: '#mse2_tpl a'
-		,selected_tpl: '<a href="#" data-id="[[+id]]" class="mse2_selected_link">[[+title]]</a>'
+		,selected_tpl: '<a href="#" data-id="[[+id]]" class="mse2_selected_link"><em>[[+title]]</em><sup>x</sup></a>'
 
 		,active_class: 'active'
 		,disabled_class: 'disabled'
@@ -49,11 +50,11 @@ mSearch2 = {
 		});
 
 		if (this.selected) {
-			$(document).on('change', this.options.filters + ' input', function(e) {
+			$(document).on('change', this.options.filters + ' input[type="checkbox"]', function(e) {
 				mSearch2.handleSelected($(this));
 			});
 
-			this.filters.find(':checked').each(function(e) {
+			this.filters.find('input[type="checkbox"]:checked').each(function(e) {
 				mSearch2.handleSelected($(this));
 			});
 
@@ -79,7 +80,11 @@ mSearch2 = {
 				var page = tmp && tmp[1] ? Number(tmp[1]) : 1;
 				mSearch2Config.page = (page != mSearch2Config.start_page) ? page : '';
 
-				mSearch2.load();
+				mSearch2.load('', function() {
+					$('html, body').animate({
+						scrollTop: $(mSearch2.options.wrapper).position().top || 0
+					}, 0);
+				});
 			}
 
 			return false;
@@ -184,8 +189,8 @@ mSearch2 = {
 		var id = input.prop('id');
 		var label = input.parents('label');
 		var match = label.html().match(/>(.*?)</);
-		if (match[1]) {
-			var title = match[1];
+		if (match && match[1]) {
+			var title = match[1].replace(/(\s+$)/, '');
 		}
 		else {return;}
 
@@ -200,8 +205,10 @@ mSearch2 = {
 		else {this.selected.hide();}
 	}
 
-	,load: function() {
-		var params = this.getFilters();
+	,load: function(params, callback) {
+		if (!params) {
+			params = this.getFilters();
+		}
 		if (mSearch2Config.query != '') {params.query = mSearch2Config.query;}
 		if (mSearch2Config.sort != '') {params.sort = mSearch2Config.sort;}
 		if (mSearch2Config.tpl != '') {params.tpl = mSearch2Config.tpl;}
@@ -231,6 +238,9 @@ mSearch2 = {
 				mSearch2.setSuggestions(response.data.suggestions);
 				if (response.data.log) {
 					$('.mFilterLog').html(response.data.log);
+				}
+				if (callback && $.isFunction(callback)) {
+					callback.call(this, response, params);
 				}
 			}
 			else {
