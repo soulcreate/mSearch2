@@ -4,9 +4,9 @@
 define('PKG_NAME','mSearch2');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 
-define('PKG_VERSION','0.8.0');
+define('PKG_VERSION','0.8.1');
 define('PKG_RELEASE','pl');
-define('PKG_AUTO_INSTALL', true);
+define('PKG_AUTO_INSTALL', false);
 
 /* define paths */
 if (is_file(dirname(dirname(dirname(__FILE__))) . '/index.php' )) {

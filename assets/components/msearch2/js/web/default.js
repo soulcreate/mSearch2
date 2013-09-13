@@ -209,7 +209,8 @@ mSearch2 = {
 		if (!params) {
 			params = this.getFilters();
 		}
-		if (mSearch2Config.query != '') {params.query = mSearch2Config.query;}
+		if (mSearch2Config[mSearch2Config.queryVar] != '') {params[mSearch2Config.queryVar] = mSearch2Config[mSearch2Config.queryVar];}
+		if (mSearch2Config[mSearch2Config.parentsVar] != '') {params[mSearch2Config.parentsVar] = mSearch2Config[mSearch2Config.parentsVar];}
 		if (mSearch2Config.sort != '') {params.sort = mSearch2Config.sort;}
 		if (mSearch2Config.tpl != '') {params.tpl = mSearch2Config.tpl;}
 		if (mSearch2Config.page > 0) {params.page = mSearch2Config.page;}

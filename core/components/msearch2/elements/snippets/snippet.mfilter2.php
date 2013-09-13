@@ -45,10 +45,10 @@ if (!empty($resources)) {
 	$pdoFetch->addTime('Recieved ids for include: "'.implode(',',$in).'" and exclude: "'.implode(',', $out).'"');
 }
 else if (isset($_REQUEST[$queryVar]) && empty($query)) {
-	return $modx->lexicon('mse2_err_no_query');
+	$output['results'] =  $modx->lexicon('mse2_err_no_query');
 }
 else if (isset($_REQUEST[$queryVar]) && !preg_match('/^[0-9]{2,}$/', $query) && mb_strlen($query,'UTF-8') < $minQuery) {
-	return $modx->lexicon('mse2_err_min_query');
+	$output['results'] = $modx->lexicon('mse2_err_min_query');
 }
 else if (isset($_REQUEST[$queryVar])) {
 	$query = htmlspecialchars(strip_tags(trim($query)));
@@ -58,9 +58,24 @@ else if (isset($_REQUEST[$queryVar])) {
 	$ids = array_keys($found);
 
 	if (empty($ids)) {
-		return $modx->lexicon('mse2_err_no_results');
+		$output['results'] = $modx->lexicon('mse2_err_no_results');
 	}
 	$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
+}
+
+// Has error message - exit
+if (!empty($output['results'])) {
+	if (!empty($toSeparatePlaceholders)) {
+		$modx->setPlaceholders($output, $toSeparatePlaceholders);
+		return;
+	}
+	elseif (!empty($toPlaceholders)) {
+		$modx->setPlaceholders($output, $toPlaceholders);
+		return;
+	}
+	else {
+		return $output;
+	}
 }
 
 // Filter ids by parents
@@ -399,7 +414,10 @@ $modx->regClientStartupScript('<script type="text/javascript">
 	mSearch2Config.limit = "'.($limit == $start_limit ? '' : $limit).'";
 	mSearch2Config.page = "'.$page.'";
 	mSearch2Config.tpl = "'.(!empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '').'";
-	mSearch2Config.query = "'.(isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '').'";
+	mSearch2Config.queryVar = "'.$queryVar.'";
+	mSearch2Config.parentsVar = "'.$parentsVar.'";
+	mSearch2Config.'.$queryVar.' = "'.(isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '').'";
+	mSearch2Config.'.$parentsVar.' = "'.(isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '').'";
 </script>');
 
 $pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
