@@ -222,7 +222,7 @@ if (!empty($ids)) {
 
 // ---------------------- Loading results
 $start_sort = implode(',', array_map('trim' , explode(',', $scriptProperties['sort'])));
-$start_limit = $limit;
+$start_limit = $scriptProperties['limit'];
 $suggestions = array();
 $page = $sort = '';
 if (!empty($ids)) {
@@ -278,6 +278,7 @@ if (!empty($ids)) {
 			$paginatorProperties['sortdir'] = '';
 		}
 
+		$paginatorProperties['start_limit'] = $start_limit;
 		$_SESSION['mFilter2'][$modx->resource->id]['paginatorProperties'] = $paginatorProperties;
 
 		// We have a delimeters in $_GET, so need to filter resources

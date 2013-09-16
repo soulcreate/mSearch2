@@ -49,6 +49,9 @@ switch ($action) {
 			$paginatorProperties['sortby'] = $mSearch2->getSortFields($sort);
 			$paginatorProperties['sortdir'] = '';
 		}
+		if (empty($_REQUEST['limit'])) {
+			$paginatorProperties['limit'] = $_REQUEST['limit'] = $paginatorProperties['start_limit'];
+		}
 
 		// Switching chunk for rows, if specified
 		if (!empty($paginatorProperties['tpls']) && is_array($paginatorProperties['tpls'])) {
