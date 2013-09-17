@@ -44,3 +44,7 @@
 	word-wrap: normal;
 	white-space: pre;
 }
+
+#mse2_sort .sort span {color: #000000;}
+#mse2_sort .sort[data-dir="asc"] span:after {content: "↑";}
+#mse2_sort .sort[data-dir="desc"] span:after {content: "↓";}

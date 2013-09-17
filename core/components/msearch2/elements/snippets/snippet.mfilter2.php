@@ -19,10 +19,7 @@ if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggesti
 if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlaceholder;}
 if (!empty($_REQUEST['limit'])) {$limit = (integer) $_REQUEST['limit'];}
 elseif ($limit == '') {$limit = 10;}
-
-//$maxLimit = 100;
-//if ($limit > $maxLimit) {$limit = $maxLimit;}
-
+if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 $fastMode = !empty($fastMode);
 
 $class = 'modResource';
@@ -52,7 +49,7 @@ else if (isset($_REQUEST[$queryVar]) && !preg_match('/^[0-9]{2,}$/', $query) && 
 }
 else if (isset($_REQUEST[$queryVar])) {
 	$query = htmlspecialchars(strip_tags(trim($query)));
-	$modx->setPlaceholder('mse2_'.$queryVar, $query);
+	$modx->setPlaceholder($plPrefix.$queryVar, $query);
 
 	$found = $mSearch2->Search($query);
 	$ids = array_keys($found);
@@ -394,6 +391,7 @@ else {
 		$pdoFetch->addTime('Filters templated');
 	}
 }
+$pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
 
 // Saving params into session for ajax requests
 $_SESSION['mFilter2'][$modx->resource->id]['scriptProperties'] = $scriptProperties;
@@ -406,23 +404,29 @@ if (isset($paginatorProperties['tpl_idx'])) {
 }
 
 // Setting values for frontend javascript
-$modx->regClientStartupScript('<script type="text/javascript">
-	mSearch2Config.start_sort = "'.$start_sort.'";
-	mSearch2Config.start_limit= "'.$start_limit.'";
-	mSearch2Config.start_page = "1";
-	mSearch2Config.start_tpl = "";
-	mSearch2Config.sort = "'.($sort == $start_sort ? '' : $sort).'";
-	mSearch2Config.limit = "'.($limit == $start_limit ? '' : $limit).'";
-	mSearch2Config.page = "'.$page.'";
-	mSearch2Config.tpl = "'.(!empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '').'";
-	mSearch2Config.queryVar = "'.$queryVar.'";
-	mSearch2Config.parentsVar = "'.$parentsVar.'";
-	mSearch2Config.'.$queryVar.' = "'.(isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '').'";
-	mSearch2Config.'.$parentsVar.' = "'.(isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '').'";
-</script>');
+$config = array(
+	'start_sort' => $start_sort,
+	'start_limit' => $start_limit,
+	'start_page' => 1,
+	'start_tpl' => '',
+	'sort' => $sort == $start_sort ? '' : $sort,
+	'limit' => $limit == $start_limit ? '' : $limit,
+	'page' => $page,
+	'tpl' => !empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '',
+	'queryVar' => $queryVar,
+	'parentsVar' => $parentsVar,
+	$queryVar => isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '',
+	$parentsVar => isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '',
+);
 
-$pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
-// Process main chunk
+$scripts = '';
+foreach ($config as $k => $v) {
+	$scripts .= "\n\tmSearch2Config.$k = \"$v\";";
+}
+$modx->regClientStartupScript('<script type="text/javascript">'.$scripts.'</script>');
+$modx->setPlaceholders($config, $plPrefix);
+
+// Prepare output
 $log = '';
 if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 	$log = '<pre class="mFilterLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';

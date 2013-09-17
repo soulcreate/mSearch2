@@ -10,8 +10,8 @@
 	<div class="span9">
 		<div class="row">
 			<div id="mse2_sort" class="span5">
-				<a href="#" data-sort="resource|publishedon:desc" class="[[+resource|publishedon:desc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_desc]]</a> /
-				<a href="#" data-sort="resource|publishedon:asc" class="[[+resource|publishedon:asc]]">[[%mse2_sort_publishedon]], [[%mse2_sort_asc]]</a>
+				[[%mse2_sort]]
+				<a href="#" data-sort="resource|publishedon" data-dir="[[+mse2_sort:is=`resource|publishedon:desc`:then=`desc`]]" data-default="desc" class="sort">[[%mse2_sort_publishedon]] <span></span></a>
 			</div>
 
 			[[+tpls:notempty=`

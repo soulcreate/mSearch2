@@ -92,16 +92,33 @@ mSearch2 = {
 	}
 
 	,handleSort: function() {
-		$(document).on('click', this.options.sort_link, function(e) {
-			if (!$(this).hasClass(mSearch2.options.active_class)) {
-				$(mSearch2.options.sort_link).removeClass(mSearch2.options.active_class);
-				$(this).addClass(mSearch2.options.active_class);
-
-				var sort = $(this).data('sort');
-				mSearch2Config.sort = (sort != mSearch2Config.start_sort) ? sort : '';
-
-				mSearch2.load();
+		var params = this.Hash.get();
+		if (params.sort) {
+			var sorts = params.sort.split(mSearch2Config.values_delimeter);
+			for (var i = 0; i < sorts.length; i++) {
+				var tmp = sorts[i].split(mSearch2Config.method_delimeter);
+				if (tmp[0] && tmp[1]) {
+					$(mSearch2.options.sort_link +'[data-sort="' + tmp[0] + '"').data('dir', tmp[1]).attr('data-dir', tmp[1]);
+				}
 			}
+		}
+
+		$(document).on('click', this.options.sort_link, function(e) {
+			var dir;
+			if ($(this).data('dir').length == 0) {
+				dir = $(this).data('default');
+			}
+			else {
+				dir = $(this).data('dir') == 'desc'
+					? 'asc'
+					: 'desc';
+			}
+			$(mSearch2.options.sort_link).data('dir', '').attr('data-dir', '');
+			$(this).data('dir', dir).attr('data-dir', dir);
+
+			var sort = $(this).data('sort') + mSearch2Config.method_delimeter + dir;
+			mSearch2Config.sort = (sort != mSearch2Config.start_sort) ? sort : '';
+			mSearch2.load();
 
 			return false;
 		});

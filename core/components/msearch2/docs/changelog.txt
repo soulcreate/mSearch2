@@ -5,6 +5,8 @@ Changelog for mSearch2.
 - [mFilter2] Improved work with modified &queryVar=`` and &parentsVar=``.
 - [mFilter2] Improved return of error messages, when nothing found.
 - [mFilter2] Improved work with limit, when page loaded by direct link.
+- [mFilter2] Improved sort links.
+- [mFilter2] Array with config for frontend is now available as placeholders with prefix "mse2_". E.g. [[+mse2_start_sort]], [[+mse2_tpls]] etc.
 
 0.8.0 pl
 ==============
