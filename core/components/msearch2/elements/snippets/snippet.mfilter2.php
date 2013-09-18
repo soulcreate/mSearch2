@@ -71,7 +71,7 @@ if (!empty($output['results'])) {
 		return;
 	}
 	else {
-		return $output;
+		return $output['results'];
 	}
 }
 
@@ -171,17 +171,19 @@ if (empty($ids)) {
 	$output = array_merge($output, array(
 		'filters' => $modx->lexicon('mse2_err_no_filters')
 		,'results' => $modx->lexicon('mse2_err_no_results')
+		,'log' => $log
 	));
-	if (!empty($toPlaceholders)) {
-		$output['log'] = $log;
+
+	if (!empty($toSeparatePlaceholders)) {
+		$modx->setPlaceholders($output, $toSeparatePlaceholders);
+		return;
+	}
+	elseif (!empty($toPlaceholders)) {
 		$modx->setPlaceholders($output, $toPlaceholders);
 		return;
 	}
 	else {
-		$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
-		$output .= $log;
-
-		return $output;
+		return $output['results'].$log;
 	}
 }
 
