@@ -321,8 +321,9 @@ class mSearch2 {
 	public function Search($query) {
 		$string = preg_replace('/[^_-а-яёa-z0-9\s\.\/]+/iu', ' ', $this->modx->stripTags($query));
 		$words = $this->getBaseForms($string, 0);
-
 		$result = $all_words = $found_words = array();
+
+		// Search by words index
 		if (!empty($words)) {
 			$q = $this->modx->newQuery('mseWord');
 			$q->select('`resource`, `word`, `weight`');
@@ -344,6 +345,7 @@ class mSearch2 {
 			}
 		}
 
+		// Add bonuses
 		$bulk_words = $this->getBulkWords($query);
 		if (count($bulk_words) > 1) {
 			$exact = $this->simpleSearch($query);
@@ -366,11 +368,16 @@ class mSearch2 {
 		}
 
 		// Add matches by %LIKE% search
-		foreach ($bulk_words as $word) {
-			$found = $this->simpleSearch($word);
-			foreach ($found as $v) {
-				if (!isset($result[$v])) {
-					$result[$v] = floor($this->config['exact_match_bonus'] / 2);
+		if ($not_found = array_diff($bulk_words, $words)) {
+			foreach ($not_found as $word) {
+				$found = $this->simpleSearch($word);
+				foreach ($found as $v) {
+					if (!isset($result[$v])) {
+						$result[$v] = round($this->config['exact_match_bonus'] / 2);
+					}
+					else {
+						$result[$v] += round($this->config['exact_match_bonus'] / 2);
+					}
 				}
 			}
 		}
