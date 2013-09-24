@@ -45,10 +45,11 @@ switch ($action) {
 		else if (!empty($paginatorProperties['defaultSort'])) {
 			$sort = $paginatorProperties['defaultSort'];
 		}
-		if (!empty($sort)) {
-			$paginatorProperties['sortby'] = $mSearch2->getSortFields($sort);
-			$paginatorProperties['sortdir'] = '';
-		}
+		$paginatorProperties['sortby'] = !empty($sort)
+			? $mSearch2->getSortFields($sort)
+			: '';
+		$paginatorProperties['sortdir'] = '';
+
 		if (empty($_REQUEST['limit'])) {
 			$paginatorProperties['limit'] = $_REQUEST['limit'] = $paginatorProperties['start_limit'];
 		}
@@ -92,7 +93,12 @@ switch ($action) {
 		// Retrieving results
 		if (!empty($ids)) {
 			$_GET = $_REQUEST;
+
 			$paginatorProperties['resources'] = is_array($ids) ? implode(',', $ids) : $ids;
+			// Saving search sort
+			if (empty($paginatorProperties['sortby'])) {
+				$paginatorProperties['sortby'] = "find_in_set(`".$pdoFetch->config['class']."`.`id`,'".$paginatorProperties['resources']."')";
+			}
 			// Trying to save weight of found ids if using mSearch2
 			if (!empty($found) && strtolower($paginatorProperties['element']) == 'msearch2') {
 				$tmp = array();
