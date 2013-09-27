@@ -376,6 +376,7 @@ else {
 		}
 
 		$tpl = empty($rows) ? $tplEmpty : $tplOuter;
+		if (!isset($output['filters'][$filter])) {$output['filters'][$filter] = '';}
 		$output['filters'][$filter] .= $pdoFetch->getChunk($tpl, array(
 			'filter' => $filter2
 			,'table' => $table
