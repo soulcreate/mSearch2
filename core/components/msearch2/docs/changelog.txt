@@ -3,6 +3,8 @@ Changelog for mSearch2.
 0.8.2 pl
 ==============
 - [mFilter2] Fixed work with MS2 multicategories.
+- [mFilter2] Improved working with search results.
+- [mSearch2] Improved search algorithm.
 
 0.8.1 pl1
 ==============
