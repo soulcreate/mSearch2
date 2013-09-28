@@ -109,9 +109,8 @@ if (!empty($parents)) {
 	$members = array();
 	if ($mSearch2->checkMS2() && (!empty($parents_in) || !empty($parents_out))) {
 		$q = $modx->newQuery('msCategoryMember');
-		if (!empty($parents_in)) {$q->where(array('parent:IN' => $parents_in));}
-		if (!empty($parents_out)) {$q->where(array('parent:NOT IN' => $parents_out));}
-		$q->select('product_id');
+		if (!empty($parents_in)) {$q->where(array('category_id:IN' => $parents_in));}
+		if (!empty($parents_out)) {$q->where(array('category_id:NOT IN' => $parents_out));}
 		if ($q->prepare() && $q->stmt->execute()) {
 			$members = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
 		}
