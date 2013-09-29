@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.8.2 pl1
+==============
+- [mFilter2] If no results, message about it will be returned in "&tplOuter=``".
+
 0.8.2 pl
 ==============
 - [mFilter2] Fixed work with MS2 multicategories.

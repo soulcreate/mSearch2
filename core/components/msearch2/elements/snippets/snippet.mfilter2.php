@@ -71,7 +71,7 @@ if (!empty($output['results'])) {
 		return;
 	}
 	else {
-		return $output['results'];
+		return $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
 	}
 }
 
@@ -182,7 +182,8 @@ if (empty($ids)) {
 		return;
 	}
 	else {
-		return $output['results'].$log;
+		$output['results'] .= $log;
+		return $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
 	}
 }
 
