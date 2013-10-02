@@ -88,9 +88,9 @@ if (!empty($hideContainers)) {$where['isfolder'] = 0;}
 // Filter by parents
 $parents = !empty($scriptProperties[$parentsVar])
 	? $scriptProperties[$parentsVar]
-	: !empty($_REQUEST[$parentsVar])
+	: (!empty($_REQUEST[$parentsVar])
 		? $modx->stripTags($_REQUEST[$parentsVar])
-		: '';
+		: '');
 $modx->setPlaceholder($plPrefix.$parentsVar, $parents);
 
 if (!empty($parents)) {
