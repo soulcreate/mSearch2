@@ -347,7 +347,8 @@ class mSearch2 {
 
 		// Add bonuses
 		$bulk_words = $this->getBulkWords($query);
-		if (count($bulk_words) > 1) {
+		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
+		if (count($bulk_words) > 1 || count($tmp_words) > 1) {
 			$exact = $this->simpleSearch($query);
 			// Exact match bonus
 			foreach ($exact as $v) {
@@ -359,10 +360,12 @@ class mSearch2 {
 				}
 			}
 
-			// All words bonus
-			foreach ($all_words as $k => $v) {
-				if (count($bulk_words) == count($v)) {
-					$result[$k] += $this->config['all_words_bonus'];
+			if (count($bulk_words) > 1) {
+				// All words bonus
+				foreach ($all_words as $k => $v) {
+					if (count($bulk_words) == count($v)) {
+						$result[$k] += $this->config['all_words_bonus'];
+					}
 				}
 			}
 		}
