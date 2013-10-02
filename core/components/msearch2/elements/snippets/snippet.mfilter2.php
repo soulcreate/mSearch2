@@ -133,31 +133,31 @@ if (!empty($parents)) {
 }
 
 // ---------------------- Checking resources by status and custom "where" parameter
-if (!empty($where)) {
-	if (!empty($ids) && !empty($where['id:IN'])) {
-		$where['id:IN'] = array_merge($ids, $where['id:IN']);
+if (!empty($ids) && !empty($where['id:IN'])) {
+	$where['id:IN'] = array_merge($ids, $where['id:IN']);
+}
+elseif(!empty($ids)) {
+	$where['id:IN'] = $ids;
+}
+if (empty($showUnpublished)) {$where['published'] = 1;}
+if (empty($showHidden)) {$where['hidemenu'] = 0;}
+if (empty($showDeleted)) {$where['deleted'] = 0;}
+if (!empty($hideContainers)) {$where['isfolder'] = 0;}
+if (!empty($scriptProperties['where'])) {
+	$tmp = $modx->fromJSON($scriptProperties['where']);
+	if (!empty($tmp) && is_array($tmp)) {
+		$where = array_merge($where, $tmp);
 	}
-	elseif(!empty($ids)) {
-		$where['id:IN'] = $ids;
-	}
-	if (empty($showUnpublished)) {$where['published'] = 1;}
-	if (empty($showHidden)) {$where['hidemenu'] = 0;}
-	if (empty($showDeleted)) {$where['deleted'] = 0;}
-	if (!empty($hideContainers)) {$where['isfolder'] = 0;}
-	if (!empty($scriptProperties['where'])) {
-		$tmp = $modx->fromJSON($scriptProperties['where']);
-		if (!empty($tmp) && is_array($tmp)) {
-			$where = array_merge($where, $tmp);
-		}
-	}
-	unset($scriptProperties['where']);
-	$q = $modx->newQuery($class, $where);
-	$q->select('id');
-	if ($q->prepare() && $q->stmt->execute()) {
-		$tmp = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
-		$ids = !empty($ids) ? array_intersect($ids, $tmp) : $tmp;
-		$pdoFetch->addTime('Fetched ids for building filters: "'.implode(',',$ids).'"');
-	}
+}
+unset($scriptProperties['where']);
+$q = $modx->newQuery($class, $where);
+$q->select('id');
+if ($q->prepare() && $q->stmt->execute()) {
+	$tmp = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
+	$ids = !empty($ids)
+		? array_intersect($ids, $tmp)
+		: $tmp;
+	$pdoFetch->addTime('Fetched ids for building filters: "'.implode(',',$ids).'"');
 }
 
 // ---------------------- Nothing to filter, exit

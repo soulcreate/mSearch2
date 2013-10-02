@@ -3,6 +3,7 @@ Changelog for mSearch2.
 0.8.3 pl
 ==============
 - [mSearch2] Improved search algorithm.
+- [mFilter2] Fixed processing parameters of snippet.
 
 0.8.2 pl1
 ==============
