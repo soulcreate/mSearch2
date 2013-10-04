@@ -338,8 +338,8 @@ class mSearch2 {
 					}
 
 					if (isset($words[$row['word']])) {
-						@$all_words[$row['resource']][$words[$row['word']]] = 1;
-						@$found_words[$words[$row['word']]] = 1;
+						$all_words[$row['resource']][$words[$row['word']]] = 1;
+						$found_words[$words[$row['word']]] = 1;
 					}
 				}
 			}
@@ -348,7 +348,7 @@ class mSearch2 {
 		// Add bonuses
 		$bulk_words = $this->getBulkWords($query);
 		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
-		if (count($bulk_words) > 1 || count($tmp_words) > 1) {
+		if (count($bulk_words) > 1 || count($tmp_words) > 1 || empty($result)) {
 			$exact = $this->simpleSearch($query);
 			// Exact match bonus
 			foreach ($exact as $v) {
@@ -676,7 +676,7 @@ class mSearch2 {
 							$count = count($res);
 						}
 
-						@$suggestions[$key][$value] = $count;
+						$suggestions[$key][$value] = $count;
 					}
 				}
 			}
