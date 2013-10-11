@@ -151,7 +151,7 @@ class mseIndexCreateProcessor extends modProcessor {
 			$text = (strpos($field, 'tv_') !== false) ? $resource->getTVValue(substr($field, 3)) : $resource->get($field);
 
 			$forms = $this->mSearch2->getBaseForms($text);
-			$intro .= $this->modx->stripTags(is_array($text) ? $this->mSearch2->implode_r(' ', $text) : $text).' ';
+			$intro .= $this->modx->stripTags(is_array($text) ? $this->implode_r(' ', $text) : $text).' ';
 
 			foreach ($forms as $form) {
 				if (array_key_exists($form, $words)) {
@@ -219,6 +219,23 @@ class mseIndexCreateProcessor extends modProcessor {
 		}
 
 		return $this->mSearch2 instanceof mSearch2;
+	}
+
+
+	/**
+	 * Recursive implode
+	 *
+	 * @param $glue
+	 * @param array $array
+	 *
+	 * @return string
+	 */
+	function implode_r($glue, array $array) {
+		$result = array();
+		foreach ($array as $v) {
+			$result[] = is_array($v) ? $this->implode_r($glue, $v) : $v;
+		}
+		return implode($glue, $result);
 	}
 
 }
