@@ -2,6 +2,10 @@ Changelog for mSearch2.
 
 0.8.3 pl2
 ==============
+- Improved check of "limit" parameter.
+
+0.8.3 pl2
+==============
 - Returned missed function "implode_r" into index processor.
 
 0.8.3 pl1

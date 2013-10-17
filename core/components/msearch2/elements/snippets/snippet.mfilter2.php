@@ -17,7 +17,7 @@ if ($depth == '') {$depth = 10;}
 if (empty($classActive)) {$classActive = 'active';}
 if (isset($scriptProperties['disableSuggestions'])) {$scriptProperties['suggestions'] = empty($scriptProperties['disableSuggestions']);}
 if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlaceholder;}
-if (!empty($_REQUEST['limit'])) {$limit = (integer) $_REQUEST['limit'];}
+if (isset($_REQUEST['limit']) && is_numeric($_REQUEST['limit']) && abs($_REQUEST['limit']) > 0) {$limit = abs($_REQUEST['limit']);}
 elseif ($limit == '') {$limit = 10;}
 if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 $fastMode = !empty($fastMode);
