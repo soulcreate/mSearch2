@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.8.4 pl
+==============
+- Added filter by year of document. For example: "publishedon:year".
+
 0.8.3 pl2
 ==============
 - Improved check of "limit" parameter.

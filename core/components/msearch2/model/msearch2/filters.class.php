@@ -428,6 +428,63 @@ class mse2FiltersHandler {
 
 
 	/**
+	 * Prepares values for filter
+	 * Returns array with resources grouped by specified date format
+	 *
+	 * @param array $values
+	 * @param string $format
+	 * @param string $sort
+	 *
+	 * @return array Prepared values
+	 */
+	public function buildDateFilter(array $values, $format = 'Y-m-d', $sort = 'desc') {
+		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
+			return array();
+		}
+
+		$results = array();
+		foreach ($values as $value => $ids) {
+			$value = date($format, $value);
+			if (!isset($results[$value])) {
+				$results[$value] = array(
+					'title' => $value,
+					'value' => $value,
+					'type' => 'date',
+					'resources' => $ids,
+				);
+			}
+			else {
+				$results[$value]['resources'] = array_merge(
+					$results[$value]['resources'],
+					$ids
+				);
+			}
+		}
+
+		if (strtolower($sort) == 'asc') {
+			ksort($results);
+		}
+		else {
+			krsort($results);
+		}
+		return $results;
+	}
+
+
+	/**
+	 * Shorthand for group resources by year
+	 *
+	 * @param array $values
+	 * @param string $sort
+	 *
+	 * @return array Prepared values
+	 */
+	public function buildYearFilter(array $values, $sort = 'desc') {
+		return $this->buildDateFilter($values, 'Y', $sort);
+	}
+
+
+	/**
 	 * Returns string for insert into sorting properties of pdoTools snippet
 	 *
 	 * @param string
@@ -541,4 +598,46 @@ class mse2FiltersHandler {
 		return $matched;
 	}
 
+
+	/**
+	 * Filters dates. Values must be between min and max number
+	 *
+	 * @param array $requested Filtered ids of resources
+	 * @param array $values Filter data with min and max number
+	 * @param array $ids Ids of currently active resources
+	 * @param array $format Format of date for combine resources
+	 *
+	 * @return array
+	 */
+	public function filterDate(array $requested, array $values, array $ids, $format = 'Y-m-d') {
+		$array = array();
+		foreach ($values as $value => $resources) {
+			$value = date($format, $value);
+			if (!isset($array[$value])) {
+				$array[$value] = $resources;
+			}
+			else {
+				$array[$value] = array_merge(
+					$array[$value],
+					$resources
+				);
+			}
+		}
+
+		return $this->filterDefault($requested, $array, $ids);
+	}
+
+
+	/**
+	 * Shorthand for filter by year
+	 *
+	 * @param array $requested Filtered ids of resources
+	 * @param array $values Filter data with min and max number
+	 * @param array $ids Ids of currently active resources
+	 *
+	 * @return array
+	 */
+	public function filterYear(array $requested, array $values, array $ids) {
+		return $this->filterDate($requested, $values, $ids, 'Y');
+	}
 }
