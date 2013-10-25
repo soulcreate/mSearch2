@@ -339,7 +339,7 @@ class mse2FiltersHandler {
 			}
 
 			if (empty($query)) {continue;}
-			$q = $this->modx->newQuery('modResource', array('id:IN' => $query));
+			$q = $this->modx->newQuery('modResource', array('id:IN' => $query, 'published' => 1));
 			$q->select('id,pagetitle');
 			if ($q->prepare() && $q->stmt->execute()) {
 				while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {

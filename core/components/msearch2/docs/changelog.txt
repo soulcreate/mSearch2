@@ -4,6 +4,7 @@ Changelog for mSearch2.
 ==============
 - Added filter by year of document. For example: "publishedon:year".
 - Improved search algorithm, when there is only one word in query.
+- Hide unpublished parents in mse2FiltersHandler::getParents().
 
 0.8.3 pl2
 ==============
