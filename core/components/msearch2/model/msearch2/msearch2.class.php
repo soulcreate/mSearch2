@@ -369,6 +369,15 @@ class mSearch2 {
 				}
 			}
 		}
+		else {
+			// Add the whole possible results for query
+			$all_results = $this->simpleSearch($query);
+			foreach ($all_results as $v) {
+				if (!isset($result[$v])) {
+					$result[$v] = round($this->config['exact_match_bonus'] / 2);
+				}
+			}
+		}
 
 		// Add matches by %LIKE% search
 		if ($not_found = array_diff($bulk_words, $words)) {
