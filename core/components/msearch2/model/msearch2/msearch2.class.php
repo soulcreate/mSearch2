@@ -328,7 +328,10 @@ class mSearch2 {
 			$q = $this->modx->newQuery('mseWord');
 			$q->select('`resource`, `word`, `weight`');
 			$q->where(array('word:IN' => array_keys($words)));
+			$tstart = microtime(true);
 			if ($q->prepare() && $q->stmt->execute()) {
+				$this->modx->queryTime += microtime(true) - $tstart;
+				$this->modx->executedQueries++;
 				while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 					if (isset($result[$row['resource']])) {
 						$result[$row['resource']] += $row['weight'];
@@ -413,7 +416,10 @@ class mSearch2 {
 		$q = $this->modx->newQuery('mseIntro');
 		$q->select('`resource`');
 		$q->where(array('intro:LIKE' => '%'.$string.'%'));
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			$result = $q->stmt->fetchAll(PDO::FETCH_COLUMN);
 		}
 

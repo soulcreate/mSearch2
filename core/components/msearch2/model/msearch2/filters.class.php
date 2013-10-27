@@ -41,7 +41,10 @@ class mse2FiltersHandler {
 		$q->innerJoin('modTemplateVar', 'modTemplateVar', '`modTemplateVarResource`.`tmplvarid` = `modTemplateVar`.`id` AND `modTemplateVar`.`name` IN ("' . implode('","', $tvs).'")');
 		$q->where(array('`modTemplateVarResource`.`contentid`:IN' => $ids));
 		$q->select('`name`,`contentid`,`value`');
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$tmp = strpos($row['value'], '||') !== false
 					? explode('||', $row['value'])
@@ -80,7 +83,10 @@ class mse2FiltersHandler {
 		$q = $this->modx->newQuery('msProductData');
 		$q->where(array('id:IN' => $ids));
 		$q->select('id,' . implode(',', $fields));
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				foreach ($row as $k => $v) {
 					$v = trim($v);
@@ -116,7 +122,10 @@ class mse2FiltersHandler {
 		$q = $this->modx->newQuery('msProductOption');
 		$q->where(array('product_id:IN' => $ids, 'key:IN' => $keys));
 		$q->select('`product_id`,`key`,`value`');
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$row['value'] = trim($row['value']);
 				if ($row['value'] == '') {continue;}
@@ -154,7 +163,10 @@ class mse2FiltersHandler {
 			$q->orCondition(array('Member.product_id:IN' => $ids));
 			$q->select('category_id');
 		}
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				foreach ($row as $k => $v) {
 					$v = trim($v);
@@ -262,7 +274,10 @@ class mse2FiltersHandler {
 		$results = array();
 		$q = $this->modx->newQuery('msVendor', array('id:IN' => $vendors));
 		$q->select('id,name');
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			$vendors = array();
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$vendors[$row['id']] = $row['name'];
@@ -331,7 +346,10 @@ class mse2FiltersHandler {
 		$results = $parents = array();
 		$q = $this->modx->newQuery('modResource', array('id:IN' => array_keys($values), 'published' => 1));
 		$q->select('id,pagetitle,context_key');
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$parents[$row['id']] = $row;
 			}
@@ -347,7 +365,10 @@ class mse2FiltersHandler {
 				if (!empty($pids)) {
 					$q = $this->modx->newQuery('modResource', array('id:IN' => array_reverse($pids), 'published' => 1));
 					$q->select('id,pagetitle');
+					$tstart = microtime(true);
 					if ($q->prepare() && $q->stmt->execute()) {
+						$this->modx->queryTime += microtime(true) - $tstart;
+						$this->modx->executedQueries++;
 						while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 							$titles[$row['id']] = $row['pagetitle'];
 						}
@@ -401,7 +422,10 @@ class mse2FiltersHandler {
 		$results = array();
 		$q = $this->modx->newQuery('modUserProfile', array('internalKey:IN' => $users));
 		$q->select('id,'.$field);
+		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
 			$users = array();
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$users[$row['id']] = $row[$field];

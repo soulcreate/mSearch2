@@ -5,6 +5,7 @@ Changelog for mSearch2.
 - Added filter by year of document. For example: "publishedon:year".
 - Improved search algorithm, when there is only one word in query.
 - Improved buildParentsFilter(). Now it works for parents from different contexts.
+- Added support of placeholders [^q^] and [^qt^].
 
 0.8.3 pl2
 ==============
