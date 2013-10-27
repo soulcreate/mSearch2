@@ -625,7 +625,7 @@ class mse2FiltersHandler {
 	 * @param array $requested Filtered ids of resources
 	 * @param array $values Filter data with min and max number
 	 * @param array $ids Ids of currently active resources
-	 * @param array $format Format of date for combine resources
+	 * @param string $format Format of date for combine resources
 	 *
 	 * @return array
 	 */

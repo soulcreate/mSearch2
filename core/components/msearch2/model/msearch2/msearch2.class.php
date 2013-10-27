@@ -86,8 +86,8 @@ class mSearch2 {
 	/**
 	 * Initializes mSearch2 into different contexts.
 	 *
-	 * @access public
 	 * @param string $ctx The context to load. Defaults to web.
+	 * @param array $scriptProperties
 	 *
 	 * @return boolean
 	 */
@@ -165,8 +165,6 @@ class mSearch2 {
 	/**
 	 * Initializes phpMorphy for needed language
 	 *
-	 * @param $lang
-	 *
 	 * @return boolean
 	 */
 	public function loadPhpMorphy() {
@@ -200,6 +198,7 @@ class mSearch2 {
 	 * Returns array with words for search
 	 *
 	 * @param string $text
+	 * @param string $pcre
 	 *
 	 * @return array
 	 */
@@ -221,10 +220,11 @@ class mSearch2 {
 	 * Gets base form of the words
 	 *
 	 * @param array|string $text
+	 * @param boolean $only_words
 	 *
 	 * @return array|string
 	 */
-	public function getBaseForms($text, $only_words = 1) {
+	public function getBaseForms($text, $only_words = true) {
 		$result = array();
 		if (is_array($text)) {
 			foreach ($text as $v) {
@@ -434,6 +434,7 @@ class mSearch2 {
 	 * @param $query
 	 * @param string $htag_open
 	 * @param string $htag_close
+	 * @param boolean $strict
 	 *
 	 * @return mixed
 	 */
@@ -501,7 +502,10 @@ class mSearch2 {
 
 
 	/**
+	 * Return array with filters
+	 *
 	 * @param array|string $ids
+	 * @param boolean $build
 	 *
 	 * @return array
 	 */
@@ -589,9 +593,10 @@ class mSearch2 {
 
 
 	/**
-	 * Fiters resources by given params
+	 * Filters resources by given params
 	 *
-	 * @param $request
+	 * @param array|string $ids
+	 * @param array $request
 	 *
 	 * @return array
 	 */
@@ -731,6 +736,7 @@ class mSearch2 {
 	 * Method for transform array to placeholders
 	 *
 	 * @var array $array With keys and values
+	 * @var string $prefix
 	 *
 	 * @return array $array Two nested arrays With placeholders and values
 	 */
