@@ -318,55 +318,51 @@ class mse2FiltersHandler {
 	 * Returns array with human-readable parents of resources
 	 *
 	 * @param array $values
+	 * @param integer $depth
+	 * @param string $separator
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildParentsFilter(array $values, $depth = 1) {
+	public function buildParentsFilter(array $values, $depth = 1, $separator = ' / ') {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
 
 		$results = $parents = array();
+		$q = $this->modx->newQuery('modResource', array('id:IN' => array_keys($values), 'published' => 1));
+		$q->select('id,pagetitle,context_key');
+		if ($q->prepare() && $q->stmt->execute()) {
+			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+				$parents[$row['id']] = $row;
+			}
+		}
+
 		foreach ($values as $value => $ids) {
-			$pids = array($value);
-			$pids = array_merge($pids, $this->modx->getParentIds($value, $depth));
+			if (!isset($parents[$value])) {continue;}
 
-			$query = array();
-			foreach ($pids as $v) {
-				if (!isset($parents[$v])) {
-					$query[] = $v;
+			$parent = $parents[$value];
+			$titles = array();
+			if ($depth > 0) {
+				$pids = $this->modx->getParentIds($value, $depth, array('context' => $parent['context_key']));
+				if (!empty($pids)) {
+					$q = $this->modx->newQuery('modResource', array('id:IN' => array_reverse($pids), 'published' => 1));
+					$q->select('id,pagetitle');
+					if ($q->prepare() && $q->stmt->execute()) {
+						while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+							$titles[$row['id']] = $row['pagetitle'];
+						}
+					}
 				}
 			}
+			$titles[$value] = $parent['pagetitle'];
 
-			if (empty($query)) {continue;}
-			$q = $this->modx->newQuery('modResource', array('id:IN' => $query, 'published' => 1));
-			$q->select('id,pagetitle');
-			if ($q->prepare() && $q->stmt->execute()) {
-				while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
-					$parents[$row['id']] = $row['pagetitle'];
-				}
-			}
-
-			$pids = array_reverse($pids);
-			$title = '';
-			foreach ($pids as $v) {
-				if ($v == 0) {}
-				else if (isset($parents[$v])) {
-					$title .= ' / '.$parents[$v];
-				}
-				else {
-					$title .= ' / '.$v;
-				}
-			}
-
-			$title = !empty($title) ? substr($title, 3) : '/';
+			$title = implode($separator, $titles);
 			$results[$title] = array(
 				'title' => $title
 				,'value' => $value
 				,'type' => 'parents'
 				,'resources' => $ids
 			);
-
 		}
 
 		ksort($results);
