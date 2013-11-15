@@ -637,10 +637,9 @@ class mse2FiltersHandler {
 				$array[$value] = $resources;
 			}
 			else {
-				$array[$value] = array_merge(
-					$array[$value],
-					$resources
-				);
+				foreach ($resources as $v) {
+					$array[$value][] = $v;
+				}
 			}
 		}
 
