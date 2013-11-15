@@ -6,6 +6,7 @@ Changelog for mSearch2.
 - [mFilter2] Improved filtration of conditions for retrieve resources. Now it handle end snippet with parameter &returnIds=`1`.
 - [mSearch2] Optimized for last version of pdoTools.
 - [mSearch2] Added parameter "forceSearch" to specify whether or not to show list of resources without search query.
+- Improved javascript. Hide of block "limit" when no results.
 
 0.8.4 pl
 ==============

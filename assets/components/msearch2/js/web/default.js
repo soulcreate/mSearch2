@@ -1,4 +1,4 @@
-mSearch2 = {
+var mSearch2 = {
 	options: {
 		wrapper: '#mse2_mfilter'
 		,filters: '#mse2_filters'
@@ -22,7 +22,7 @@ mSearch2 = {
 	}
 	,sliders: {}
 	,initialize: function(selector) {
-		var elements = ['filters','results','pagination','total','sort','selected'];
+		var elements = ['filters','results','pagination','total','sort','selected','limit'];
 		for (var i in elements) {
 			if (elements.hasOwnProperty(i)) {
 				var elem = elements[i];
@@ -322,11 +322,13 @@ mSearch2 = {
 		if (this.total.length != 0) {
 			if (!total || total == 0) {
 				this.total.parent().hide();
+				this.limit.parent().hide();
 				this.sort.hide();
 				this.total.text(0);
 			}
 			else {
 				this.total.parent().show();
+				this.limit.parent().show();
 				this.sort.show();
 				this.total.text(total);
 			}
