@@ -115,7 +115,10 @@ $tmp = array(
 		'type' => 'combo-boolean'
 		,'value' => false
 	)
-
+	,'forceSearch' => array(
+		'type' => 'combo-boolean'
+		,'value' => false
+	)
 );
 
 foreach ($tmp as $k => $v) {

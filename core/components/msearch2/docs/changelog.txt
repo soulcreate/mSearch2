@@ -1,5 +1,12 @@
 Changelog for mSearch2.
 
+0.9.0 beta
+==============
+- [mFilter2] Changed default &paginator=`` to "pdoPage".
+- [mFilter2] Improved filtration of conditions for retrieve resources. Now it handle end snippet with parameter &returnIds=`1`.
+- [mSearch2] Optimized for last version of pdoTools.
+- [mSearch2] Added parameter "forceSearch" to specify whether or not to show list of resources without search query.
+
 0.8.4 pl
 ==============
 - Added filter by year of document. For example: "publishedon:year".

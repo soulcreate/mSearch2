@@ -11,7 +11,7 @@ $properties = array();
 $tmp = array(
 	'paginator' => array(
 		'type' => 'textfield'
-		,'value' => 'getPage'
+		,'value' => 'pdoPage'
 	)
 	,'element' => array(
 		'type' => 'textfield'
