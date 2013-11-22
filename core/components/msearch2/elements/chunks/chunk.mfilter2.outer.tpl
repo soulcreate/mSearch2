@@ -1,5 +1,5 @@
 <div class="row" id="mse2_mfilter">
-	<div class="span3">
+	<div class="span3 col-md-3">
 		<form action="" method="post" id="mse2_filters">
 			[[+filters]]
 		</form>
@@ -7,15 +7,15 @@
 		<div>[[%mse2_filter_total]] <span id="mse2_total">[[+total:default=`0`]]</span></div>
 	</div>
 
-	<div class="span9">
+	<div class="span9 col-md-9">
 		<div class="row">
-			<div id="mse2_sort" class="span5">
+			<div id="mse2_sort" class="span5 col-md-5">
 				[[%mse2_sort]]
 				<a href="#" data-sort="resource|publishedon" data-dir="[[+mse2_sort:is=`resource|publishedon:desc`:then=`desc`]]" data-default="desc" class="sort">[[%mse2_sort_publishedon]] <span></span></a>
 			</div>
 
 			[[+tpls:notempty=`
-			<div id="mse2_tpl" class="span4">
+			<div id="mse2_tpl" class="span4 col-md-4">
 				<a href="#" data-tpl="0" class="[[+tpl0]]">[[%mse2_chunk_default]]</a> /
 				<a href="#" data-tpl="1" class="[[+tpl1]]">[[%mse2_chunk_alternate]]</a>
 			</div>

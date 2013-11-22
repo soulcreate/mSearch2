@@ -8,6 +8,7 @@ Changelog for mSearch2.
 - [mSearch2] Added parameter "forceSearch" to specify whether or not to show list of resources without search query.
 - Improved javascript. Hide of block "limit" when no results.
 - Improved speed of mseFiltersHandler2::filterDate().
+- Default chunks support Bootstrap3.
 
 0.8.4 pl
 ==============
