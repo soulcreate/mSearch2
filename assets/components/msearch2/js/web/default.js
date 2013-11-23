@@ -305,6 +305,10 @@ var mSearch2 = {
 						if (count == 0) {
 							input.prop('disabled', true);
 							label.addClass(mSearch2.options.disabled_class);
+							if (input.is(':checked')) {
+								input.prop('checked', false);
+								mSearch2.handleSelected(input);
+							}
 						}
 						else {
 							input.prop('disabled', false);

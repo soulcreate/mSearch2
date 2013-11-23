@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-0.9.0 beta
+0.9.0 rc
 ==============
 - [mFilter2] Changed default &paginator=`` to "pdoPage".
 - [mFilter2] Improved filtration of conditions for retrieve resources. Now it handle end snippet with parameter &returnIds=`1`.
