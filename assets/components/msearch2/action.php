@@ -20,7 +20,7 @@ else {
 if (!empty($_REQUEST['pageId']) && !$modx->resource) {
 	$modx->resource = $modx->getObject('modResource', $_REQUEST['pageId']);
 	$config = $_SESSION['mFilter2'][@$_REQUEST['pageId']]['scriptProperties'];
-	if ($modx->resource->get('context_key' != 'web')) {
+	if ($modx->resource->get('context_key') != 'web') {
 		$modx->switchContext($modx->resource->context_key);
 	}
 }

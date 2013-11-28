@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-0.9.0 rc
+0.9.0 pl
 ==============
 - [mFilter2] Changed default &paginator=`` to "pdoPage".
 - [mFilter2] Improved filtration of conditions for retrieve resources. Now it handle end snippet with parameter &returnIds=`1`.
@@ -9,6 +9,7 @@ Changelog for mSearch2.
 - Improved javascript. Hide of block "limit" when no results.
 - Improved speed of mseFiltersHandler2::filterDate().
 - Default chunks support Bootstrap3.
+- Fixed context switch in action.php
 
 0.8.4 pl
 ==============
