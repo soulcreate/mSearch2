@@ -26,19 +26,24 @@ $output = array('filters' => '', 'results' => '', 'total' => 0, 'limit' => $limi
 $ids = $found = $log = $where = array();
 
 // ---------------------- Retrieving ids of resources for filter
-$query = isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
+$query = !empty($_REQUEST[$queryVar])
+	? htmlspecialchars(strip_tags(trim($_REQUEST[$queryVar])))
+	: '';
+
 // Filter by ids
 if (!empty($resources)) {
 	$ids = array_map('trim', explode(',', $resources));
 }
-else if (isset($_REQUEST[$queryVar]) && empty($query)) {
+elseif (isset($_REQUEST[$queryVar]) && empty($query)) {
 	$output['results'] =  $modx->lexicon('mse2_err_no_query');
 }
-else if (isset($_REQUEST[$queryVar]) && !preg_match('/^[0-9]{2,}$/', $query) && mb_strlen($query,'UTF-8') < $minQuery) {
+elseif (empty($query) && !empty($forceSearch)) {
+	$output['results'] = $modx->lexicon('mse2_err_no_query_var');
+}
+elseif (isset($_REQUEST[$queryVar]) && !preg_match('/^[0-9]{2,}$/', $query) && mb_strlen($query,'UTF-8') < $minQuery) {
 	$output['results'] = $modx->lexicon('mse2_err_min_query');
 }
-else if (isset($_REQUEST[$queryVar])) {
-	$query = htmlspecialchars(strip_tags(trim($query)));
+elseif (isset($_REQUEST[$queryVar])) {
 	$modx->setPlaceholder($plPrefix.$queryVar, $query);
 
 	$found = $mSearch2->Search($query);
@@ -49,6 +54,8 @@ else if (isset($_REQUEST[$queryVar])) {
 	}
 	$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
 }
+
+$modx->setPlaceholder($plPrefix.$queryVar, $query);
 
 // Has error message - exit
 if (!empty($output['results'])) {
