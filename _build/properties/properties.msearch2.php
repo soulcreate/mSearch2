@@ -117,7 +117,7 @@ $tmp = array(
 	)
 	,'forceSearch' => array(
 		'type' => 'combo-boolean'
-		,'value' => false
+		,'value' => true
 	)
 );
 

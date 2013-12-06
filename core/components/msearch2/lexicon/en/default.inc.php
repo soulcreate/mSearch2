@@ -16,6 +16,7 @@ $_lang['mse2_tab_index'] = 'Index';
 $_lang['mse2_tab_index_intro'] = 'This section is responsible for the management of the search index';
 
 $_lang['mse2_err_no_query'] = 'Your search query is empty.';
+$_lang['mse2_err_no_query_var'] = 'No search query.';
 $_lang['mse2_err_min_query'] = 'Your search query is too short.';
 $_lang['mse2_err_no_results'] = 'No results found.';
 

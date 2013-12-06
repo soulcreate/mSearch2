@@ -17,32 +17,31 @@ if (empty($outputSeparator)) {$outputSeparator = "\n";}
 if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 $returnIds = !empty($returnIds);
 $fastMode = !empty($fastMode);
-$output = null;
 
 $class = 'modResource';
 $found = array();
-$query = !empty($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '';
+$output = null;
+$query = !empty($_REQUEST[$queryVar])
+	? htmlspecialchars(strip_tags(trim($_REQUEST[$queryVar])))
+	: '';
+
 if (empty($resources)) {
 	if (empty($query) && isset($_REQUEST[$queryVar])) {
-		$query = '';
 		$output = $modx->lexicon('mse2_err_no_query');
 	}
+	elseif (empty($query) && !empty($forceSearch)) {
+		$output = $modx->lexicon('mse2_err_no_query_var');
+	}
 	elseif (!empty($query) && !preg_match('/^[0-9]{2,}$/', $query) && mb_strlen($query,'UTF-8') < $minQuery) {
-		$query = '';
 		$output = $modx->lexicon('mse2_err_min_query');
 	}
-	elseif (empty($query) && !empty($forceSearch)) {
-		return '';
-	}
-	elseif (empty($query)) {
-		// continue
-	}
-	else {
-		$query = htmlspecialchars(strip_tags(trim($query)));
-		$modx->setPlaceholder($plPrefix.$queryVar, $query);
-	}
 
-	if (!empty($query)) {
+	$modx->setPlaceholder($plPrefix.$queryVar, $query);
+
+	if (!empty($output)) {
+		return $output;
+	}
+	elseif (!empty($query)) {
 		$found = $mSearch2->Search($query);
 		$ids = array_keys($found);
 		$resources = implode(',', $ids);
@@ -120,6 +119,7 @@ if (!empty($returnIds)) {
 	return $rows;
 }
 elseif (!empty($rows) && is_array($rows)) {
+	$output = array();
 	foreach ($rows as $k => $row) {
 		// Processing main fields
 		$row['weight'] = isset($found[$row['id']]) ? $found[$row['id']] : '';

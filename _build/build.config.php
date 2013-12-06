@@ -4,7 +4,7 @@
 define('PKG_NAME','mSearch2');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 
-define('PKG_VERSION','0.9.0');
+define('PKG_VERSION','0.9.1');
 define('PKG_RELEASE','pl');
 define('PKG_AUTO_INSTALL', false);
 
@@ -37,8 +37,8 @@ define('BUILD_ACTION_UPDATE', false);
 define('BUILD_SETTING_UPDATE', false);
 define('BUILD_CHUNK_UPDATE', false);
 
-define('BUILD_SNIPPET_UPDATE', false);
-define('BUILD_PLUGIN_UPDATE', false);
+define('BUILD_SNIPPET_UPDATE', true);
+define('BUILD_PLUGIN_UPDATE', true);
 //define('BUILD_EVENT_UPDATE', true);
 //define('BUILD_POLICY_UPDATE', true);
 //define('BUILD_POLICY_TEMPLATE_UPDATE', true);
