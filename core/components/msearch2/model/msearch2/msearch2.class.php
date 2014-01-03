@@ -566,7 +566,6 @@ class mSearch2 {
 			}
 		}
 
-		//$this->modx->cacheManager->set('msearch2/fltr_' . md5(implode(',',$ids)), $filters, $this->config['cacheTime']);
 		$this->filters = $filters;
 		// Building filters
 		if ($build) {
@@ -648,7 +647,6 @@ class mSearch2 {
 			return $this->filtersHandler->getSuggestions($ids, $request, $current);
 		}
 		else {
-			$count_current = count($current);
 			$current = array_flip($current);
 			$filters = $this->getFilters($ids, false);
 			$radio = $this->config['suggestionsRadio'];
@@ -682,9 +680,8 @@ class mSearch2 {
 								}
 								$count = count($res);
 								if ($count != 0) {
-									$count += $count_current;
+									$count = '+' . $count;
 								}
-								//else {$count = $count_current;}
 							}
 							else {
 								$count = count($res);

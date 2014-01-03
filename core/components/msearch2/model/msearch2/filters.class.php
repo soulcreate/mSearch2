@@ -170,9 +170,12 @@ class mse2FiltersHandler {
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				foreach ($row as $k => $v) {
 					$v = trim($v);
-					if ($k == 'category_id') {$k = 'parent';}
+					if ($k == 'category_id') {
+						if ($row['parent'] == $v) {continue;}
+						else {$k = 'parent';}
+					}
 					if ($v == '' || $k == 'id') {continue;}
-					else if (isset($filters[$k][$v])) {
+					elseif (isset($filters[$k][$v])) {
 						$filters[$k][$v][] = $row['id'];
 					}
 					else {
