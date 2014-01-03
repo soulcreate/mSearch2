@@ -248,7 +248,7 @@ if (!empty($ids)) {
 		$output['results'] = !empty($paginatorProperties['resources'])
 			? $paginator->process()
 			: $modx->lexicon('mse2_err_no_results');
-		$output['total'] = $modx->getPlaceholder($pdoFetch->config['totalVar']);
+		$output['total'] = $modx->getPlaceholder($paginatorProperties['totalVar']);
 	}
 	else {
 		$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find pagination snippet with name: "'.$scriptProperties['paginator'].'"');

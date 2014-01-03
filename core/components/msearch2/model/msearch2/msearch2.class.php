@@ -742,12 +742,12 @@ class mSearch2 {
 	 */
 	public function makePlaceholders(array $array = array(), $prefix = '') {
 		$result = array(
-			'pl' => array()
-		,'vl' => array()
+			'pl' => array(),
+			'vl' => array(),
 		);
 		foreach ($array as $k => $v) {
 			if (is_array($v)) {
-				$result = array_merge_recursive($result, $this->makePlaceholders($v, $k.'.'));
+				$result = array_merge_recursive($result, $this->makePlaceholders($v, $prefix . $k.'.'));
 			}
 			else {
 				$result['pl'][$prefix.$k] = '[[+'.$prefix.$k.']]';

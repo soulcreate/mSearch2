@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+0.9.2 pl
+==============
+- Fixed [[+total]] placeholder for new pdoPage versions.
+
 0.9.1 pl2
 ==============
 - Improved verification of search query.
