@@ -146,12 +146,14 @@ var mSearch2 = {
 	}
 
 	,handleSlider: function() {
-		if (!$.ui || !$.ui.slider) {
+		if (!$(this.options.slider).length) {
+			return false;
+		}
+		else if (!$.ui || !$.ui.slider) {
 			return $.getScript(mSearch2Config.jsUrl + 'lib/jquery-ui.min.js', function() {
 				mSearch2.handleSlider();
 			});
 		}
-
 		$(this.options.slider).each(function() {
 			var fieldset = $(this).parents('fieldset');
 			var imin = fieldset.find('input:first');
