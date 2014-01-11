@@ -409,6 +409,54 @@ class mse2FiltersHandler {
 
 	/**
 	 * Prepares values for filter
+	 * Returns array with human-readable grandparent of resource
+	 *
+	 * @param array $values
+	 * @param bool $filter
+	 *
+	 * @return array
+	 */
+	public function buildGrandParentsFilter(array $values, $filter = false) {
+		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
+			return array();
+		}
+
+		$grandparents = array();
+		$q = $this->modx->newQuery('modResource', array('id:IN' => array_keys($values), 'published' => 1));
+		$q->select('id,parent');
+		$tstart = microtime(true);
+		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
+			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+				$grandparents[$row['id']] = $row['parent'];
+			}
+		}
+
+		$tmp = array();
+		foreach ($values as $k => $v) {
+			if (isset($grandparents[$k]) && $grandparents[$k] != 0) {
+				$parent = $grandparents[$k];
+				if (!isset($tmp[$parent])) {
+					$tmp[$parent] = $v;
+				}
+				else {
+					$tmp[$parent] = array_merge($tmp[$parent], $v);
+				}
+			}
+			else {
+				$tmp[$k] = $v;
+			}
+		}
+
+		return $filter
+			? $tmp
+			: $this->buildParentsFilter($tmp, 0);
+	}
+
+
+	/**
+	 * Prepares values for filter
 	 * Returns array with user id replaced to any field from modUserProfile
 	 *
 	 * @param array $values
@@ -588,6 +636,22 @@ class mse2FiltersHandler {
 		}
 
 		return $matched;
+	}
+
+
+	/**
+	 * Filtration method for grandparents
+	 *
+	 * @param array $requested
+	 * @param array $values
+	 * @param array $ids
+	 *
+	 * @return array
+	 */
+	public function filterGrandParents(array $requested, array $values, array $ids) {
+		$values = $this->buildGrandParentsFilter($values, true);
+
+		return $this->filterDefault($requested, $values, $ids);
 	}
 
 
