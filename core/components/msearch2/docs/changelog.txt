@@ -5,6 +5,7 @@ Changelog for mSearch2.
 - Fixed [[+total]] placeholder for new pdoPage versions.
 - More convenient suggestions.
 - Added filter "grandparents".
+- Added ability to update chunks on package upgrade.
 
 0.9.1 pl2
 ==============

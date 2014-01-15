@@ -49,3 +49,9 @@ define('BUILD_SNIPPET_STATIC', false);
 define('BUILD_PLUGIN_STATIC', false);
 
 define('BUILD_REMOVE_DICTS', true);
+
+$BUILD_RESOLVERS = array(
+	'tables',
+	'setup',
+	'update',
+);
