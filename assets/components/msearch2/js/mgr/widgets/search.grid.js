@@ -33,8 +33,14 @@ mSearch2.grid.Search = function(config) {
 				,id: 'msearch2-input-search'
 				,emptyText: _('mse2_search')
 				,listeners: {
-					render: {fn: function(tf) {	tf.getEl().addKeyListener(Ext.EventObject.ENTER, function() {this.search(tf);}, this);if (MODx.request.query) {tf.setValue(this.getUrlParam('query'));this.search(tf);}},scope: this}
-					,change: {fn: function(tf) {this.getStore().baseParams.query = tf.getValue();},scope: this}
+					render: {fn: function(tf) {
+						tf.getEl().addKeyListener(Ext.EventObject.ENTER, function() {
+							this.search(tf);
+						}, this);
+						if (MODx.request.query) {
+							tf.setValue(this.getUrlParam('query'));
+							this.search(tf);}
+						},scope: this}
 				}
 			}
 			,'-'
@@ -64,7 +70,6 @@ Ext.extend(mSearch2.grid.Search,MODx.grid.Grid,{
 			s.baseParams.unpublished = Ext.getCmp('msearch2-check-unpublished').getValue() == true ? 1 : 0;
 			s.baseParams.deleted = Ext.getCmp('msearch2-check-deleted').getValue() == true ? 1 : 0;
 			this.getBottomToolbar().changePage(1);
-			this.refresh();
 		}
 	}
 

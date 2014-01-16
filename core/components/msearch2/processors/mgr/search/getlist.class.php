@@ -12,19 +12,14 @@ class mseIndexGetListProcessor extends modObjectGetListProcessor {
 	public $mSearch2;
 	protected $ids = array();
 
-	/**
-	 * Allow stoppage of process before the query
-	 * @return boolean
-	 */
+
+	/** {@inheritDoc} */
 	public function beforeQuery() {
 		return $this->loadClass();
 	}
 
 
-	/**
-	 * Get the data of the query
-	 * @return array
-	 */
+	/** {@inheritDoc} */
 	public function getData() {
 		$data = array();
 		$limit = intval($this->getProperty('limit'));
@@ -62,12 +57,7 @@ class mseIndexGetListProcessor extends modObjectGetListProcessor {
 	}
 
 
-	/**
-	 * Iterate across the data
-	 *
-	 * @param array $data
-	 * @return array
-	 */
+	/** {@inheritDoc} */
 	public function iterate(array $data) {
 		$list = array();
 		foreach ($data['results'] as $array) {
@@ -80,6 +70,7 @@ class mseIndexGetListProcessor extends modObjectGetListProcessor {
 	}
 
 
+	/** {@inheritDoc} */
 	public function prepareQueryBeforeCount(xPDOQuery $c) {
 		$c->where(array('id:IN' => array_keys($this->ids)));
 		$c->leftJoin('mseIntro', 'mseIntro', '`modResource`.`id` = `mseIntro`.`resource`');
@@ -91,6 +82,7 @@ class mseIndexGetListProcessor extends modObjectGetListProcessor {
 	}
 
 
+	/** {@inheritDoc} */
 	public function prepareArray(array $array) {
 		$array['weight'] = $this->ids[$array['id']];
 		$array['intro'] = $this->mSearch2->Highlight($array['intro'], $this->getProperty('query'), '<b>', '</b>');
@@ -98,17 +90,14 @@ class mseIndexGetListProcessor extends modObjectGetListProcessor {
 		return $array;
 	}
 
+
 	/**
 	 * Loads mSearch2 class to processor
 	 *
 	 * @return bool
 	 */
 	public function loadClass() {
-		if (!empty($this->modx->mSearch2) && $this->modx->mSearch2 instanceof mSearch2) {
-			$this->mSearch2 = & $this->modx->mSearch2;
-		}
-		else {
-			if (!class_exists('mSearch2')) {require_once MODX_CORE_PATH . 'components/msearch2/model/msearch2/msearch2.class.php';}
+		if ($this->modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {
 			$this->mSearch2 = new mSearch2($this->modx, array());
 		}
 

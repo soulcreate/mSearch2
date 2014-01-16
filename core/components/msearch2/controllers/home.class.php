@@ -18,6 +18,8 @@ class mSearch2HomeManagerController extends mSearch2MainController {
 	public function loadCustomCssJs() {
 		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/index.form.js');
 		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/search.grid.js');
+		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/aliases.grid.js');
+		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/queries.grid.js');
 		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/home.panel.js');
 	 	$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/sections/home.js');
 	}

@@ -5,6 +5,7 @@
 if ($object->xpdo) {
 	switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 		case xPDOTransport::ACTION_INSTALL:
+		case xPDOTransport::ACTION_UPGRADE:
 			/* @var modX $modx */
 			$modx =& $object->xpdo;
 			$modelPath = $modx->getOption('msearch2.core_path',null,$modx->getOption('core_path').'components/msearch2/').'model/';
@@ -13,9 +14,8 @@ if ($object->xpdo) {
 			$manager = $modx->getManager();
 			$manager->createObjectContainer('mseWord');
 			$manager->createObjectContainer('mseIntro');
-		break;
-
-		case xPDOTransport::ACTION_UPGRADE:
+			$manager->createObjectContainer('mseQuery');
+			$manager->createObjectContainer('mseAlias');
 		break;
 	}
 }

@@ -45,6 +45,11 @@ $tmp = array(
 		,'value' => 5
 		,'area' => 'mse2_search'
 	)
+	,'search_like_match_bonus' => array(
+		'xtype' => 'numberfield'
+		,'value' => 3
+		,'area' => 'mse2_search'
+	)
 	,'search_split_words' => array(
 		'xtype' => 'textfield'
 		,'value' => '#\s#'

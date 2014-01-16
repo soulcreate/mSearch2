@@ -18,6 +18,7 @@ $xpdo_meta_map['mseIntro']= array (
       'phptype' => 'integer',
       'attributes' => 'unsigned',
       'null' => false,
+      'index' => 'pk',
     ),
     'intro' => 
     array (

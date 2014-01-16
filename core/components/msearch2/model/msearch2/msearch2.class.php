@@ -22,11 +22,15 @@ class mSearch2 {
 	public $methods = array();
 	/** Cache for filters values */
 	public $filters = array();
-	/** Total number of filter operations */
+	/** @var integer Total number of filter operations */
 	public $filter_operations = 0;
+	/** @var string Current search query */
+	public $query = '';
+	/** @var null|\pdoTools $pdoTools */
+	public $pdoTools = null;
 
 
-	public function __construct(modX &$modx,array $config = array()) {
+	public function __construct(modX &$modx,array $config = array(), pdoTools &$pdoTools = null) {
 		$this->modx =& $modx;
 
 		$corePath = $this->modx->getOption('msearch2.core_path', $config, $this->modx->getOption('core_path').'components/msearch2/');
@@ -60,6 +64,7 @@ class mSearch2 {
 			)
 			,'min_word_length' => $this->modx->getOption('mse2_index_min_words_length', null, 3, true)
 			,'exact_match_bonus' => $this->modx->getOption('mse2_search_exact_match_bonus', null, 5, true)
+			,'like_match_bonus' => $this->modx->getOption('mse2_search_like_match_bonus', null, 3, true)
 			,'all_words_bonus' => $this->modx->getOption('mse2_search_all_words_bonus', null, 5, true)
 			,'introCutBefore' => 50
 			,'introCutAfter' => 250
@@ -80,6 +85,10 @@ class mSearch2 {
 
 		$this->modx->addPackage('msearch2', $this->config['modelPath']);
 		$this->modx->lexicon->load('msearch2:default');
+
+		if (!empty($pdoTools) && $pdoTools instanceof pdoTools) {
+			$this->pdoTools = $pdoTools;
+		}
 	}
 
 
@@ -228,7 +237,7 @@ class mSearch2 {
 		$result = array();
 		if (is_array($text)) {
 			foreach ($text as $v) {
-				$result = array_merge($result, $this->getBaseForms($v));
+				$result = array_merge($result, $this->getBaseForms($v, $only_words));
 			}
 		}
 		else {
@@ -320,7 +329,10 @@ class mSearch2 {
 	 */
 	public function Search($query) {
 		$string = preg_replace('/[^_-а-яёa-z0-9\s\.\/]+/iu', ' ', $this->modx->stripTags($query));
-		$words = $this->getBaseForms($string, 0);
+		$this->log('Filtered search query: "'.mb_strtolower($query.'"', 'UTF-8'));
+		$string = $this->query = $this->addAliases($string);
+		$this->log('Search query with processed aliases: "'.mb_strtolower($string.'"', 'UTF-8'));
+		$words = $this->getBaseForms($string, false);
 		$result = $all_words = $found_words = array();
 
 		// Search by words index
@@ -348,54 +360,96 @@ class mSearch2 {
 			}
 		}
 
+		$added = 0;
+
+		if (!empty($found_words)) {
+			$this->log('Found results by words INDEX ('.implode(',',array_keys($words)).'): '.count($result));
+		}
+		else {
+			$this->log('Nothing found by words INDEX');
+		}
+
 		// Add bonuses
 		$bulk_words = $this->getBulkWords($query);
 		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
 		if (count($bulk_words) > 1 || count($tmp_words) > 1 || empty($result)) {
-			$exact = $this->simpleSearch($query);
-			// Exact match bonus
-			foreach ($exact as $v) {
-				if (isset($result[$v])) {
-					$result[$v] += $this->config['exact_match_bonus'];
+			if (!empty($this->config['exact_match_bonus']) || !empty($this->config['all_words_bonus'])) {
+				$exact = $this->simpleSearch($query);
+				// Exact match bonus
+				if (!empty($this->config['exact_match_bonus'])) {
+					foreach ($exact as $v) {
+						if (isset($result[$v])) {
+							$result[$v] += $this->config['exact_match_bonus'];
+							//$this->log('Added "exact match bonus" for a resource '.$v.' for words "'.implode(', ', $words).'": +'.$this->config['exact_match_bonus']);
+						}
+						else {
+							$result[$v] = $this->config['exact_match_bonus'];
+							//$this->log('Found resource '.$v.' by LIKE search with all words "'.implode(', ',$words).'": +'.$this->config['exact_match_bonus']);
+							$added ++;
+						}
+					}
 				}
-				else {
-					$result[$v] = $this->config['exact_match_bonus'];
-				}
-			}
 
-			if (count($bulk_words) > 1) {
-				// All words bonus
-				foreach ($all_words as $k => $v) {
-					if (count($bulk_words) == count($v)) {
-						$result[$k] += $this->config['all_words_bonus'];
+				if (!empty($this->config['all_words_bonus'])) {
+					if (count($bulk_words) > 1) {
+						// All words bonus
+						foreach ($all_words as $k => $v) {
+							if (count($bulk_words) == count($v)) {
+								$result[$k] += $this->config['all_words_bonus'];
+								//$this->log('Added "all words bonus" for a resource '.$k.' for words "'.implode(', ', $words).'": +'.$this->config['all_words_bonus']);
+							}
+						}
 					}
 				}
 			}
 		}
-		else {
+		elseif (!empty($this->config['like_match_bonus'])) {
 			// Add the whole possible results for query
 			$all_results = $this->simpleSearch($query);
 			foreach ($all_results as $v) {
 				if (!isset($result[$v])) {
-					$result[$v] = round($this->config['exact_match_bonus'] / 2);
+					$weight = round($this->config['like_match_bonus']);
+					$result[$v] = $weight;
+					//$this->log('Found resource '.$v.' by LIKE search with all words "'.$query.'": +'.$weight);
+					$added ++;
 				}
 			}
 		}
 
 		// Add matches by %LIKE% search
-		if ($not_found = array_diff($bulk_words, $words)) {
+		if (!empty($this->config['like_match_bonus']) && $not_found = array_diff($bulk_words, $words)) {
 			foreach ($not_found as $word) {
 				$found = $this->simpleSearch($word);
 				foreach ($found as $v) {
+					$weight = round($this->config['like_match_bonus']);
 					if (!isset($result[$v])) {
-						$result[$v] = round($this->config['exact_match_bonus'] / 2);
+						$result[$v] = $weight;
+						//$this->log('Found resource '.$v.' by LIKE search with single word "'.$word.'": +'.$weight);
+						$added ++;
 					}
 					else {
-						$result[$v] += round($this->config['exact_match_bonus'] / 2);
+						$result[$v] += $weight;
+						//$this->log('Added "LIKE bonus" for a resource '.$v.' for word "'.$word.'": +'.$weight);
 					}
+
 				}
 			}
 		}
+
+		$this->log('Added resources by LIKE search: '.$added);
+
+		// Log the search query
+		/** @var mseQuery $object */
+		if ($object = $this->modx->getObject('mseQuery', array('query' => $string))) {
+			$object->set('quantity', $object->quantity + 1);
+		}
+		else {
+			$object = $this->modx->newObject('mseQuery');
+			$object->set('query', $query);
+			$object->set('quantity', 1);
+		}
+		$object->set('found', count($result));
+		$object->save();
 
 		arsort($result);
 		return $result;
@@ -428,10 +482,51 @@ class mSearch2 {
 
 
 	/**
+	 * @param $string
+	 *
+	 * @return mixed
+	 */
+	public function addAliases($string) {
+		$string = mb_strtoupper(str_ireplace('ё', 'е', $this->modx->stripTags($string)), 'UTF-8');
+		$string = preg_replace('#\[.*\]#isU', '', $string);
+
+		$pcre = $this->config['split_words'];
+		$words = preg_split($pcre, $string, -1, PREG_SPLIT_NO_EMPTY);
+		$words = array_unique($words);
+		$forms = $this->getBaseForms($words, false);
+
+		$q = $this->modx->newQuery('mseAlias', array('word:IN' => array_merge($words, array_keys($forms))));
+		$q->select('word,alias,replace');
+		$tstart = microtime(true);
+		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
+			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+				if ($row['replace']) {
+					$all = $this->getAllForms($row['word']);
+					foreach (current($all) as $word) {
+						$key = array_search($word, $words);
+						if ($key !== false) {
+							$words[$key] = $row['alias'];
+						}
+					}
+				}
+				else {
+					$words[] = $row['alias'];
+				}
+			}
+		}
+
+		$words = array_unique($words);
+		return implode(' ', $words);
+	}
+
+
+	/**
 	 * Highlight search string in given text string
 	 *
 	 * @param $text
-	 * @param $query
+	 * @param string $query
 	 * @param string $htag_open
 	 * @param string $htag_close
 	 * @param boolean $strict
@@ -439,62 +534,93 @@ class mSearch2 {
 	 * @return mixed
 	 */
 	public function Highlight($text, $query, $htag_open = '<b>', $htag_close = '</b>', $strict = true) {
-		$tmp = array_merge(
-			array($query => preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY))
-			,$this->getAllForms($query)
-		);
-
-		$words = array_keys($tmp);
-		foreach ($tmp as $v) {
-			$words = array_merge($words, array_values($v));
-		}
-
-		$text_cut = '';
-		foreach ($words as $key => $word) {
-			if (!preg_match('/^[0-9]{2,}$/', $word) && mb_strlen($word,'UTF-8') < $this->config['min_word_length']) {
-				unset($words[$key]);
-				continue;
-			}
-			$word = preg_quote($word, '/');
-			$words[$key] = $word;
-
-			// Cutting text on first occurrence
-			$pcre = $strict ? '/\b'.$word.'\b/imu' : '/'.$word.'/imu';
-			if (empty($text_cut) && preg_match($pcre, $text, $matches)) {
-				$pos = mb_strpos($text, $matches[0], 0, 'UTF-8');
-				if ($pos >= $this->config['introCutBefore']) {
-					$text_cut = '... ';
-					$pos -= $this->config['introCutBefore'];
-				}
-				else {
-					$text_cut = '';
-					$pos = 0;
-				}
-				$text_cut .= mb_substr($text, $pos, $this->config['introCutAfter'], 'UTF-8');
-				if (mb_strlen($text,'UTF-8') > $this->config['introCutAfter']) {$text_cut .= ' ...';}
-			}
-		}
-
-		if (empty($text_cut) && $strict) {
-			return $this->Highlight($text, $query, $htag_open, $htag_close, false);
-		}
-
-		$pcre = $strict ? '/\b('.implode('|',$words).')\b/imu' : '/('.implode('|',$words).')/imu';
-		preg_match_all($pcre, $text_cut, $matches);
-
 		$from = $to = array();
-		foreach ($matches[0] as $v) {
-			$from[$v] = $v;
-			$to[$v] = $htag_open.$v.$htag_close;
-		}
-		if (!empty($matches[1])) {
-			foreach ($matches[1] as $v) {
+
+		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
+		// Exact match
+		$pcre = $strict ? '/\b'.$query.'\b/imu' : '/'.$query.'/imu';
+		if (count($tmp_words) > 1 && preg_match($pcre, $text, $matches)) {
+			$pos = mb_stripos($text, $matches[0], 0, 'UTF-8');
+			if ($pos >= $this->config['introCutBefore']) {
+				$text_cut = '... ';
+				$pos -= $this->config['introCutBefore'];
+			}
+			else {
+				$text_cut = '';
+				$pos = 0;
+			}
+			$text_cut .= mb_substr($text, $pos, $this->config['introCutAfter'], 'UTF-8');
+			if (mb_strlen($text,'UTF-8') > $this->config['introCutAfter']) {$text_cut .= ' ...';}
+
+			foreach ($matches as $v) {
 				$from[$v] = $v;
 				$to[$v] = $htag_open.$v.$htag_close;
 			}
 		}
-		else if ($strict) {
-			return $this->Highlight($text, $query, $htag_open, $htag_close, false);
+		// Matching by separate words
+		else {
+			if (empty($this->query)) {
+				$this->query = $this->addAliases($query);
+			}
+
+			$tmp = array_merge(
+				$tmp_words
+				,explode(' ', $this->query)
+			);
+			$tmp = array_unique($tmp);
+			$tmp = $this->getAllForms($tmp);
+
+			$words = array_keys($tmp);
+			foreach ($tmp as $v) {
+				$words = array_merge($words, $v);
+			}
+
+			$text_cut = '';
+			foreach ($words as $key => $word) {
+				if (!preg_match('/^[0-9]{2,}$/', $word) && mb_strlen($word,'UTF-8') < $this->config['min_word_length']) {
+					unset($words[$key]);
+					continue;
+				}
+				$word = preg_quote($word, '/');
+				$words[$key] = $word;
+
+				// Cutting text on first occurrence
+				$pcre = $strict ? '/\b'.$word.'\b/imu' : '/'.$word.'/imu';
+				if (empty($text_cut) && preg_match($pcre, $text, $matches)) {
+					$pos = mb_stripos($text, $matches[0], 0, 'UTF-8');
+					if ($pos >= $this->config['introCutBefore']) {
+						$text_cut = '... ';
+						$pos -= $this->config['introCutBefore'];
+					}
+					else {
+						$text_cut = '';
+						$pos = 0;
+					}
+					$text_cut .= mb_substr($text, $pos, $this->config['introCutAfter'], 'UTF-8');
+					if (mb_strlen($text,'UTF-8') > $this->config['introCutAfter']) {$text_cut .= ' ...';}
+				}
+			}
+
+			if (empty($text_cut) && $strict) {
+				return $this->Highlight($text, $query, $htag_open, $htag_close, false);
+			}
+
+			$pcre = $strict ? '/\b('.implode('|',$words).')\b/imu' : '/('.implode('|',$words).')/imu';
+			preg_match_all($pcre, $text_cut, $matches);
+
+			foreach ($matches[0] as $v) {
+				$from[$v] = $v;
+				$to[$v] = $htag_open.$v.$htag_close;
+			}
+			if (!empty($matches[1])) {
+				foreach ($matches[1] as $v) {
+					$from[$v] = $v;
+					$to[$v] = $htag_open.$v.$htag_close;
+				}
+			}
+			elseif ($strict) {
+				return $this->Highlight($text, $query, $htag_open, $htag_close, false);
+			}
 		}
 
 		return str_replace($from, $to, $text_cut);
@@ -520,10 +646,10 @@ class mSearch2 {
 		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']))) {
 			return $prepared;
 		}
-		else if (!$build && !empty($this->filters)) {
+		elseif (!$build && !empty($this->filters)) {
 			return $this->filters;
 		}
-		else if (!$build && $this->filters = $this->modx->cacheManager->get('msearch2/fltr_' . md5(implode(',',$ids)))) {
+		elseif (!$build && $this->filters = $this->modx->cacheManager->get('msearch2/fltr_' . md5(implode(',',$ids)))) {
 			return $this->filters;
 		}
 
@@ -798,6 +924,16 @@ class mSearch2 {
 	 */
 	public function checkMS2() {
 		return file_exists(MODX_CORE_PATH . 'components/minishop2/model/minishop2/msproduct.class.php');
+	}
+
+
+	/**
+	 * @param $entry
+	 */
+	public function log($entry) {
+		if ($this->pdoTools && empty($this->config['hideSearchLog'])) {
+			$this->pdoTools->addTime('[mSearch2] ' . $entry);
+		}
 	}
 
 }

@@ -1,11 +1,17 @@
 Changelog for mSearch2.
 
-0.9.2 rc1
+1.0.0 beta
 ==============
 - Fixed [[+total]] placeholder for new pdoPage versions.
 - More convenient suggestions.
 - Added filter "grandparents".
 - Added ability to update chunks on package upgrade.
+- Added manager page with words aliases.
+- Added manager page with search queries.
+- Improved mSearch2::Search() for aliases support.
+- Improved mSearch2::Highlight() for more exact cutting of text.
+- Enabling of parameter "showLog" of snippets displays also log of search.
+- Added system parameter "like_match_bonus".
 
 0.9.1 pl2
 ==============

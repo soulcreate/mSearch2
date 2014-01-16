@@ -39,6 +39,35 @@ mSearch2.panel.Home = function(config) {
 					xtype: 'msearch2-form-index'
 					,preventRender: true
 				}]
+			},{
+				title: _('mse2_tab_queries')
+				,items: [{
+					html: _('mse2_tab_queries_intro')
+					,border: false
+					,bodyCssClass: 'panel-desc'
+					,bodyStyle: 'margin-bottom: 10px'
+				},{
+					xtype: 'msearch2-grid-queries'
+					,preventRender: true
+				}]
+				/*
+				,listeners: {
+					activate : {fn: function() {
+						Ext.getCmp('msearch2-grid-queries').refresh();
+					}, scope: this}
+				}
+				*/
+			},{
+				title: _('mse2_tab_aliases')
+				,items: [{
+					html: _('mse2_tab_aliases_intro')
+					,border: false
+					,bodyCssClass: 'panel-desc'
+					,bodyStyle: 'margin-bottom: 10px'
+				},{
+					xtype: 'msearch2-grid-aliases'
+					,preventRender: true
+				}]
 			}]
 		}]
 	});

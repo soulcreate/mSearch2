@@ -1,12 +1,12 @@
 <?php
 /** @var array $scriptProperties */
-/** @var mSearch2 $mSearch2 */
-if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
-$mSearch2 = new mSearch2($modx, $scriptProperties);
 /** @var pdoFetch $pdoFetch */
 if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
 $pdoFetch = new pdoFetch($modx, $scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
+/** @var mSearch2 $mSearch2 */
+if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
+$mSearch2 = new mSearch2($modx, $scriptProperties, $pdoFetch);
 
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
@@ -59,6 +59,9 @@ if (empty($resources)) {
 					$fastMode
 				);
 			}
+			if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
+				$output .= '<pre class="mSearchLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';
+			}
 			if (!empty($toPlaceholder)) {
 				$modx->setPlaceholder($toPlaceholder, $output);
 			}
@@ -110,7 +113,7 @@ if (!empty($resources)) {
 }
 
 // Merge all properties and run!
-$pdoFetch->setConfig(array_merge($default, $scriptProperties));
+$pdoFetch->setConfig(array_merge($default, $scriptProperties), false);
 $pdoFetch->addTime('Query parameters are prepared.');
 $rows = $pdoFetch->run();
 

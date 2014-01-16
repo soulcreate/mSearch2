@@ -1,60 +1,53 @@
 <?php
-$xpdo_meta_map['mseWord']= array (
+$xpdo_meta_map['mseQuery']= array (
   'package' => 'msearch2',
   'version' => '1.1',
-  'table' => 'mse2_words',
+  'table' => 'mse2_queries',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'word' => NULL,
-    'resource' => NULL,
-    'weight' => NULL,
+    'query' => NULL,
+    'quantity' => 1,
+    'found' => 0,
   ),
   'fieldMeta' => 
   array (
-    'word' => 
+    'query' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '32',
+      'precision' => '255',
       'phptype' => 'string',
       'null' => false,
       'index' => 'pk',
     ),
-    'resource' => 
+    'quantity' => 
     array (
       'dbtype' => 'integer',
       'precision' => '10',
       'phptype' => 'integer',
-      'attributes' => 'unsigned',
-      'null' => false,
-      'index' => 'pk',
+      'null' => true,
+      'default' => 1,
     ),
-    'weight' => 
+    'found' => 
     array (
       'dbtype' => 'integer',
       'precision' => '10',
       'phptype' => 'integer',
-      'attributes' => 'unsigned',
-      'null' => false,
+      'null' => true,
+      'default' => 0,
     ),
   ),
   'indexes' => 
   array (
-    'word' => 
+    'query' => 
     array (
-      'alias' => 'word',
+      'alias' => 'query',
       'primary' => true,
       'unique' => true,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'word' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-        'resource' => 
+        'query' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -62,16 +55,37 @@ $xpdo_meta_map['mseWord']= array (
         ),
       ),
     ),
-  ),
-  'aggregates' => 
-  array (
-    'Resource' => 
+    'quantity' => 
     array (
-      'class' => 'modResource',
-      'local' => 'resource',
-      'foreign' => 'id',
-      'owner' => 'foreign',
-      'cardinality' => 'one',
+      'alias' => 'quantity',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'quantity' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+    'found' => 
+    array (
+      'alias' => 'found',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'found' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
     ),
   ),
 );

@@ -14,6 +14,10 @@ $_lang['mse2_tab_search'] = 'Search';
 $_lang['mse2_tab_search_intro'] = 'Here you can check how search work on your site.';
 $_lang['mse2_tab_index'] = 'Index';
 $_lang['mse2_tab_index_intro'] = 'This section is responsible for the management of the search index';
+$_lang['mse2_tab_queries'] = 'Queries';
+$_lang['mse2_tab_queries_intro'] = 'There you see a search queries on your site. If you have a lot of irrelevant queries, maybe you need to change the settings for indexing or add aliases.';
+$_lang['mse2_tab_aliases'] = 'Aliases';
+$_lang['mse2_tab_aliases_intro'] = 'Here you can add aliases for words, that will be added to query. Alias can replace the word, it may be useful for correcting users typos, for example "wiskas" &rarr; "whiskas".';
 
 $_lang['mse2_err_no_query'] = 'Your search query is empty.';
 $_lang['mse2_err_no_query_var'] = 'No search query.';
@@ -62,3 +66,22 @@ $_lang['mse2_err_no_filters'] = 'Nothing to filter';
 
 $_lang['mse2_chunk_default'] = 'Default view';
 $_lang['mse2_chunk_alternate'] = 'Alternate view';
+
+$_lang['mse2_query'] = 'Query';
+$_lang['mse2_query_quantity'] = 'Number of queries';
+$_lang['mse2_query_found'] = 'Number of results';
+$_lang['mse2_query_remove'] = 'Remove query';
+$_lang['mse2_query_remove_all'] = 'Remove all queries';
+$_lang['mse2_query_remove_all_confirm'] = 'Are you sure you want to remove all search queries? This operation cannot be undone!';
+$_lang['mse2_query_search'] = 'Search by queries';
+
+$_lang['mse2_alias'] = 'Alias';
+$_lang['mse2_alias_word'] = 'Source word';
+$_lang['mse2_alias_replace'] = 'Replace';
+$_lang['mse2_alias_create'] = 'Add alias';
+$_lang['mse2_alias_update'] = 'Update alias';
+$_lang['mse2_alias_remove'] = 'Remove alias';
+$_lang['mse2_alias_search'] = 'Search by aliases';
+$_lang['mse2_alias_err_rq'] = 'This field is required';
+$_lang['mse2_alias_err_eq'] = 'Alias is equal to word.';
+$_lang['mse2_alias_err_ae'] = 'Alias "[[+alias]]" is already set for word "[[+word]]".';

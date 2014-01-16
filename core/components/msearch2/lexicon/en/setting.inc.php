@@ -21,6 +21,8 @@ $_lang['setting_mse2_index_min_words_length_desc'] = 'Specify the minimum length
 
 $_lang['setting_mse2_search_exact_match_bonus'] = 'Bonus for an exact match';
 $_lang['setting_mse2_search_exact_match_bonus_desc'] = 'Specify the number of points added for an exact match the search phrase and the result. Default is "5".';
+$_lang['setting_mse2_search_exact_match_bonus'] = 'Bonus for an like match';
+$_lang['setting_mse2_search_exact_match_bonus_desc'] = 'Specify the number of points added for an like match the search phrase and the result. Default is "3".';
 $_lang['setting_mse2_search_all_words_bonus'] = 'Bonus for the match whole words';
 $_lang['setting_mse2_search_all_words_bonus_desc'] = 'If a search request consists of several words, and all of them were found in the resource - will assigned extra points. Default is "5".';
 $_lang['setting_mse2_search_split_words'] = 'Breakdown query on the words';

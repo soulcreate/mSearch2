@@ -1,13 +1,13 @@
 <?php
 /** @var array $scriptProperties */
-/** @var mSearch2 $mSearch2 */
-if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
-$mSearch2 = new mSearch2($modx, $scriptProperties);
-$mSearch2->initialize($modx->context->key);
 /** @var pdoFetch $pdoFetch */
 if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
 $pdoFetch = new pdoFetch($modx, $scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
+/** @var mSearch2 $mSearch2 */
+if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
+$mSearch2 = new mSearch2($modx, $scriptProperties, $pdoFetch);
+$mSearch2->initialize($modx->context->key);
 $_SESSION['mFilter2'][$modx->resource->id] = array();
 
 if (empty($queryVar)) {$queryVar = 'query';}
@@ -52,23 +52,33 @@ elseif (isset($_REQUEST[$queryVar])) {
 	if (empty($ids)) {
 		$output['results'] = $modx->lexicon('mse2_err_no_results');
 	}
-	$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
+	else {
+		$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
+	}
 }
 
 $modx->setPlaceholder($plPrefix.$queryVar, $query);
 
 // Has error message - exit
 if (!empty($output['results'])) {
+	$log = '';
+	if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
+		$log = '<pre class="mFilterLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';
+	}
 	if (!empty($toSeparatePlaceholders)) {
+		$output['log'] = $log;
 		$modx->setPlaceholders($output, $toSeparatePlaceholders);
 		return;
 	}
 	elseif (!empty($toPlaceholders)) {
+		$output['log'] = $log;
 		$modx->setPlaceholders($output, $toPlaceholders);
 		return;
 	}
 	else {
-		return $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
+		$output = $pdoFetch->getChunk($scriptProperties['tplOuter'], $output, $fastMode);
+		$output .= $log;
+		return $output;
 	}
 }
 
