@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.0.0 beta
+1.0.0 beta2
 ==============
 - Fixed [[+total]] placeholder for new pdoPage versions.
 - More convenient suggestions.
@@ -12,6 +12,7 @@ Changelog for mSearch2.
 - Improved mSearch2::Highlight() for more exact cutting of text.
 - Enabling of parameter "showLog" of snippets displays also log of search.
 - Added system parameter "like_match_bonus".
+- Fixed possible warnings when word from dictionary has incorrect symbols.
 
 0.9.1 pl2
 ==============

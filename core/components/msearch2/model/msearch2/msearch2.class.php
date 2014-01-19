@@ -254,14 +254,14 @@ class mSearch2 {
 			}
 
 			$result = array();
-			foreach ($base_forms as $lang) {
-				if (!empty($lang)) {
-					foreach ($lang as $word => $forms) {
+			foreach ($base_forms as $array) {
+				if (!empty($array)) {
+					foreach ($array as $word => $forms) {
 						//if (!$forms) {$forms = array($word);}
 						if (!$forms) {continue;}
 						foreach ($forms as $form) {
 							if (preg_match('/^[0-9]{2,}$/', $form) || mb_strlen($form,'UTF-8') >= $this->config['min_word_length']) {
-								$result[$form] = $word;
+								$result[$form] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $word);
 							}
 						}
 					}
@@ -304,11 +304,16 @@ class mSearch2 {
 
 			$result = array();
 			if (!empty($all_forms)) {
-				foreach ($all_forms as $lang) {
-					if (!empty($lang)) {
-						foreach ($lang as $word => $forms) {
+				foreach ($all_forms as $array) {
+					if (!empty($array)) {
+						foreach ($array as $word => $forms) {
 							if (!empty($forms)) {
-								$result[$word] = isset($result[$word]) ? array_merge($result['$word'], $forms) : $forms;
+								foreach ($forms as &$v) {
+									$v = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $v);
+								}
+								$result[$word] = isset($result[$word])
+									? array_merge($result[$word], $forms)
+									: $forms;
 							}
 						}
 					}
@@ -606,11 +611,11 @@ class mSearch2 {
 			}
 
 			$pcre = $strict ? '/\b('.implode('|',$words).')\b/imu' : '/('.implode('|',$words).')/imu';
-			preg_match_all($pcre, $text_cut, $matches);
-
-			foreach ($matches[0] as $v) {
-				$from[$v] = $v;
-				$to[$v] = $htag_open.$v.$htag_close;
+			if (preg_match_all($pcre, $text_cut, $matches)) {
+				foreach ($matches[0] as $v) {
+					$from[$v] = $v;
+					$to[$v] = $htag_open.$v.$htag_close;
+				}
 			}
 			if (!empty($matches[1])) {
 				foreach ($matches[1] as $v) {
