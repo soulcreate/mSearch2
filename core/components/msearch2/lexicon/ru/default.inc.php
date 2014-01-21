@@ -18,6 +18,8 @@ $_lang['mse2_tab_queries'] = 'Запросы';
 $_lang['mse2_tab_queries_intro'] = 'В этой таблице вы видите поисковые запросы на вашем сайте. Если у вас много нерелевантных запросов, возможно вам стоит изменить настройки индексации или добавить синонимы.';
 $_lang['mse2_tab_aliases'] = 'Синонимы';
 $_lang['mse2_tab_aliases_intro'] = 'Вы можете указать синонимы для слов, которые будут автоматически подставляться в запрос. Синоним может заменять указанное слово - будет полезно для исправления пользовательских опечаток, например "wiskas &rarr; whiskas".';
+$_lang['mse2_tab_dictionaries'] = 'Словари';
+$_lang['mse2_tab_dictionaries_intro'] = 'Установите нужные словари из предложенного списка. Для нормальной работы mSearch2 у вас должен быть хотя бы один словарь. После изменения списка словарей сайт нужно обязательно проиндексировать заново.';
 
 $_lang['mse2_err_no_query'] = 'Задан пустой поисковый запрос.';
 $_lang['mse2_err_no_query_var'] = 'Не указан поисковый запрос.';
@@ -85,3 +87,17 @@ $_lang['mse2_alias_search'] = 'Поиск по синонимам';
 $_lang['mse2_alias_err_rq'] = 'Это поле обязательно для заполнения.';
 $_lang['mse2_alias_err_eq'] = 'Синоним ничем не отличается от исходного слова.';
 $_lang['mse2_alias_err_ae'] = 'Синоним "[[+alias]]" для слова "[[+word]]" уже задан.';
+
+$_lang['mse2_dictionary'] = 'Словарь';
+$_lang['mse2_language'] = 'Язык';
+$_lang['mse2_dictionary_installed'] = 'Установлен';
+$_lang['mse2_dictionary_russian'] = 'Русский';
+$_lang['mse2_dictionary_english'] = 'Английский';
+$_lang['mse2_dictionary_german'] = 'Немецкий';
+$_lang['mse2_dictionary_ukrainian'] = 'Украинский';
+$_lang['mse2_dictionary_estonian'] = 'Эстонский';
+$_lang['mse2_dictionary_install'] = 'Установить словарь';
+$_lang['mse2_dictionary_remove'] = 'Удалить словарь';
+$_lang['mse2_dictionary_mirror'] = 'Зеркало Sourceforge';
+$_lang['mse2_dictionary_mirror_select'] = 'Выберите из списка';
+$_lang['mse2_dictionary_err_ns'] = 'Не указан словарь для загрузки';

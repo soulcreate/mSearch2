@@ -68,6 +68,17 @@ mSearch2.panel.Home = function(config) {
 					xtype: 'msearch2-grid-aliases'
 					,preventRender: true
 				}]
+			},{
+				title: _('mse2_tab_dictionaries')
+				,items: [{
+					html: _('mse2_tab_dictionaries_intro')
+					,border: false
+					,bodyCssClass: 'panel-desc'
+					,bodyStyle: 'margin-bottom: 10px'
+				},{
+					xtype: 'msearch2-grid-dictionaries'
+					,preventRender: true
+				}]
 			}]
 		}]
 	});

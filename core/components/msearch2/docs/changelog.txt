@@ -5,6 +5,7 @@ Changelog for mSearch2.
 - Improved load if pdoFetch class.
 - [#9] [mFilter2] Added set of placeholder "mse2_filters_count".
 - Fixed possible incorrect characters in the English dictionary.
+- Added manager page with dictionaries.
 
 1.0.0 beta2
 ==============

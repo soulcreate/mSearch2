@@ -18,6 +18,8 @@ $_lang['mse2_tab_queries'] = 'Queries';
 $_lang['mse2_tab_queries_intro'] = 'There you see a search queries on your site. If you have a lot of irrelevant queries, maybe you need to change the settings for indexing or add aliases.';
 $_lang['mse2_tab_aliases'] = 'Aliases';
 $_lang['mse2_tab_aliases_intro'] = 'Here you can add aliases for words, that will be added to query. Alias can replace the word, it may be useful for correcting users typos, for example "wiskas" &rarr; "whiskas".';
+$_lang['mse2_tab_dictionaries'] = 'Dictionaries';
+$_lang['mse2_tab_dictionaries_intro'] = 'Install the required dictionaries from the list provided. For normal operation mSearch2 you must be at least one dictionary. After changing the list of dictionaries you must reindex your site again.';
 
 $_lang['mse2_err_no_query'] = 'Your search query is empty.';
 $_lang['mse2_err_no_query_var'] = 'No search query.';
@@ -85,3 +87,17 @@ $_lang['mse2_alias_search'] = 'Search by aliases';
 $_lang['mse2_alias_err_rq'] = 'This field is required';
 $_lang['mse2_alias_err_eq'] = 'Alias is equal to word.';
 $_lang['mse2_alias_err_ae'] = 'Alias "[[+alias]]" is already set for word "[[+word]]".';
+
+$_lang['mse2_dictionary'] = 'Dictionary';
+$_lang['mse2_language'] = 'Language';
+$_lang['mse2_dictionary_installed'] = 'Installed';
+$_lang['mse2_dictionary_russian'] = 'Russian';
+$_lang['mse2_dictionary_english'] = 'English';
+$_lang['mse2_dictionary_german'] = 'German';
+$_lang['mse2_dictionary_ukrainian'] = 'Ukrainian';
+$_lang['mse2_dictionary_estonian'] = 'Estonian';
+$_lang['mse2_dictionary_install'] = 'Install dictionary';
+$_lang['mse2_dictionary_remove'] = 'Remove dictionary';
+$_lang['mse2_dictionary_mirror'] = 'Sourceforge mirror';
+$_lang['mse2_dictionary_mirror_select'] = 'Select an option';
+$_lang['mse2_dictionary_err_ns'] = 'The dictionary not set';

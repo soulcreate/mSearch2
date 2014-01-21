@@ -44,6 +44,7 @@ class mSearch2 {
 			,'jsUrl' => $assetsUrl.'js/'
 			,'imagesUrl' => $assetsUrl.'images/'
 			,'customPath' => $corePath.'custom/'
+			,'dictsPath' => $corePath.'phpmorphy/dicts/'
 
 			,'connectorUrl' => $connectorUrl
 			,'actionUrl' => $actionUrl
@@ -54,14 +55,6 @@ class mSearch2 {
 			,'processorsPath' => $corePath.'processors/'
 
 			,'cacheTime' => 1800
-			,'languages' => array(
-				'ru_RU' => array(
-					'storage' => 'file'
-				)
-				,'en_EN' => array(
-					'storage' => 'file'
-				)
-			)
 			,'min_word_length' => $this->modx->getOption('mse2_index_min_words_length', null, 3, true)
 			,'exact_match_bonus' => $this->modx->getOption('mse2_search_exact_match_bonus', null, 5, true)
 			,'like_match_bonus' => $this->modx->getOption('mse2_search_like_match_bonus', null, 3, true)
@@ -181,25 +174,57 @@ class mSearch2 {
 			require_once $this->config['corePath'] . 'phpmorphy/src/common.php';
 		}
 
-		foreach ($this->config['languages'] as $lang => $options) {
+		$dicts = $this->getDictionaries();
+		foreach (array_keys($dicts) as $lang) {
 			if (!empty($this->phpMorphy[$lang]) && $this->phpMorphy[$lang] instanceof phpMorphy) {
-				return true;
+				continue;
 			}
 			else {
 				try {
 					$this->phpMorphy[$lang] = new phpMorphy(
 						$this->config['corePath'] . 'phpmorphy/dicts/'
 						,$lang
-						,$options
+						,array(
+							'storage' => 'file'
+						)
 					);
 				} catch (phpMorphy_Exception $e) {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not initialize phpMorphy for language .'.$lang.': .'.$e->getMessage());
-					return false;
 				}
 			}
 		}
 
-		return true;
+		if (!count($this->phpMorphy)) {
+			$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find any phpMorphy dictionary.');
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+
+	/**
+	 * Get dictionaries from phpMorphy directory
+	 *
+	 * @return array
+	 */
+	public function getDictionaries() {
+		$dicts = array();
+
+		$path = $this->config['dictsPath'];
+		if (!file_exists($path)) {
+			return $dicts;
+		}
+
+		$files = scandir($path);
+		foreach ($files as $file) {
+			if (preg_match('/\.([a-z]{2,2}\_[a-z]{2,2})\./i', $file, $matches)) {
+				$dicts[$matches[1]][] = $file;
+			}
+		}
+
+		return $dicts;
 	}
 
 
