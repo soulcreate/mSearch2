@@ -150,12 +150,11 @@ else {
 
 // Then get filters
 $pdoFetch->addTime('Getting filters for ids: "'.implode(',',$ids).'"');
-$filters = '';
+$filters = ''; $count = 0;
 if (!empty($ids)) {
 	$filters = $mSearch2->getFilters($ids);
 	// And checking by filters count
 	if (!empty($filters) && $scriptProperties['suggestions']) {
-		$count = 0;
 		foreach ($filters as $tmp) {
 			$count += count(array_values($tmp));
 		}
@@ -168,6 +167,7 @@ if (!empty($ids)) {
 		}
 	}
 }
+$modx->setPlaceholder($plPrefix . 'filters_count', $count );
 
 
 // ---------------------- Loading results

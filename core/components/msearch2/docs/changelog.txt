@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.0.0 rc
 ==============
 - Improved load if pdoFetch class.
+- [#9] [mFilter2] Added set of placeholder "mse2_filters_count".
 
 1.0.0 beta2
 ==============
