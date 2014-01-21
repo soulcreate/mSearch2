@@ -254,14 +254,16 @@ class mSearch2 {
 			}
 
 			$result = array();
-			foreach ($base_forms as $array) {
+			foreach ($base_forms as $lang => $array) {
 				if (!empty($array)) {
 					foreach ($array as $word => $forms) {
 						//if (!$forms) {$forms = array($word);}
 						if (!$forms) {continue;}
 						foreach ($forms as $form) {
 							if (preg_match('/^[0-9]{2,}$/', $form) || mb_strlen($form,'UTF-8') >= $this->config['min_word_length']) {
-								$result[$form] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $word);
+								$result[$form] = $lang == 'en_EN'
+									? iconv('WINDOWS-1250', 'UTF-8//IGNORE', $word)
+									: $word;
 							}
 						}
 					}
@@ -304,12 +306,14 @@ class mSearch2 {
 
 			$result = array();
 			if (!empty($all_forms)) {
-				foreach ($all_forms as $array) {
+				foreach ($all_forms as $lang => $array) {
 					if (!empty($array)) {
 						foreach ($array as $word => $forms) {
 							if (!empty($forms)) {
-								foreach ($forms as &$v) {
-									$v = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $v);
+								if ($lang == 'en_EN') {
+									foreach ($forms as &$v) {
+										$v = iconv('WINDOWS-1250', 'UTF-8//IGNORE', $v);
+									}
 								}
 								$result[$word] = isset($result[$word])
 									? array_merge($result[$word], $forms)
