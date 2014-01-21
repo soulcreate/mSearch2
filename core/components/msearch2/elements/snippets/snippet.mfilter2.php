@@ -1,8 +1,9 @@
 <?php
 /** @var array $scriptProperties */
 /** @var pdoFetch $pdoFetch */
-if (!$modx->loadClass('pdofetch', MODX_CORE_PATH . 'components/pdotools/model/pdotools/', false, true)) {return false;}
-$pdoFetch = new pdoFetch($modx, $scriptProperties);
+$fqn = $modx->getOption('pdoFetch.class', null, 'pdotools.pdofetch', true);
+if (!$pdoClass = $modx->loadClass($fqn, '', false, true)) {return false;}
+$pdoFetch = new $pdoClass($modx, $scriptProperties);
 $pdoFetch->addTime('pdoTools loaded.');
 /** @var mSearch2 $mSearch2 */
 if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}

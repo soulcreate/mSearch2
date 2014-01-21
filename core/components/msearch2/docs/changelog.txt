@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.0.0 rc
+==============
+- Improved load if pdoFetch class.
+
 1.0.0 beta2
 ==============
 - Fixed [[+total]] placeholder for new pdoPage versions.
