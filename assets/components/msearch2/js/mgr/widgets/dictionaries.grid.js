@@ -86,7 +86,7 @@ mSearch2.window.installDictionary = function(config) {
 	config = config || {};
 	this.ident = config.ident || 'meudictionary'+Ext.id();
 	Ext.applyIf(config,{
-		title: _('mse2_dictionary_update')
+		title: _('mse2_dictionary_install')
 		,id: this.ident
 		,height: 200
 		,width: 475
