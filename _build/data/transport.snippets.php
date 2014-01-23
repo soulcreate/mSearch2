@@ -6,6 +6,10 @@ $tmp = array(
 	'mSearch2' => array(
 		'file' => 'msearch2'
 		,'description' => ''
+	),
+	'mSearchForm' => array(
+		'file' => 'msearchform'
+		,'description' => ''
 	)
 	,'mFilter2' => array(
 		'file' => 'mfilter2'

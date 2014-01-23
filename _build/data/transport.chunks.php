@@ -4,6 +4,8 @@ $chunks = array();
 
 $tmp = array(
 	'tpl.mSearch2.row' => 'msearch2.row',
+	'tpl.mSearch2.form' => 'msearch2.form',
+	'tpl.mSearch2.ac' => 'msearch2.ac',
 	'tpl.mFilter2.outer' => 'mfilter2.outer',
 	'tpl.mFilter2.filter.outer' => 'mfilter2.filter.outer',
 	'tpl.mFilter2.filter.checkbox' => 'mfilter2.filter.checkbox',

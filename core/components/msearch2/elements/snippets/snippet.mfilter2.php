@@ -9,7 +9,7 @@ $pdoFetch->addTime('pdoTools loaded.');
 if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
 $mSearch2 = new mSearch2($modx, $scriptProperties, $pdoFetch);
 $mSearch2->initialize($modx->context->key);
-$_SESSION['mFilter2'][$modx->resource->id] = array();
+$savedProperties = array();
 
 if (empty($queryVar)) {$queryVar = 'query';}
 if (empty($parentsVar)) {$parentsVar = 'parents';}
@@ -229,7 +229,7 @@ if (!empty($ids)) {
 		}
 
 		$paginatorProperties['start_limit'] = $start_limit;
-		$_SESSION['mFilter2'][$modx->resource->id]['paginatorProperties'] = $paginatorProperties;
+		$savedProperties['paginatorProperties'] = $paginatorProperties;
 
 		// We have a delimeters in $_GET, so need to filter resources
 		if (strpos(implode(array_keys($_GET)), $mSearch2->config['filter_delimeter']) !== false) {
@@ -348,8 +348,10 @@ else {
 }
 $pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
 
-// Saving params into session for ajax requests
-$_SESSION['mFilter2'][$modx->resource->id]['scriptProperties'] = $scriptProperties;
+// Saving params into cache for ajax requests
+$savedProperties['scriptProperties'] = $scriptProperties;
+$hash = sha1(serialize($savedProperties));
+$_SESSION['mSearch2'][$hash] = $savedProperties;
 
 // Active class for sort links
 if (!empty($sort)) {$output[$sort] = $classActive;}
@@ -368,8 +370,8 @@ $config = array(
 	'limit' => $limit == $start_limit ? '' : $limit,
 	'page' => $page,
 	'tpl' => !empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '',
-	'queryVar' => $queryVar,
 	'parentsVar' => $parentsVar,
+	'key' => $hash,
 	$queryVar => isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '',
 	$parentsVar => isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '',
 );

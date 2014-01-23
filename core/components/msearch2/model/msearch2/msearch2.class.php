@@ -34,6 +34,7 @@ class mSearch2 {
 		$this->modx =& $modx;
 
 		$corePath = $this->modx->getOption('msearch2.core_path', $config, $this->modx->getOption('core_path').'components/msearch2/');
+		$assetsPath = $this->modx->getOption('msearch2.assets_path', $config, $this->modx->getOption('assets_path').'components/msearch2/');
 		$assetsUrl = $this->modx->getOption('msearch2.assets_url', $config, $this->modx->getOption('assets_url').'components/msearch2/');
 		$actionUrl = $this->modx->getOption('msearch2.action_url', $config, $assetsUrl.'action.php');
 		$connectorUrl = $assetsUrl.'connector.php';
@@ -42,6 +43,7 @@ class mSearch2 {
 			'assetsUrl' => $assetsUrl
 			,'cssUrl' => $assetsUrl.'css/'
 			,'jsUrl' => $assetsUrl.'js/'
+			,'jsPath' => $assetsPath.'js/'
 			,'imagesUrl' => $assetsUrl.'images/'
 			,'customPath' => $corePath.'custom/'
 			,'dictsPath' => $corePath.'phpmorphy/dicts/'
@@ -67,6 +69,11 @@ class mSearch2 {
 			,'split_words' => $this->modx->getOption('mse2_search_split_words', null, '#\s#', true)
 			,'split_all' => '#\s|[,.:;!?"\'(){}\\/\#]#'
 			,'suggestionsRadio' => array()
+
+			,'autocomplete' => 0
+			,'queryVar' => 'query'
+			,'minQuery' => 3
+			,'pageId' => $modx->resource->id
 		), $config);
 
 		if (!is_array($this->config['languages'])) {
@@ -115,21 +122,27 @@ class mSearch2 {
 						$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
 					}
 					if ($js = trim($this->modx->getOption('mse2_frontend_js'))) {
-						$this->modx->regClientStartupScript(str_replace('					', '', '
-						<script type="text/javascript">
+						$config_js = preg_replace(array('/^\n/', '/\t{5}/'), '', '
 						mSearch2Config = {
 							cssUrl: "'.$this->config['cssUrl'].'web/"
 							,jsUrl: "'.$this->config['jsUrl'].'web/"
 							,actionUrl: "'.$this->config['actionUrl'].'"
-							,pageId: '.$this->modx->resource->id.'
+							,queryVar: "'.$this->config['queryVar'].'"
+							,pageId: '.$this->config['pageId'].'
 							,filter_delimeter: "'.$this->config['filter_delimeter'].'"
 							,method_delimeter: "'.$this->config['method_delimeter'].'"
 							,values_delimeter: "'.$this->config['values_delimeter'].'"
-						};
-						</script>
-					'), true);
+							,autocomplete: "'.$this->config['autocomplete'].'"
+							,minQuery: "'.$this->config['minQuery'].'"
+						};');
+						if (file_put_contents($this->config['jsPath'] . 'web/config.js', $config_js)) {
+							$this->modx->regClientStartupScript($this->config['jsUrl'] . 'web/config.js');
+						}
+						else {
+							$this->modx->regClientStartupScript("<script type=\"text/javascript\">\n".$config_js."\n</script>", true);
+						}
 						if (!empty($js) && preg_match('/\.js$/i', $js)) {
-							$this->modx->regClientScript(str_replace('							', '', '
+							$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
 							<script type="text/javascript">
 							if(typeof jQuery == "undefined") {
 								document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
@@ -609,12 +622,18 @@ class mSearch2 {
 				$words = array_merge($words, $v);
 			}
 
+			if (empty($words)) {
+				$words = array($query => $query);
+			}
+
 			$text_cut = '';
 			foreach ($words as $key => $word) {
+				/*
 				if (!preg_match('/^[0-9]{2,}$/', $word) && mb_strlen($word,'UTF-8') < $this->config['min_word_length']) {
 					unset($words[$key]);
 					continue;
 				}
+				*/
 				$word = preg_quote($word, '/');
 				$words[$key] = $word;
 
@@ -646,6 +665,7 @@ class mSearch2 {
 					$to[$v] = $htag_open.$v.$htag_close;
 				}
 			}
+
 			if (!empty($matches[1])) {
 				foreach ($matches[1] as $v) {
 					$from[$v] = $v;

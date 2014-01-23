@@ -42,7 +42,7 @@ $_lang['mse2_prop_parentsVar'] = 'The name of the variable to additional filter 
 $_lang['mse2_prop_queryVar'] = 'The name of the variable of search query to get it from $_REQUEST. Default is "query"';
 
 $_lang['mse2_prop_paginator'] = 'Snippet for pagination, default is "getPage".';
-$_lang['mse2_prop_element'] = 'Snippet, which will be called пагинатором to output the results of work. Default is "mSearch2".';
+$_lang['mse2_prop_element'] = 'Snippet, which will be called to output the results of work. Default is "mSearch2".';
 $_lang['mse2_prop_resources'] = 'List of resources for output, separated by commas. This list can be filtered by other parameters such as "parents", "showDeleted", "showHidden" and "showUnpublished".';
 $_lang['mse2_prop_showEmptyFilters'] = 'Show filters when it has the only one item.';
 $_lang['mse2_prop_sort'] = 'Comma separated list for sorting resources. It must be set in the form "table|field:direction". Default is "resource:publisedon:desc".';
@@ -64,3 +64,7 @@ $_lang['mse2_prop_tpls'] = 'Comma-separated list of available chunks for rows te
 $_lang['mse2_prop_tplWrapper'] = 'Name of a chunk serving as a wrapper template for the output. Placeholders: [[+output]], [[+total]], [[+query]] and [[+parents]].';
 $_lang['mse2_prop_wrapIfEmpty'] = 'If true, will output the wrapper specified in &tplWrapper even if the output is empty.';
 $_lang['mse2_prop_forceSearch'] = 'Search is required to display the results. If no search query - nothing displays.';
+
+$_lang['mse2_prop_tplForm'] = 'Chunk with form for output.';
+$_lang['mse2_prop_autocomplete'] = 'Configuring autocompletion. The options are: "results" - site search (for output will be called the snippet specified in the "element"), the "queries" - search by table with queries, the "0" - disable autocompletion.';
+$_lang['mse2_prop_pageId'] = 'Id of the page that will be sent to the search query. By default, the current page.';

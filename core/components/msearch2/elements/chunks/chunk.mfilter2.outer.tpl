@@ -1,4 +1,4 @@
-<div class="row" id="mse2_mfilter">
+<div class="row msearch2" id="mse2_mfilter">
 	<div class="span3 col-md-3">
 		<form action="" method="post" id="mse2_filters">
 			[[+filters]]

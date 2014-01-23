@@ -11,6 +11,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 			'pdoTools' => array(
 				'version_major' => 1,
 				'version_minor:>=' => 9,
+				'version_patch:>=' => 1,
 			)
 		);
 
