@@ -146,13 +146,13 @@ var mSearch2 = {
 	}
 
 	,handleSlider: function() {
-		if (!$(this.options.slider).length) {
+		if (!$(mSearch2.options.slider).length) {
 			return false;
 		}
 		else if (!$.ui || !$.ui.slider) {
-			mSearch2.loadJQUI(mSearch2.handleSlider);
+			return mSearch2.loadJQUI(mSearch2.handleSlider);
 		}
-		$(this.options.slider).each(function() {
+		$(mSearch2.options.slider).each(function() {
 			var fieldset = $(this).parents('fieldset');
 			var imin = fieldset.find('input:first');
 			var imax = fieldset.find('input:last');
@@ -412,7 +412,7 @@ mSearch2.Form = {
 				}
 			}
 		})
-		.data("ui-autocomplete")._renderItem = function(ul, item) {
+			.data("ui-autocomplete")._renderItem = function(ul, item) {
 			return $("<li></li>")
 				.data("item.autocomplete", item)
 				.addClass("mse2-ac-wrapper")

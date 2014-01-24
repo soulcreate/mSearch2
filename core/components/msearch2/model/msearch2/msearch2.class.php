@@ -73,12 +73,11 @@ class mSearch2 {
 			,'autocomplete' => 0
 			,'queryVar' => 'query'
 			,'minQuery' => 3
-			,'pageId' => $modx->resource->id
+			,'pageId' => !empty($modx->resource)
+					? $modx->resource->get('id')
+					: $this->modx->getOption('site_start')
 		), $config);
 
-		if (!is_array($this->config['languages'])) {
-			$this->config['languages'] = $modx->fromJSON($this->config['languages']);
-		}
 		if (!is_array($this->config['suggestionsRadio'])) {
 			$this->config['suggestionsRadio'] = array_map('trim', explode(',', $this->config['suggestionsRadio']));
 		}
