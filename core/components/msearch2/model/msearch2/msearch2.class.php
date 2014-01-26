@@ -486,7 +486,7 @@ class mSearch2 {
 
 		// Log the search query
 		/** @var mseQuery $object */
-		if ($object = $this->modx->getObject('mseQuery', array('query' => $string))) {
+		if ($object = $this->modx->getObject('mseQuery', array('query' => $query))) {
 			$object->set('quantity', $object->quantity + 1);
 		}
 		else {
@@ -638,7 +638,7 @@ class mSearch2 {
 
 				// Cutting text on first occurrence
 				$pcre = $strict ? '/\b'.$word.'\b/imu' : '/'.$word.'/imu';
-				if (empty($text_cut) && preg_match($pcre, $text, $matches)) {
+				if (empty($text_cut) && !empty($word) && preg_match($pcre, $text, $matches)) {
 					$pos = mb_stripos($text, $matches[0], 0, 'UTF-8');
 					if ($pos >= $this->config['introCutBefore']) {
 						$text_cut = '... ';

@@ -5,7 +5,7 @@ define('PKG_NAME','mSearch2');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 
 define('PKG_VERSION','1.0.0');
-define('PKG_RELEASE','rc2');
+define('PKG_RELEASE','rc3');
 define('PKG_AUTO_INSTALL', false);
 
 /* define paths */
