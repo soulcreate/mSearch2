@@ -164,6 +164,7 @@ switch ($action) {
 			switch (strtolower($scriptProperties['autocomplete'])) {
 				case 'queries':
 					$query = $string = preg_replace('/[^_-а-яёa-z0-9\s\.\/]+/iu', ' ', $modx->stripTags($query));
+					$query = $mSearch2->addAliases($query);
 					$condition = "`found` > 0 AND (`query` LIKE '%$query%'";
 					$words = $mSearch2->getAllForms($query);
 					foreach ($words as $tmp) {
@@ -178,7 +179,11 @@ switch ($action) {
 					$rows = $pdoFetch->getCollection('mseQuery', '["'.$condition.'"]', $scriptProperties);
 					$i = 1;
 					foreach ($rows as $row) {
-						$row['pagetitle'] = $row['title'] = $mSearch2->Highlight($row['query'], $query);
+						$intro = $mSearch2->Highlight($row['query'], $query);
+						if (empty($intro)) {
+							$intro = $row['query'];
+						}
+						$row['pagetitle'] = $row['title'] = $intro;
 						$row['idx'] = $i;
 						$results[] = array(
 							//'id' => $row['id'],
