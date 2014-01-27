@@ -16,8 +16,6 @@ class mSearch2 {
 	public $filtersHandler = null;
 	/** @var array $phpMorphy */
 	public $phpMorphy = array();
-	/** @var array $initialized */
-	public $initialized = array();
 	/** Cache for filters methods */
 	public $methods = array();
 	/** Cache for filters values */
@@ -76,6 +74,7 @@ class mSearch2 {
 			,'pageId' => !empty($modx->resource)
 					? $modx->resource->get('id')
 					: $this->modx->getOption('site_start')
+			,'config_file' => $assetsPath.'js/web/config.js'
 		), $config);
 
 		if (!is_array($this->config['suggestionsRadio'])) {
@@ -111,9 +110,7 @@ class mSearch2 {
 			default:
 				$this->config = array_merge($this->config, $scriptProperties);
 				$this->config['ctx'] = $ctx;
-				if (!empty($this->initialized[$ctx])) {
-					return true;
-				}
+				$initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/config.js']);
 
 				if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
 					$config = $this->makePlaceholders($this->config);
@@ -121,25 +118,20 @@ class mSearch2 {
 						$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
 					}
 					if ($js = trim($this->modx->getOption('mse2_frontend_js'))) {
-						$config_js = preg_replace(array('/^\n/', '/\t{5}/'), '', '
-						mSearch2Config = {
+						$cx = $this->config['config_suffix'];
+						$config_js = preg_replace(array('/^\n/', '/\t{6}/'), '', '
+						mse2Config'.$cx.' = {
 							cssUrl: "'.$this->config['cssUrl'].'web/"
 							,jsUrl: "'.$this->config['jsUrl'].'web/"
 							,actionUrl: "'.$this->config['actionUrl'].'"
 							,queryVar: "'.$this->config['queryVar'].'"
-							,pageId: '.$this->config['pageId'].'
+							,pageId: "'.$this->config['pageId'].'"
 							,filter_delimeter: "'.$this->config['filter_delimeter'].'"
 							,method_delimeter: "'.$this->config['method_delimeter'].'"
 							,values_delimeter: "'.$this->config['values_delimeter'].'"
-							,autocomplete: "'.$this->config['autocomplete'].'"
-							,minQuery: "'.$this->config['minQuery'].'"
 						};');
-						if (file_put_contents($this->config['jsPath'] . 'web/config.js', $config_js)) {
-							$this->modx->regClientStartupScript($this->config['jsUrl'] . 'web/config.js');
-						}
-						else {
-							$this->modx->regClientStartupScript("<script type=\"text/javascript\">\n".$config_js."\n</script>", true);
-						}
+
+						$this->modx->regClientStartupScript("<script type=\"text/javascript\">\n".$config_js."\n</script>", true);
 						if (!empty($js) && preg_match('/\.js$/i', $js)) {
 							$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
 							<script type="text/javascript">
@@ -152,8 +144,6 @@ class mSearch2 {
 						}
 					}
 				}
-
-				$this->initialized[$ctx] = true;
 		}
 
 		return true;

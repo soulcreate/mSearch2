@@ -222,19 +222,21 @@ switch ($action) {
 						$scriptProperties['resources'] = implode(',', array_keys($found));
 						$rows = $pdoFetch->getCollection('modResource', null, $scriptProperties);
 
-						$i = 0;
-						foreach ($processed as $k => $v) {
-							$row = $rows[$k];
-							$results[] = array(
-								'id' => $row['id'],
-								'url' => $modx->makeUrl($row['id'], '', '', 'full'),
-								'value' => html_entity_decode($row['pagetitle'], ENT_QUOTES, 'UTF-8'),
-								'label' => preg_replace('/\[\[.*?\]\]/', '',
-									isset($processed[$i])
-										? $processed[$i]
-										: $pdoFetch->getChunk($scriptProperties['tpl'], $row)),
-							);
-							$i++;
+						if (!empty($processed[0])) {
+							$i = 0;
+							foreach ($processed as $k => $v) {
+								$row = $rows[$k];
+								$results[] = array(
+									'id' => $row['id'],
+									'url' => $modx->makeUrl($row['id'], '', '', 'full'),
+									'value' => html_entity_decode($row['pagetitle'], ENT_QUOTES, 'UTF-8'),
+									'label' => preg_replace('/\[\[.*?\]\]/', '',
+										isset($processed[$i])
+											? $processed[$i]
+											: $pdoFetch->getChunk($scriptProperties['tpl'], $row)),
+								);
+								$i++;
+							}
 						}
 					}
 			}

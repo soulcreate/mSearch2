@@ -378,9 +378,9 @@ $config = array(
 
 $scripts = '';
 foreach ($config as $k => $v) {
-	$scripts .= "\n\tmSearch2Config.$k = \"$v\";";
+	$scripts .= "\nmse2Config.$k = \"$v\";";
 }
-$modx->regClientStartupScript('<script type="text/javascript">'.$scripts.'</script>');
+$modx->regClientStartupScript("<script type=\"text/javascript\">".$scripts."\n</script>", true);
 $modx->setPlaceholders($config, $plPrefix);
 
 // Prepare output

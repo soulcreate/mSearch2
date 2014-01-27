@@ -40,7 +40,7 @@ var mSearch2 = {
 		this.handleLimit();
 
 		$(document).on('submit', this.options.filters, function(e) {
-			mSearch2Config.page = '';
+			mse2Config.page = '';
 			mSearch2.load();
 			return false;
 		});
@@ -59,7 +59,7 @@ var mSearch2 = {
 			});
 
 			$(document).on('click', this.options.selected + ' a', function(e) {
-				var id = $(this).data('id').replace(mSearch2Config.filter_delimeter, "\\" + mSearch2Config.filter_delimeter);
+				var id = $(this).data('id').replace(mse2Config.filter_delimeter, "\\" + mse2Config.filter_delimeter);
 				$('#' + id).trigger('click');
 				return false;
 			});
@@ -78,7 +78,7 @@ var mSearch2 = {
 
 				var tmp = $(this).prop('href').match(/page[=|\/](\d+)/);
 				var page = tmp && tmp[1] ? Number(tmp[1]) : 1;
-				mSearch2Config.page = (page != mSearch2Config.start_page) ? page : '';
+				mse2Config.page = (page != mse2Config.start_page) ? page : '';
 
 				mSearch2.load('', function() {
 					$('html, body').animate({
@@ -94,9 +94,9 @@ var mSearch2 = {
 	,handleSort: function() {
 		var params = this.Hash.get();
 		if (params.sort) {
-			var sorts = params.sort.split(mSearch2Config.values_delimeter);
+			var sorts = params.sort.split(mse2Config.values_delimeter);
 			for (var i = 0; i < sorts.length; i++) {
-				var tmp = sorts[i].split(mSearch2Config.method_delimeter);
+				var tmp = sorts[i].split(mse2Config.method_delimeter);
 				if (tmp[0] && tmp[1]) {
 					$(this.options.sort_link +'[data-sort="' + tmp[0] + '"').data('dir', tmp[1]).attr('data-dir', tmp[1]).addClass(this.options.active_class);;
 				}
@@ -120,9 +120,9 @@ var mSearch2 = {
 
 			var sort = $(this).data('sort');
 			if (dir) {
-				sort += mSearch2Config.method_delimeter + dir;
+				sort += mse2Config.method_delimeter + dir;
 			}
-			mSearch2Config.sort = (sort != mSearch2Config.start_sort) ? sort : '';
+			mse2Config.sort = (sort != mse2Config.start_sort) ? sort : '';
 			mSearch2.load();
 
 			return false;
@@ -136,7 +136,7 @@ var mSearch2 = {
 				$(this).addClass(mSearch2.options.active_class);
 
 				var tpl = $(this).data('tpl');
-				mSearch2Config.tpl = (tpl != mSearch2Config.start_tpl && tpl != 0) ? tpl : '';
+				mse2Config.tpl = (tpl != mse2Config.start_tpl && tpl != 0) ? tpl : '';
 
 				mSearch2.load();
 			}
@@ -179,7 +179,7 @@ var mSearch2 = {
 			var name = imin.prop('name');
 			var values = mSearch2.Hash.get();
 			if (values[name]) {
-				var tmp = values[name].split(mSearch2Config.values_delimeter);
+				var tmp = values[name].split(mse2Config.values_delimeter);
 				$this.slider('values', 0, tmp[0]);
 				$this.slider('values', 1, tmp[1]);
 				imin.val(tmp[0]);
@@ -196,12 +196,12 @@ var mSearch2 = {
 	,handleLimit: function() {
 		$(document).on('change', this.options.limit, function(e) {
 			var limit = $(this).val();
-			mSearch2Config.page = '';
-			if (limit == mSearch2Config.start_limit) {
-				mSearch2Config.limit = '';
+			mse2Config.page = '';
+			if (limit == mse2Config.start_limit) {
+				mse2Config.limit = '';
 			}
 			else {
-				mSearch2Config.limit = limit;
+				mse2Config.limit = limit;
 			}
 			mSearch2.load();
 		});
@@ -231,16 +231,16 @@ var mSearch2 = {
 		if (!params) {
 			params = this.getFilters();
 		}
-		if (mSearch2Config[mSearch2Config.queryVar] != '') {params[mSearch2Config.queryVar] = mSearch2Config[mSearch2Config.queryVar];}
-		if (mSearch2Config[mSearch2Config.parentsVar] != '') {params[mSearch2Config.parentsVar] = mSearch2Config[mSearch2Config.parentsVar];}
-		if (mSearch2Config.sort != '') {params.sort = mSearch2Config.sort;}
-		if (mSearch2Config.tpl != '') {params.tpl = mSearch2Config.tpl;}
-		if (mSearch2Config.page > 0) {params.page = mSearch2Config.page;}
-		if (mSearch2Config.limit > 0) {params.limit = mSearch2Config.limit;}
+		if (mse2Config[mse2Config.queryVar] != '') {params[mse2Config.queryVar] = mse2Config[mse2Config.queryVar];}
+		if (mse2Config[mse2Config.parentsVar] != '') {params[mse2Config.parentsVar] = mse2Config[mse2Config.parentsVar];}
+		if (mse2Config.sort != '') {params.sort = mse2Config.sort;}
+		if (mse2Config.tpl != '') {params.tpl = mse2Config.tpl;}
+		if (mse2Config.page > 0) {params.page = mse2Config.page;}
+		if (mse2Config.limit > 0) {params.limit = mse2Config.limit;}
 
 		for (var i in this.sliders) {
 			if (this.sliders.hasOwnProperty(i) && params[i]) {
-				if (this.sliders[i].join(mSearch2Config.values_delimeter) == params[i]) {
+				if (this.sliders[i].join(mse2Config.values_delimeter) == params[i]) {
 					delete params[i];
 				}
 			}
@@ -248,11 +248,11 @@ var mSearch2 = {
 
 		this.Hash.set(params);
 		params.action = 'filter';
-		params.pageId = mSearch2Config.pageId;
+		params.pageId = mse2Config.pageId;
 
 		this.beforeLoad();
-		params.key = mSearch2Config.key;
-		$.post(mSearch2Config.actionUrl, params, function(response) {
+		params.key = mse2Config.key;
+		$.post(mse2Config.actionUrl, params, function(response) {
 			mSearch2.afterLoad();
 			if (response.success) {
 				mSearch2.Message.success(response.message);
@@ -277,7 +277,7 @@ var mSearch2 = {
 		var data = {};
 		$.map(this.filters.serializeArray(), function(n, i) {
 			if (data[n['name']]) {
-				data[n['name']] += mSearch2Config.values_delimeter + n['value'];
+				data[n['name']] += mse2Config.values_delimeter + n['value'];
 			}
 			else {
 				data[n['name']] = n['value'];
@@ -294,7 +294,7 @@ var mSearch2 = {
 				for (var value in arr) {
 					if (arr.hasOwnProperty(value)) {
 						var count = arr[value];
-						var selector = filter.replace(mSearch2Config.filter_delimeter, "\\" + mSearch2Config.filter_delimeter);
+						var selector = filter.replace(mse2Config.filter_delimeter, "\\" + mse2Config.filter_delimeter);
 						var input = $('#' + mSearch2.options.prefix + selector, mSearch2.filters).find('[value="' + value + '"]');
 						var proptype = input.prop('type');
 						if (proptype != 'checkbox' && proptype != 'radio') {continue;}
@@ -355,10 +355,10 @@ var mSearch2 = {
 		$('<link/>', {
 			rel: 'stylesheet',
 			type: 'text/css',
-			href: mSearch2Config.cssUrl + 'redmond/jquery-ui-1.10.4.custom.min.css'
+			href: mse2Config.cssUrl + 'redmond/jquery-ui-1.10.4.custom.min.css'
 		}).appendTo('head');
 
-		return $.getScript(mSearch2Config.jsUrl + 'lib/jquery-ui-1.10.4.custom.min.js', function() {
+		return $.getScript(mse2Config.jsUrl + 'lib/jquery-ui-1.10.4.custom.min.js', function() {
 			if (typeof callback == 'function') {
 				callback(parameters);
 			}
@@ -369,58 +369,63 @@ var mSearch2 = {
 
 mSearch2.Form = {
 	initialize: function(selector) {
-		if (mSearch2Config.autocomplete == '0' || mSearch2Config.autocomplete == 'false') {
-			return false;
-		}
-		else if (!$.ui || !$.ui.autocomplete) {
-			return mSearch2.loadJQUI(mSearch2.Form.initialize, selector);
-		}
 
-		var cache = {};
-		$(selector + ' input[name="' + mSearch2Config.queryVar + '"]').autocomplete({
-			source: function(request, callback) {
-				if (request.term in cache) {
-					callback(cache[request.term]);
-					return;
+		$(selector).each(function() {
+			var form = $(this);
+			var config = mse2Config[form.data('key')];
+			var cache = {};
+
+			if (config.autocomplete == '0' || config.autocomplete == 'false') {
+				return false;
+			}
+			else if (!$.ui || !$.ui.autocomplete) {
+				return mSearch2.loadJQUI(mSearch2.Form.initialize, selector);
+			}
+
+			form.find('input[name="' + config.queryVar + '"]').autocomplete({
+				source: function(request, callback) {
+					if (request.term in cache) {
+						callback(cache[request.term]);
+						return;
+					}
+					var data = {
+						action: 'search'
+						,key: form.data('key')
+						,pageId: config.pageId
+					};
+					data[config.queryVar] = request.term;
+					$.post(mse2Config.actionUrl, data, function(response) {
+						if (response.data.log) {
+							$('.mSearchFormLog').html(response.data.log);
+						}
+						else {
+							$('.mSearchFormLog').html('');
+						}
+						cache[request.term] = response.data.results;
+						callback(response.data.results)
+					}, 'json');
 				}
-				var data = {
-					action: 'search'
-					,key: $(selector).data('key')
-					,pageId: mSearch2Config.pageId
-				};
-				data[mSearch2Config.queryVar] = request.term;
-				$.post(mSearch2Config.actionUrl, data, function(response) {
-					if (response.data.log) {
-						$('.mSearchFormLog').html(response.data.log);
+				,minLength: config.minQuery || 3
+				,select: function(event,ui) {
+					if (ui.item.url) {
+						document.location.href = ui.item.url;
 					}
 					else {
-						$('.mSearchFormLog').html('');
+						setTimeout(function() {
+							form.submit();
+						}, 100);
 					}
-					cache[request.term] = response.data.results;
-					callback(response.data.results)
-				}, 'json');
-			}
-			,minLength: mSearch2Config.minQuery || 3
-			,select: function(event,ui) {
-				if (ui.item.url) {
-					document.location.href = ui.item.url;
 				}
-				else {
-					setTimeout(function() {
-						$(selector).submit();
-					}, 100);
-				}
-			}
-		})
+			})
 			.data("ui-autocomplete")._renderItem = function(ul, item) {
-			return $("<li></li>")
-				.data("item.autocomplete", item)
-				.addClass("mse2-ac-wrapper")
-				.append("<a class=\"mse2-ac-link\">"+ item.label + "</a>")
-				.appendTo(ul);
-		};
-
-		return true;
+				return $("<li></li>")
+					.data("item.autocomplete", item)
+					.addClass("mse2-ac-wrapper")
+					.append("<a class=\"mse2-ac-link\">"+ item.label + "</a>")
+					.appendTo(ul);
+			};
+			return true;
+		});
 	}
 };
 
@@ -509,6 +514,6 @@ if ($('#mse2_mfilter').length) {
 	}
 }
 // Initialize Form
-if ($('form.msearch2').length && mSearch2Config.autocomplete) {
+if ($('form.msearch2').length) {
 	mSearch2.Form.initialize('form.msearch2');
 }

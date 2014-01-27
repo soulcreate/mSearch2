@@ -8,12 +8,18 @@ $pdoTools->addTime('pdoTools loaded.');
 
 /** @var mSearch2 $mSearch2 */
 if (!$modx->loadClass('msearch2', MODX_CORE_PATH . 'components/msearch2/model/msearch2/', false, true)) {return false;}
-$mSearch2 = new mSearch2($modx, $scriptProperties, $pdoFetch);
+$mSearch2 = new mSearch2($modx, array(), $pdoFetch);
 $mSearch2->initialize($modx->context->key);
 
-if (empty($scriptProperties['pageId'])) {$scriptProperties['pageId'] = $modx->resource->id;}
-if (empty($tplForm)) {$tplForm = 'tpl.mSearch2.form';}
+$config = array(
+	'autocomplete' => !empty($autocomplete) ? $autocomplete : 'results',
+	'queryVar' => !empty($queryVar) ? $queryVar : 'query',
+	'minQuery' => !empty($minQuery) ? (integer) $minQuery : 3,
+	'pageId' => !empty($pageId) ? (integer) $pageId : $modx->resource->id,
+);
+$scriptProperties = array_merge($scriptProperties, $config);
 
+if (empty($tplForm)) {$tplForm = 'tpl.mSearch2.form';}
 $form = $pdoTools->getChunk($tplForm, $scriptProperties);
 
 $hash = sha1(serialize($scriptProperties));
@@ -24,5 +30,9 @@ $form = str_ireplace('<form', '<form data-key="'.$hash.'"', $form);
 if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 	$form = str_ireplace('</form>', "</form>\n<pre class=\"mSearchFormLog\"></pre>", $form);
 }
+
+$scripts = "\nmse2Config['$hash'] = ".$modx->toJSON($config);
+$initialized = false;
+$modx->regClientStartupScript("<script type=\"text/javascript\">".$scripts."\n</script>", true);
 
 return $form;
