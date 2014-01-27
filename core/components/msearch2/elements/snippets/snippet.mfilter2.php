@@ -372,6 +372,7 @@ $config = array(
 	'tpl' => !empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '',
 	'parentsVar' => $parentsVar,
 	'key' => $hash,
+	'pageId' => !empty($pageId) ? (integer) $pageId : $modx->resource->id,
 	$queryVar => isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '',
 	$parentsVar => isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '',
 );

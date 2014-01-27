@@ -71,9 +71,6 @@ class mSearch2 {
 			,'autocomplete' => 0
 			,'queryVar' => 'query'
 			,'minQuery' => 3
-			,'pageId' => !empty($modx->resource)
-					? $modx->resource->get('id')
-					: $this->modx->getOption('site_start')
 			,'config_file' => $assetsPath.'js/web/config.js'
 		), $config);
 
@@ -125,7 +122,6 @@ class mSearch2 {
 							,jsUrl: "'.$this->config['jsUrl'].'web/"
 							,actionUrl: "'.$this->config['actionUrl'].'"
 							,queryVar: "'.$this->config['queryVar'].'"
-							,pageId: "'.$this->config['pageId'].'"
 							,filter_delimeter: "'.$this->config['filter_delimeter'].'"
 							,method_delimeter: "'.$this->config['method_delimeter'].'"
 							,values_delimeter: "'.$this->config['values_delimeter'].'"
