@@ -524,7 +524,7 @@ class mSearch2 {
 
 		$pcre = $this->config['split_words'];
 		$words = preg_split($pcre, $string, -1, PREG_SPLIT_NO_EMPTY);
-		$words = array_unique($words);
+		$words = array_map('mb_strtolower', array_unique($words));
 		$forms = $this->getBaseForms($words, false);
 
 		$q = $this->modx->newQuery('mseAlias', array('word:IN' => array_merge($words, array_keys($forms))));
@@ -535,9 +535,10 @@ class mSearch2 {
 			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				if ($row['replace']) {
-					$all = $this->getAllForms($row['word']);
-					foreach (current($all) as $word) {
-						$key = array_search($word, $words);
+					$all = current($this->getAllForms($row['word']));
+					$all[] = $row['word'];
+					foreach ($all as $word) {
+						$key = array_search(mb_strtolower($word), $words);
 						if ($key !== false) {
 							$words[$key] = $row['alias'];
 						}
