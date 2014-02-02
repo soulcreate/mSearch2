@@ -107,37 +107,22 @@ class mSearch2 {
 			default:
 				$this->config = array_merge($this->config, $scriptProperties);
 				$this->config['ctx'] = $ctx;
-				$initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/config.js']);
+				//$initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/config.js']);
 
 				if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
 					$config = $this->makePlaceholders($this->config);
-					if ($css = $this->modx->getOption('mse2_frontend_css')) {
+					if ($css = trim($this->modx->getOption('mse2_frontend_css'))) {
 						$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
 					}
 					if ($js = trim($this->modx->getOption('mse2_frontend_js'))) {
-						$cx = $this->config['config_suffix'];
-						$config_js = preg_replace(array('/^\n/', '/\t{6}/'), '', '
-						mse2Config'.$cx.' = {
-							cssUrl: "'.$this->config['cssUrl'].'web/"
-							,jsUrl: "'.$this->config['jsUrl'].'web/"
-							,actionUrl: "'.$this->config['actionUrl'].'"
-							,queryVar: "'.$this->config['queryVar'].'"
-							,filter_delimeter: "'.$this->config['filter_delimeter'].'"
-							,method_delimeter: "'.$this->config['method_delimeter'].'"
-							,values_delimeter: "'.$this->config['values_delimeter'].'"
-						};');
-
-						$this->modx->regClientStartupScript("<script type=\"text/javascript\">\n".$config_js."\n</script>", true);
-						if (!empty($js) && preg_match('/\.js$/i', $js)) {
-							$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
-							<script type="text/javascript">
-							if(typeof jQuery == "undefined") {
-								document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
-							}
-							</script>
-							'), true);
-							$this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
+						$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
+						<script type="text/javascript">
+						if(typeof jQuery == "undefined") {
+							document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
 						}
+						</script>
+						'), true);
+						$this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
 					}
 				}
 		}

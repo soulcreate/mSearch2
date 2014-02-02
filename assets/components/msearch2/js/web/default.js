@@ -372,7 +372,7 @@ mSearch2.Form = {
 
 		$(selector).each(function() {
 			var form = $(this);
-			var config = mse2Config[form.data('key')];
+			var config = mse2FormConfig[form.data('key')];
 			var cache = {};
 
 			if (config.autocomplete == '0' || config.autocomplete == 'false') {

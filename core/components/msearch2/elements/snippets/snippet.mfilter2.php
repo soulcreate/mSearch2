@@ -362,6 +362,13 @@ if (isset($paginatorProperties['tpl_idx'])) {
 
 // Setting values for frontend javascript
 $config = array(
+	'cssUrl' => $mSearch2->config['cssUrl'].'web/',
+	'jsUrl' => $mSearch2->config['jsUrl'].'web/',
+	'actionUrl' => $mSearch2->config['actionUrl'],
+	'queryVar' => $mSearch2->config['queryVar'],
+	'filter_delimeter' => $mSearch2->config['filter_delimeter'],
+	'method_delimeter' => $mSearch2->config['method_delimeter'],
+	'values_delimeter' => $mSearch2->config['values_delimeter'],
 	'start_sort' => $start_sort,
 	'start_limit' => $start_limit,
 	'start_page' => 1,
@@ -377,11 +384,10 @@ $config = array(
 	$parentsVar => isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '',
 );
 
-$scripts = '';
-foreach ($config as $k => $v) {
-	$scripts .= "\nmse2Config.$k = \"$v\";";
-}
-$modx->regClientStartupScript("<script type=\"text/javascript\">".$scripts."\n</script>", true);
+$modx->regClientStartupScript('
+<script type="text/javascript">
+mse2Config = '.$modx->toJSON($config).';
+</script>', true);
 $modx->setPlaceholders($config, $plPrefix);
 
 // Prepare output

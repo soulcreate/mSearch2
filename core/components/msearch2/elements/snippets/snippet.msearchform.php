@@ -31,8 +31,19 @@ if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 	$form = str_ireplace('</form>', "</form>\n<pre class=\"mSearchFormLog\"></pre>", $form);
 }
 
-$scripts = "\nmse2Config['$hash'] = ".$modx->toJSON($config);
-$initialized = false;
-$modx->regClientStartupScript("<script type=\"text/javascript\">".$scripts."\n</script>", true);
+// Setting values for frontend javascript
+$main_config = array(
+	'cssUrl' => $mSearch2->config['cssUrl'].'web/',
+	'jsUrl' => $mSearch2->config['jsUrl'].'web/',
+	'actionUrl' => $mSearch2->config['actionUrl'],
+);
+
+$modx->regClientStartupScript('
+<script type="text/javascript">
+if (typeof mse2Config == "undefined") {mse2Config = '.$modx->toJSON($main_config).';}
+if (typeof mse2FormConfig == "undefined") {mse2FormConfig = {};}
+mse2FormConfig["'.$hash.'"] = '.$modx->toJSON($config).';
+</script>'
+, true);
 
 return $form;
