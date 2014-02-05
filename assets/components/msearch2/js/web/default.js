@@ -187,17 +187,21 @@ var mSearch2 = {
 			}
 
 			//imin.attr('readonly', true);
-			imin.on('change keyup input click', function() {
+			imin.on('change keyup input click', function(e) {
 				if (this.value.match(/[^0-9]/g)) {this.value = this.value.replace(/[^0-9]/g, '');}
-				if (this.value > vmax) {this.value = vmax;}
-				else if (this.value < vmin) {this.value = vmin;}
+				if (e.type != 'keyup' && e.type != 'input') {
+					if (this.value > vmax) {this.value = vmax;}
+					else if (this.value < vmin) {this.value = vmin;}
+				}
 				$this.slider('values',0,this.value);
 			});
 			//imax.attr('readonly', true);
-			imax.on('change keyup input click', function() {
+			imax.on('change keyup input click', function(e) {
 				if (this.value.match(/[^0-9]/g)) {this.value = this.value.replace(/[^0-9]/g, '');}
-				if (this.value > vmax) {this.value = vmax;}
-				else if (this.value < vmin) {this.value = vmin;}
+				if (e.type != 'keyup' && e.type != 'input') {
+					if (this.value > vmax) {this.value = vmax;}
+					else if (this.value < vmin) {this.value = vmin;}
+				}
 				$this.slider('values',1,this.value);
 			});
 			mSearch2.sliders[imin.prop('name')] = [vmin,vmax];
