@@ -186,8 +186,20 @@ var mSearch2 = {
 				imax.val(tmp[1]);
 			}
 
-			imin.attr('readonly', true);
-			imax.attr('readonly', true);
+			//imin.attr('readonly', true);
+			imin.on('change keyup input click', function() {
+				if (this.value.match(/[^0-9]/g)) {this.value = this.value.replace(/[^0-9]/g, '');}
+				if (this.value > vmax) {this.value = vmax;}
+				else if (this.value < vmin) {this.value = vmin;}
+				$this.slider('values',0,this.value);
+			});
+			//imax.attr('readonly', true);
+			imax.on('change keyup input click', function() {
+				if (this.value.match(/[^0-9]/g)) {this.value = this.value.replace(/[^0-9]/g, '');}
+				if (this.value > vmax) {this.value = vmax;}
+				else if (this.value < vmin) {this.value = vmin;}
+				$this.slider('values',1,this.value);
+			});
 			mSearch2.sliders[imin.prop('name')] = [vmin,vmax];
 		});
 		return true;

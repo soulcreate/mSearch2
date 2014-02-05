@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.0.0 rc6
+1.0.0 rc7
 ==============
 - Improved load if pdoFetch class.
 - [#9] [mFilter2] Added set of placeholder "mse2_filters_count".
@@ -9,6 +9,7 @@ Changelog for mSearch2.
 - Added new snippet "mSearchForm" with autocomplete.
 - Improved registering of frontend scripts.
 - Fixed replacement of aliases in the search query.
+- Improved javascript slider
 
 1.0.0 beta2
 ==============
