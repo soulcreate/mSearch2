@@ -509,9 +509,8 @@ class mSearch2 {
 
 		$pcre = $this->config['split_words'];
 		$words = preg_split($pcre, $string, -1, PREG_SPLIT_NO_EMPTY);
-		$words = array_map('mb_strtolower', array_unique($words));
+		$words = array_unique($words);
 		$forms = $this->getBaseForms($words, false);
-
 		$q = $this->modx->newQuery('mseAlias', array('word:IN' => array_merge($words, array_keys($forms))));
 		$q->select('word,alias,replace');
 		$tstart = microtime(true);

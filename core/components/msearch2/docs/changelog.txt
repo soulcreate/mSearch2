@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.0.0 rc7
+1.0.0 pl
 ==============
 - Improved load if pdoFetch class.
 - [#9] [mFilter2] Added set of placeholder "mse2_filters_count".
@@ -10,6 +10,7 @@ Changelog for mSearch2.
 - Improved registering of frontend scripts.
 - Fixed replacement of aliases in the search query.
 - Improved javascript slider
+- Fixed overwriting parameters &sortby and &sortdir. Parameter &sort has priority.
 
 1.0.0 beta2
 ==============

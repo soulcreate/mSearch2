@@ -16,12 +16,15 @@ class mse2FiltersHandler {
 		}
 		$this->config = array_merge(array(
 			'sortAliases' => array(
-				'ms' => 'Data'
-				,'ms_data' => 'Data'
-				,'ms_product' => 'msProduct'
-				,'ms_vendor' => 'Vendor'
-				,'tv' => 'TV'
-				,'resource' => !empty($config['class']) && strtolower($config['class']) == 'msproduct' ? 'msProduct' : 'modResource'
+				'ms' => 'Data',
+				'ms_data' => 'Data',
+				'ms_product' => 'msProduct',
+				'ms_category' => 'msCategory',
+				'ms_vendor' => 'Vendor',
+				'tv' => 'TV',
+				'resource' => !empty($config['class']) && strtolower($config['class']) == 'msproduct'
+					? 'msProduct'
+					: 'modResource',
 			)
 		), $config);
 	}

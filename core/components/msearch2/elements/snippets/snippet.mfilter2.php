@@ -212,14 +212,17 @@ if (!empty($ids)) {
 		}
 
 		if (!empty($_REQUEST['sort'])) {$sort = $_REQUEST['sort'];}
-		else if (!empty($start_sort)) {$sort = $start_sort;}
+		elseif (!empty($start_sort)) {$sort = $start_sort;}
 		else {
+			/*
 			$sortby = !empty($scriptProperties['sortby']) ? $scriptProperties['sortby'] : '';
 			if (!empty($sortby)) {
 				$sortdir = !empty($scriptProperties['sortdir']) ? $scriptProperties['sortdir'] : 'asc';
 				$sort = $sortby.$mSearch2->config['method_delimeter'].$sortdir;
 			}
+			*/
 		}
+
 		if (!empty($_REQUEST[$paginatorProperties['pageVarKey']])) {
 			$page = (int) $_REQUEST[$paginatorProperties['pageVarKey']];
 		}
