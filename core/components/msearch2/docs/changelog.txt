@@ -1,9 +1,10 @@
 Changelog for mSearch2.
 
-1.0.0 pl
+1.0.0 pl1
 ==============
-- Improved load if pdoFetch class.
+- [#10] [mFilter2] Fixed bug with sort in Safari and Firefox.
 - [#9] [mFilter2] Added set of placeholder "mse2_filters_count".
+- Improved load if pdoFetch class.
 - Fixed possible incorrect characters in the English dictionary.
 - Added manager page with dictionaries.
 - Added new snippet "mSearchForm" with autocomplete.
