@@ -670,9 +670,8 @@ class mse2FiltersHandler {
 	public function filterNumber(array $requested, array $values, array $ids) {
 		$matched = array();
 
-		sort($requested);
-		$min = floor(array_shift($requested));
-		$max = ceil(array_pop($requested));
+		$min = floor(min($requested));
+		$max = ceil(max($requested));
 
 		$tmp = array_flip($ids);
 		foreach ($values as $number => $resources) {

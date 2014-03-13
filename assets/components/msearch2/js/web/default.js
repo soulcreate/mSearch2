@@ -180,10 +180,8 @@ var mSearch2 = {
 			var values = mSearch2.Hash.get();
 			if (values[name]) {
 				var tmp = values[name].split(mse2Config.values_delimeter);
-				$this.slider('values', 0, tmp[0]);
-				$this.slider('values', 1, tmp[1]);
 				imin.val(tmp[0]);
-				imax.val(tmp[1]);
+				imax.val(tmp.length > 1 ? tmp[1] : tmp[0]);
 			}
 
 			//imin.attr('readonly', true);
@@ -204,7 +202,12 @@ var mSearch2 = {
 				}
 				$this.slider('values',1,this.value);
 			});
-			mSearch2.sliders[imin.prop('name')] = [vmin,vmax];
+
+			if (values[name]) {
+				imin.add(imax).trigger('click');
+			}
+
+			mSearch2.sliders[name] = [vmin,vmax];
 		});
 		return true;
 	}
