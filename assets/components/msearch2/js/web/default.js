@@ -346,7 +346,7 @@ var mSearch2 = {
 	
 	,setEmptyFieldsets: function() {
 		this.filters.find('fieldset').each(function(e) {
-			var all_children_disabled = $(this).find('label:not(.'+mSearch2.options.disabled_class_fieldsets+')').length == 0;
+			var all_children_disabled = $(this).find('label:not(.'+mSearch2.options.disabled_class+')').length == 0;
 			if (all_children_disabled) {
 				$(this).addClass(mSearch2.options.disabled_class_fieldsets);
 			}
