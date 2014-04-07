@@ -17,6 +17,7 @@ var mSearch2 = {
 
 		,active_class: 'active'
 		,disabled_class: 'disabled'
+		,disabled_class_fieldsets: 'disabled_fieldsets'
 		,prefix: 'mse2_'
 		,suggestion: 'sup' // inside filter item, e.g. #mse2_filters
 	}
@@ -64,7 +65,7 @@ var mSearch2 = {
 				return false;
 			});
 		}
-
+		mSearch2.setEmptyFieldsets();
 		mSearch2.setTotal(this.total.text());
 		return true;
 	}
@@ -279,6 +280,7 @@ var mSearch2 = {
 				mSearch2.pagination.html(response.data.pagination);
 				mSearch2.setTotal(response.data.total);
 				mSearch2.setSuggestions(response.data.suggestions);
+				mSearch2.setEmptyFieldsets();
 				if (response.data.log) {
 					$('.mFilterLog').html(response.data.log);
 				}
@@ -340,6 +342,18 @@ var mSearch2 = {
 				}
 			}
 		}
+	}
+	
+	,setEmptyFieldsets: function() {
+		this.filters.find('fieldset').each(function(e) {
+			var all_children_disabled = $(this).find('label:not(.'+mSearch2.options.disabled_class_fieldsets+')').length == 0;
+			if (all_children_disabled) {
+				$(this).addClass(mSearch2.options.disabled_class_fieldsets);
+			}
+			if (!all_children_disabled && $(this).hasClass(mSearch2.options.disabled_class_fieldsets)) {
+				$(this).removeClass(mSearch2.options.disabled_class_fieldsets);
+			}
+		});
 	}
 
 	,setTotal: function(total) {
