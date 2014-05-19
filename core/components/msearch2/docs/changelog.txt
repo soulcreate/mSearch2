@@ -4,6 +4,7 @@ Changelog for mSearch2.
 ==============
 - [#14] Added passing of the filter name in the method of build.
 - Improved support of TVs with type "listbox" and "tag".
+- Do not call highlight method on search results if query is empty.
 
 1.0.0 pl1
 ==============
