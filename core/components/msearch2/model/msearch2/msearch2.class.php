@@ -551,6 +551,7 @@ class mSearch2 {
 	 * @return mixed
 	 */
 	public function Highlight($text, $query, $htag_open = '<b>', $htag_close = '</b>', $strict = true) {
+		if (empty($query)) { return $text; }
 		$from = $to = array();
 
 		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
