@@ -723,7 +723,9 @@ class mSearch2 {
 			foreach ($built as $filter => &$value) {
 				list($table, $filter) = explode($this->config['filter_delimeter'], $filter);
 				$values = $filters[$table][$filter];
-
+				if ($table == 'tv' && $value == 'default') {
+					$value = 'tvs';
+				}
 				$method = 'build'.ucfirst($value).'Filter';
 				if (method_exists($this->filtersHandler, $method)) {
 					$value = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));

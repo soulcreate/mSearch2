@@ -43,12 +43,15 @@ class mse2FiltersHandler {
 		$q = $this->modx->newQuery('modTemplateVarResource');
 		$q->innerJoin('modTemplateVar', 'modTemplateVar', '`modTemplateVarResource`.`tmplvarid` = `modTemplateVar`.`id` AND `modTemplateVar`.`name` IN ("' . implode('","', $tvs).'")');
 		$q->where(array('`modTemplateVarResource`.`contentid`:IN' => $ids));
-		$q->select('`name`,`contentid`,`value`');
+		$q->select('`name`,`contentid`,`value`,`type`');
 		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
 			$this->modx->queryTime += microtime(true) - $tstart;
 			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+				if ($row['type'] == 'tag') {
+					$row['value'] = str_replace(',', '||', $row['value']);
+				}
 				$tmp = strpos($row['value'], '||') !== false
 					? explode('||', $row['value'])
 					: array($row['value']);
@@ -298,6 +301,56 @@ class mse2FiltersHandler {
 					,'resources' => $ids
 				);
 			}
+		}
+
+		ksort($results);
+		return $results;
+	}
+
+
+
+	/**
+	 * Prepares values for filter
+	 * Retrieves names of multiselect TVs
+	 *
+	 * @param array $values IDs of resources
+	 * @param string $name Name of template variable
+	 *
+	 * @return array Prepared values
+	 */
+	public function buildTVsFilter(array $values, $name = '') {
+		$keys = array_keys($values);
+		if (empty($keys) || (count($keys) < 2 && empty($this->config['showEmptyFilters']))) {
+			return array();
+		}
+
+		$results = $names = array();
+		$q = $this->modx->newQuery('modTemplateVar', array('name' => $name/*, 'type:IN' => array('listbox','listbox-multiple')*/));
+		$q->select('elements');
+		$tstart = microtime(true);
+		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
+			$tmp = $q->stmt->fetchColumn();
+			$names = array();
+			if (strpos($tmp, '||') && strpos($tmp, '==')) {
+				$tmp = explode('||', $tmp);
+				foreach ($tmp as $v) {
+					list($key, $value) = explode('==', $v);
+					if ($key && $value) {
+						$names[$value] = $key;
+					}
+				}
+			}
+		}
+		foreach ($values as $value => $ids) {
+			$title = isset($names[$value]) ? $names[$value] : $value;
+			$results[$title] = array(
+				'title' => $title,
+				'value' => $value,
+				'type' => 'tv',
+				'resources' => $ids,
+			);
 		}
 
 		ksort($results);

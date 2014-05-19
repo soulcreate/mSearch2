@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.0.1 pl
 ==============
 - [#14] Added passing of the filter name in the method of build.
+- Improved support of TVs with type "listbox" and "tag".
 
 1.0.0 pl1
 ==============
