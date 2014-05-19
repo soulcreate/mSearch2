@@ -726,7 +726,7 @@ class mSearch2 {
 
 				$method = 'build'.ucfirst($value).'Filter';
 				if (method_exists($this->filtersHandler, $method)) {
-					$value = call_user_func_array(array($this->filtersHandler, $method), array($values));
+					$value = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
 				}
 				else {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not build filter "'.$table.$this->config['filter_delimeter'].$filter.'"');
