@@ -203,10 +203,11 @@ class mse2FiltersHandler {
 	 * Sorts and returns given values
 	 *
 	 * @param array $values
+	 * @param string $name
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildDefaultFilter(array $values) {
+	public function buildDefaultFilter(array $values, $name = '') {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
@@ -231,10 +232,11 @@ class mse2FiltersHandler {
 	 * Returns array with minimum and maximum value
 	 *
 	 * @param array $values
+	 * @param string $name
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildNumberFilter(array $values) {
+	public function buildNumberFilter(array $values, $name = '') {
 		$tmp = array_keys($values);
 		if (empty($values) || (count($tmp) < 2 && empty($this->config['showEmptyFilters']))) {
 			return array();
@@ -271,10 +273,11 @@ class mse2FiltersHandler {
 	 * Retrieves names of ms2 vendors and replaces ids in array keys by it
 	 *
 	 * @param array $values
+	 * @param string $name
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildVendorsFilter(array $values) {
+	public function buildVendorsFilter(array $values, $name = '') {
 		$vendors = array_keys($values);
 		if (empty($vendors) || (count($vendors) < 2 && empty($this->config['showEmptyFilters']))) {
 			return array();
@@ -363,10 +366,11 @@ class mse2FiltersHandler {
 	 * Returns array with human-readable keys "yes" and "no"
 	 *
 	 * @param array $values
+	 * @param string $name
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildBooleanFilter(array $values) {
+	public function buildBooleanFilter(array $values, $name = '') {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
@@ -392,12 +396,13 @@ class mse2FiltersHandler {
 	 * Returns array with human-readable parents of resources
 	 *
 	 * @param array $values
+	 * @param string $name Filter name
 	 * @param integer $depth
 	 * @param string $separator
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildParentsFilter(array $values, $depth = 1, $separator = ' / ') {
+	public function buildParentsFilter(array $values, $name = '', $depth = 1, $separator = ' / ') {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
@@ -455,11 +460,12 @@ class mse2FiltersHandler {
 	 * Returns array with human-readable parent of resource
 	 *
 	 * @param array $values
+	 * @param string $name
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildCategoriesFilter(array $values) {
-		return $this->buildParentsFilter($values, 0);
+	public function buildCategoriesFilter(array $values, $name = '') {
+		return $this->buildParentsFilter($values, $name, 0);
 	}
 
 
@@ -468,11 +474,12 @@ class mse2FiltersHandler {
 	 * Returns array with human-readable grandparent of resource
 	 *
 	 * @param array $values
-	 * @param bool $filter
+	 * @param string $name
+	 * @param boolean $filter
 	 *
 	 * @return array
 	 */
-	public function buildGrandParentsFilter(array $values, $filter = false) {
+	public function buildGrandParentsFilter(array $values, $name = '', $filter = false) {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
@@ -507,7 +514,7 @@ class mse2FiltersHandler {
 
 		return $filter
 			? $tmp
-			: $this->buildParentsFilter($tmp, 0);
+			: $this->buildParentsFilter($tmp, $name, 0);
 	}
 
 
@@ -516,11 +523,12 @@ class mse2FiltersHandler {
 	 * Returns array with user id replaced to any field from modUserProfile
 	 *
 	 * @param array $values
+	 * @param string $name Filter name
 	 * @param string $field
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildFullnameFilter(array $values, $field = 'fullname') {
+	public function buildFullnameFilter(array $values, $name = '', $field = 'fullname') {
 		$users = array_keys($values);
 		if (empty($users) || (count($users) < 2 && empty($this->config['showEmptyFilters']))) {
 			return array();
@@ -559,12 +567,13 @@ class mse2FiltersHandler {
 	 * Returns array with resources grouped by specified date format
 	 *
 	 * @param array $values
+	 * @param string $name
 	 * @param string $format
 	 * @param string $sort
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildDateFilter(array $values, $format = 'Y-m-d', $sort = 'desc') {
+	public function buildDateFilter(array $values, $name = '', $format = 'Y-m-d', $sort = 'desc') {
 		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
 			return array();
 		}
@@ -602,12 +611,13 @@ class mse2FiltersHandler {
 	 * Shorthand for group resources by year
 	 *
 	 * @param array $values
+	 * @param string $name
 	 * @param string $sort
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildYearFilter(array $values, $sort = 'desc') {
-		return $this->buildDateFilter($values, 'Y', $sort);
+	public function buildYearFilter(array $values, $name = '', $sort = 'desc') {
+		return $this->buildDateFilter($values, $name, 'Y', $sort);
 	}
 
 
@@ -705,7 +715,7 @@ class mse2FiltersHandler {
 	 * @return array
 	 */
 	public function filterGrandParents(array $requested, array $values, array $ids) {
-		$values = $this->buildGrandParentsFilter($values, true);
+		$values = $this->buildGrandParentsFilter($values, '', true);
 
 		return $this->filterDefault($requested, $values, $ids);
 	}
