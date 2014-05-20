@@ -172,7 +172,7 @@ $modx->setPlaceholder($plPrefix . 'filters_count', $count );
 
 // ---------------------- Loading results
 $start_sort = implode(',', array_map('trim' , explode(',', $scriptProperties['sort'])));
-$start_limit = $scriptProperties['limit'];
+$start_limit = !empty($scriptProperties['limit']) ? $scriptProperties['limit'] : 0;
 $suggestions = array();
 $page = $sort = '';
 if (!empty($ids)) {

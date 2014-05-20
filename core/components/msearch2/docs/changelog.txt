@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.0.2 pl
 ==============
 - [#14] Changed build filters methods.
+- Fixed E_NOTICE in mFilter2.
 
 1.0.1 pl
 ==============
