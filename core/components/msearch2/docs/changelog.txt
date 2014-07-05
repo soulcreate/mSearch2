@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.0.3 pl
+==============
+- [#21] Added support filtering by date for TV of type date.
+
 1.0.2 pl
 ==============
 - [#14] Changed build filters methods.

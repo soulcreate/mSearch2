@@ -580,6 +580,9 @@ class mse2FiltersHandler {
 
 		$results = array();
 		foreach ($values as $value => $ids) {
+			if (!is_numeric($value)) {
+				$value = strtotime($value);
+			}
 			$value = date($format, $value);
 			if (!isset($results[$value])) {
 				$results[$value] = array(
@@ -764,6 +767,9 @@ class mse2FiltersHandler {
 	public function filterDate(array $requested, array $values, array $ids, $format = 'Y-m-d') {
 		$array = array();
 		foreach ($values as $value => $resources) {
+			if (!is_numeric($value)) {
+				$value = strtotime($value);
+			}
 			$value = date($format, $value);
 			if (!isset($array[$value])) {
 				$array[$value] = $resources;
