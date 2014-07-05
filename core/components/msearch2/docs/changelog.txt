@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.0.3 pl
 ==============
 - [#21] Added support filtering by date for TV of type date.
+- [#20] All templates of filters are converted to lowercase.
 
 1.0.2 pl
 ==============

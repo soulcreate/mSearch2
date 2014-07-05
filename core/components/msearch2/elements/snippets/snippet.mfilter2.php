@@ -21,6 +21,16 @@ if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 if (isset($_REQUEST['limit']) && is_numeric($_REQUEST['limit']) && abs($_REQUEST['limit']) > 0) {$limit = abs($_REQUEST['limit']);}
 elseif ($limit == '') {$limit = 10;}
 $fastMode = !empty($fastMode);
+// All templates of filters are converted to lowercase
+foreach ($scriptProperties as $k => $v) {
+	if (strpos($k, 'tplFilter') === 0) {
+		$tmp = 'tplFilter.' . strtolower(substr($k, 10));
+		if ($tmp != $k) {
+			unset($scriptProperties[$k]);
+			$scriptProperties[$tmp] = $v;
+		}
+	}
+}
 
 $class = 'modResource';
 $output = array('filters' => '', 'results' => '', 'total' => 0, 'limit' => $limit);
