@@ -67,6 +67,7 @@ class mseIndexCreateProcessor extends modProcessor {
 			}
 
 			$class_key = $data['class_key'];
+			if (!isset ($this->modx->map[$class_key])) continue;
 			$resource = $this->modx->newObject($class_key);
 			$resource->fromArray($data, '', true, true);
 
