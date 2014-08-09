@@ -5,9 +5,6 @@
 		</form>
 
 		<br/>
-		<div>[[%mse2_filter_total]]
-			<strong><span id="mse2_total">[[+total:default=`0`]]</span></strong>
-		</div>
 		<div>[[%mse2_limit]]
 			<select name="mse_limit" id="mse2_limit">
 				<option value="10" [[+limit:is=`10`:then=`selected`]]>10</option>
@@ -19,6 +16,8 @@
 	</div>
 
 	<div class="span9 col-md-9">
+		<h3>[[%mse2_filter_total]] <span id="mse2_total">[[+total:default=`0`]]</span></h3>
+
 		<div class="row">
 			<div id="mse2_sort" class="span5 col-md-5">
 				[[%mse2_sort]]
