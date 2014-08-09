@@ -9,7 +9,6 @@ mSearch2.panel.Home = function(config) {
 			,cls: 'modx-page-header container'
 		},{
 			xtype: 'modx-tabs'
-			,bodyStyle: 'padding: 10px'
 			,defaults: { border: false ,autoHeight: true }
 			,border: true
 			,hideMode: 'offsets'
@@ -19,36 +18,36 @@ mSearch2.panel.Home = function(config) {
 			,getState:function() {return {activeTab:this.items.indexOf(this.getActiveTab())};}
 			,items: [{
 				title: _('mse2_tab_search')
+				,layout: 'anchor'
 				,items: [{
 					html: _('mse2_tab_search_intro')
 					,border: false
 					,bodyCssClass: 'panel-desc'
-					,bodyStyle: 'margin-bottom: 10px'
 				},{
 					xtype: 'msearch2-grid-search'
-					,preventRender: true
+					,cls: 'main-wrapper'
 				}]
 			},{
 				title: _('mse2_tab_index')
+				,layout: 'anchor'
 				,items: [{
 					html: _('mse2_tab_index_intro')
 					,border: false
 					,bodyCssClass: 'panel-desc'
-					,bodyStyle: 'margin-bottom: 10px'
 				},{
 					xtype: 'msearch2-form-index'
-					,preventRender: true
+					,cls: 'main-wrapper'
 				}]
 			},{
 				title: _('mse2_tab_queries')
+				,layout: 'anchor'
 				,items: [{
 					html: _('mse2_tab_queries_intro')
 					,border: false
 					,bodyCssClass: 'panel-desc'
-					,bodyStyle: 'margin-bottom: 10px'
 				},{
 					xtype: 'msearch2-grid-queries'
-					,preventRender: true
+					,cls: 'main-wrapper'
 				}]
 				/*
 				,listeners: {
@@ -59,25 +58,25 @@ mSearch2.panel.Home = function(config) {
 				*/
 			},{
 				title: _('mse2_tab_aliases')
+				,layout: 'anchor'
 				,items: [{
 					html: _('mse2_tab_aliases_intro')
 					,border: false
 					,bodyCssClass: 'panel-desc'
-					,bodyStyle: 'margin-bottom: 10px'
 				},{
 					xtype: 'msearch2-grid-aliases'
-					,preventRender: true
+					,cls: 'main-wrapper'
 				}]
 			},{
 				title: _('mse2_tab_dictionaries')
+				,layout: 'anchor'
 				,items: [{
 					html: _('mse2_tab_dictionaries_intro')
 					,border: false
 					,bodyCssClass: 'panel-desc'
-					,bodyStyle: 'margin-bottom: 10px'
 				},{
 					xtype: 'msearch2-grid-dictionaries'
-					,preventRender: true
+					,cls: 'main-wrapper'
 				}]
 			}]
 		}]

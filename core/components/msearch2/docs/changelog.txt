@@ -1,5 +1,11 @@
 Changelog for mSearch2.
 
+1.0.4 pl
+==============
+- Improved UI for MODX 2.3.
+- Added Font Awesome icons.
+- Added ability to install new dictionary by double click on grid row.
+
 1.0.3 pl
 ==============
 - [#21] Added support filtering by date for TV of type date.

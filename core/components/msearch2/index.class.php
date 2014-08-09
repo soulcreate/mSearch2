@@ -12,12 +12,18 @@ abstract class mSearch2MainController extends modExtraManagerController {
 	public $mSearch2;
 
 	public function initialize() {
+		$version = $this->modx->getVersionData();
+		$modx23 = !empty($version) && version_compare($version['full_version'], '2.3.0', '>=');
+		if (!$modx23) {
+			$this->modx->controller->addCss(MODX_ASSETS_URL . 'components/ms2gallery/css/mgr/font-awesome.min.css');
+		}
+
 		$this->mSearch2 = new mSearch2($this->modx);
-		
-		$this->modx->regClientCSS($this->mSearch2->config['cssUrl'].'mgr/main.css');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/msearch2.js');
-		$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+		$this->modx->controller->addCSS($this->mSearch2->config['cssUrl'].'mgr/main.css');
+		$this->modx->controller->addJavascript($this->mSearch2->config['jsUrl'].'mgr/msearch2.js');
+		$this->modx->controller->addHtml('<script type="text/javascript">
 		Ext.onReady(function() {
+			MODx.modx23 = '.(int)$modx23.';
 			mSearch2.config = '.$this->modx->toJSON($this->mSearch2->config).';
 			mSearch2.config.connector_url = "'.$this->mSearch2->config['connectorUrl'].'";
 		});

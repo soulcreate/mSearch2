@@ -25,8 +25,9 @@ mSearch2.grid.Search = function(config) {
 			,{header: _('deleted'), dataIndex: 'deleted', width: 50, renderer: this.renderDeleted}
 		]
 		,plugins: this.exp
-		,tbar: [
-			{
+		,tbar: {
+			cls: MODx.modx23 ? 'modx23' : ''
+			,items: [{
 				xtype: 'textfield'
 				,name: 'query'
 				,width: 400
@@ -44,9 +45,11 @@ mSearch2.grid.Search = function(config) {
 				}
 			}
 			,'-'
-			,{xtype: 'button', id: 'mse2_search_btn', text: _('mse2_search'),listeners: {click: {fn: function() {var tf = Ext.getCmp('msearch2-input-search'); this.search(tf)} , scope: this}}}
+			,{xtype: 'button', text: '<i class="' + (MODx.modx23 ? 'icon icon-search' : 'fa fa-search') + '"></i>', id: 'mse2_search_btn'
+				,listeners: {click: {fn: function() {var tf = Ext.getCmp('msearch2-input-search'); this.search(tf)} , scope: this}}}
 			,'-'
-			,{xtype: 'button',text: _('mse2_search_clear'),listeners: {click: {fn: this.clearFilter, scope: this}}}
+			,{xtype: 'button', text: '<i class="' + (MODx.modx23 ? 'icon icon-times' : 'fa fa-times') + '"></i>'
+				,listeners: {click: {fn: this.clearFilter, scope: this}}}
 			,'-'
 			,{xtype: 'xcheckbox',value: 1,boxLabel: _('mse2_show_unpublished'),checked: false,name: 'unpublished', id: 'msearch2-check-unpublished'
 				,listeners: {check: {fn: function() {Ext.getCmp('mse2_search_btn').fireEvent('click');}}}
@@ -55,7 +58,7 @@ mSearch2.grid.Search = function(config) {
 			,{xtype: 'xcheckbox',value: 1,boxLabel: _('mse2_show_deleted'),checked: false,name: 'deleted', id: 'msearch2-check-deleted'
 				,listeners: {check: {fn: function() {Ext.getCmp('mse2_search_btn').fireEvent('click');}}}
 			}
-		]
+		]}
 	});
 	mSearch2.grid.Search.superclass.constructor.call(this,config);
 };

@@ -16,13 +16,13 @@ mSearch2.grid.Queries = function(config) {
 			,{header: _('mse2_query_quantity'), dataIndex: 'quantity', width: 50, sortable: true}
 			,{header: _('mse2_query_found'), dataIndex: 'found', width: 50, sortable: true}
 		]
-		,tbar: [{
+		,tbar: [/*{
 			xtype: 'button'
-			,text: _('mse2_query_remove_all')
+			,text: '<i class="' + (MODx.modx23 ? 'icon icon-trash-o' : 'fa fa-trash-o') + '"></i> ' + _('mse2_query_remove_all')
 			,listeners: {
 				click: {fn: this.removeQueries, scope:this}
 			}
-		},'->',{
+		},*/'->',{
 			xtype: 'textfield'
 			,name: 'query'
 			,width: 200
@@ -33,7 +33,7 @@ mSearch2.grid.Queries = function(config) {
 			}
 		},{
 			xtype: 'button'
-			,text: _('mse2_search_clear')
+			,text: '<i class="' + (MODx.modx23 ? 'icon icon-times' : 'fa fa-times') + '"></i>'
 			,listeners: {
 				click: {fn: this.clearFilter, scope: this}
 			}
@@ -46,8 +46,9 @@ Ext.extend(mSearch2.grid.Queries,MODx.grid.Grid, {
 
 	,getMenu: function() {
 		var m = [];
+		var cls = MODx.modx23 ? 'icon icon-' : 'fa fa-';
 		m.push({
-			text: _('mse2_query_remove')
+			text: '<i class="' + cls + 'trash-o x-menu-item-icon"></i> ' + _('mse2_query_remove')
 			,handler: this.removeQuery
 		});
 		this.addContextMenuItem(m);

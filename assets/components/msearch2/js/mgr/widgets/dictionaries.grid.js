@@ -15,6 +15,14 @@ mSearch2.grid.Dictionaries = function(config) {
 			,{header: _('mse2_language'), dataIndex: 'language', width: 100}
 			,{header: _('mse2_dictionary_installed'), dataIndex: 'installed', width: 100, renderer: this.renderBoolean}
 		]
+		,listeners: {
+			rowDblClick: function(grid, rowIndex, e) {
+				var row = grid.store.getAt(rowIndex);
+				if (!row.data.installed) {
+					this.installDictionary(grid, e, row);
+				}
+			}
+		}
 	});
 	mSearch2.grid.Dictionaries.superclass.constructor.call(this,config);
 };
@@ -25,15 +33,16 @@ Ext.extend(mSearch2.grid.Dictionaries,MODx.grid.Grid, {
 		var m = [];
 		var record = grid.getStore().data.items[index].data;
 
+		var cls = MODx.modx23 ? 'icon icon-' : 'fa fa-';
 		if (record.installed) {
 			m.push({
-				text: _('mse2_dictionary_remove')
+				text: '<i class="' + cls + 'trash-o x-menu-item-icon"></i> ' + _('mse2_dictionary_remove')
 				,handler: this.removeDictionary
 			});
 		}
 		else {
 			m.push({
-				text: _('mse2_dictionary_install')
+				text: '<i class="' + cls + 'download x-menu-item-icon"></i> ' + _('mse2_dictionary_install')
 				,handler: this.installDictionary
 			});
 		}

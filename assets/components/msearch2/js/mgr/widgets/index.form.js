@@ -2,7 +2,7 @@ mSearch2.panel.Index = function(config) {
 	config = config || {};
 	Ext.applyIf(config,{
 		id: 'modx-panel-search'
-		,cls: 'container form-with-labels'
+		,cls: 'container form-with-labels mse2-index-form'
 		,labelAlign: 'left'
 		,autoHeight: true
 		,title: _('search_criteria')
@@ -21,14 +21,20 @@ mSearch2.panel.Index = function(config) {
 			,border: false
 		}]
 		,buttonAlign: 'left'
-		,buttons: [
-			{text: _('mse2_index_create'),handler: function() {
+		,buttons: [{
+			text: '<i class="' + (MODx.modx23 ? 'icon icon-refresh' : 'fa fa-refresh') + '"></i> ' + _('mse2_index_create')
+			,handler: function() {
 				this.submit(this);
 				//this.indexCreate(0);
-			},scope: this}
-			,'-'
-			,{text: _('mse2_index_clear'),handler: function() {this.indexClear();},scope: this}
-		]
+			}, scope: this
+		}
+		,'-'
+		,{
+			text: '<i class="' + (MODx.modx23 ? 'icon icon-trash-o' : 'fa fa-trash-o') + '"></i> ' + _('mse2_index_clear')
+			,handler: function() {
+				this.indexClear();
+			}, scope: this
+		}]
 		,listeners: {
 			render: {fn: this.getStat, scope: this}
 			,success: {fn: function(response) {
@@ -54,12 +60,12 @@ Ext.extend(mSearch2.panel.Index,MODx.FormPanel,{
 	,getFields: function() {
 		var fields = [];
 		var tmp = {
-			total: {value: 0}
-			,indexed: {value: 0}
-			,words: {value: 0}
-			,delimeter: {value: '&nbsp;'}
-			,limit: {value: 10, xtype: 'numberfield', width: 60, allowDecimals: false, allowNegative: false, minValue: 1, maxValue: 1000}
-			,offset: {value: 0, xtype: 'numberfield', width: 60, allowDecimals: false, allowNegative: false}
+			total: {value: 0, disabled: true}
+			,indexed: {value: 0, disabled: true}
+			,words: {value: 0, disabled: true}
+			,delimeter: {xtype: 'displayfield', value: '&nbsp;'}
+			,limit: {value: 10, minValue: 1, maxValue: 1000}
+			,offset: {value: 0}
 		};
 
 		for (var i in tmp) {
@@ -67,8 +73,11 @@ Ext.extend(mSearch2.panel.Index,MODx.FormPanel,{
 			var field = tmp[i];
 			Ext.applyIf(field, {
 				name: i
-				,xtype: 'displayfield'
+				,xtype: 'numberfield'
+				,width: 60
 				,fieldLabel: _('mse2_index_' + i)
+				,allowDecimals: false
+				,allowNegative: false
 			});
 			fields.push(field);
 		}

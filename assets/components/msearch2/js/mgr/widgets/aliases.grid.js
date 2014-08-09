@@ -22,7 +22,7 @@ mSearch2.grid.Aliases = function(config) {
 		]
 		,tbar: [{
 			xtype: 'button'
-			,text: _('mse2_alias_create')
+			,text: '<i class="' + (MODx.modx23 ? 'icon icon-plus' : 'fa fa-plus') + '"></i> ' + _('mse2_alias_create')
 			,listeners: {
 				click: {fn: this.createAlias, scope:this}
 			}
@@ -37,7 +37,7 @@ mSearch2.grid.Aliases = function(config) {
 			}
 		},{
 			xtype: 'button'
-			,text: _('mse2_search_clear')
+			,text: '<i class="' + (MODx.modx23 ? 'icon icon-times' : 'fa fa-times') + '"></i>'
 			,listeners: {
 				click: {fn: this.clearFilter, scope: this}
 			}
@@ -50,13 +50,14 @@ Ext.extend(mSearch2.grid.Aliases,MODx.grid.Grid, {
 
 	,getMenu: function() {
 		var m = [];
+		var cls = MODx.modx23 ? 'icon icon-' : 'fa fa-';
 		m.push({
-			text: _('mse2_alias_update')
+			text: '<i class="' + cls + 'edit x-menu-item-icon"></i> ' + _('mse2_alias_update')
 			,handler: this.updateAlias
 		});
 		m.push('-');
 		m.push({
-			text: _('mse2_alias_remove')
+			text: '<i class="' + cls + 'trash-o x-menu-item-icon"></i> ' + _('mse2_alias_remove')
 			,handler: this.removeAlias
 		});
 		this.addContextMenuItem(m);
@@ -141,7 +142,7 @@ mSearch2.window.createAlias = function(config) {
 	Ext.applyIf(config,{
 		title: _('mse2_alias_create')
 		,id: this.ident
-		,height: 200
+		,autoHeight: true
 		,width: 475
 		,url: mSearch2.config.connector_url
 		,action: 'mgr/alias/create'
@@ -164,7 +165,7 @@ mSearch2.window.updateAlias = function(config) {
 	Ext.applyIf(config,{
 		title: _('mse2_alias_update')
 		,id: this.ident
-		,height: 200
+		,autoHeight: true
 		,width: 475
 		,url: mSearch2.config.connector_url
 		,action: 'mgr/alias/update'
