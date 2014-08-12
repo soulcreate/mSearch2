@@ -16,13 +16,13 @@ mSearch2.grid.Queries = function(config) {
 			,{header: _('mse2_query_quantity'), dataIndex: 'quantity', width: 50, sortable: true}
 			,{header: _('mse2_query_found'), dataIndex: 'found', width: 50, sortable: true}
 		]
-		,tbar: [/*{
+		,tbar: [{
 			xtype: 'button'
 			,text: '<i class="' + (MODx.modx23 ? 'icon icon-trash-o' : 'fa fa-trash-o') + '"></i> ' + _('mse2_query_remove_all')
 			,listeners: {
 				click: {fn: this.removeQueries, scope:this}
 			}
-		},*/'->',{
+		},'->',{
 			xtype: 'textfield'
 			,name: 'query'
 			,width: 200

@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.0 pl
+==============
+- [#29] Returned lost button "Remove all queries".
+
 1.0.4 pl
 ==============
 - Improved UI for MODX 2.3.
