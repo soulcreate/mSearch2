@@ -26,6 +26,8 @@ class mSearch2 {
 	public $query = '';
 	/** @var null|\pdoTools $pdoTools */
 	public $pdoTools = null;
+	/** @var array $fields */
+	public $fields = array();
 
 
 	public function __construct(modX &$modx,array $config = array(), pdoTools &$pdoTools = null) {
@@ -84,6 +86,53 @@ class mSearch2 {
 		if (!empty($pdoTools) && $pdoTools instanceof pdoTools) {
 			$this->pdoTools = $pdoTools;
 		}
+
+		$this->getWorkFields();
+	}
+
+
+	/**
+	 * Prepares working fields of resources for search
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	public function getWorkFields($config = array()) {
+		$config = array_merge($this->config, $config);
+		$setting = $this->modx->getOption('mse2_index_fields', null, 'content:3,description:2,introtext:2,pagetitle:3,longtitle:3', true);
+		$fields = $default = array();
+
+		// Preparing default fields for work
+		$tmp = array_map('trim', explode(',', strtolower($setting)));
+		foreach ($tmp as $v) {
+			$tmp2 = explode(':', $v);
+			$default[$tmp2[0]] = !empty($tmp2[1])
+				? $tmp2[1]
+				: 1;
+		}
+		if ($this->modx->getOption('mse2_index_comments', null, true)) {
+			$default['comment'] = $this->modx->getOption('mse2_index_comments', null, 1, true);
+		}
+
+		if (!empty($config['fields'])) {
+			$tmp = array_map('trim', explode(',', strtolower($config['fields'])));
+			foreach ($tmp as $v) {
+				$tmp2 = explode(':', $v);
+				$fields[$tmp2[0]] = !empty($tmp2[1])
+					? $tmp2[1]
+					: (isset($default[$tmp[0]])
+						? $default[$tmp[0]]
+						: 1
+					);
+			}
+		}
+		else {
+			$fields = $default;
+		}
+
+		$this->fields = $fields;
+		return $fields;
 	}
 
 
@@ -216,17 +265,26 @@ class mSearch2 {
 	 *
 	 * @param string $text
 	 * @param string $pcre
+	 * @param bool $with_count
 	 *
 	 * @return array
 	 */
-	public function getBulkWords($text = '', $pcre = '') {
+	public function getBulkWords($text = '', $pcre = '', $with_count = false) {
 		if (empty($pcre)) {$pcre = $this->config['split_words'];}
 		$words = preg_split($pcre, $text, -1, PREG_SPLIT_NO_EMPTY);
 		$bulk_words = array();
 		foreach ($words as $v) {
 			if (preg_match('/^[0-9]{2,}$/', $v) || mb_strlen($v,'UTF-8') >= $this->config['min_word_length']) {
 				$word = mb_strtoupper($v, 'UTF-8');
-				$bulk_words[$word] = $word;
+				if (!$with_count) {
+					$bulk_words[$word] = $word;
+				}
+				elseif (isset($bulk_words[$word])) {
+					$bulk_words[$word] += 1;
+				}
+				else {
+					$bulk_words[$word] = 1;
+				}
 			}
 		}
 		return $bulk_words;
@@ -355,18 +413,18 @@ class mSearch2 {
 		// Search by words index
 		if (!empty($words)) {
 			$q = $this->modx->newQuery('mseWord');
-			$q->select('`resource`, `word`, `weight`');
-			$q->where(array('word:IN' => array_keys($words)));
+			$q->select($this->modx->getSelectColumns('mseWord', 'mseWord'));
+			$q->where(array('word:IN' => array_keys($words), 'field:IN' => array_keys($this->fields)));
 			$tstart = microtime(true);
 			if ($q->prepare() && $q->stmt->execute()) {
 				$this->modx->queryTime += microtime(true) - $tstart;
 				$this->modx->executedQueries++;
 				while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 					if (isset($result[$row['resource']])) {
-						$result[$row['resource']] += $row['weight'];
+						$result[$row['resource']] += $this->fields[$row['field']] * $row['count'];
 					}
 					else {
-						$result[$row['resource']] = (int) $row['weight'];
+						$result[$row['resource']] = $this->fields[$row['field']] * $row['count'];
 					}
 
 					if (isset($words[$row['word']])) {

@@ -2,6 +2,7 @@ Changelog for mSearch2.
 
 1.1.0 pl
 ==============
+- Improved search index and algorithm.
 - [#29] Returned lost button "Remove all queries".
 
 1.0.4 pl

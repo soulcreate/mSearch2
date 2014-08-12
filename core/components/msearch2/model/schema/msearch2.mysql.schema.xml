@@ -2,13 +2,17 @@
 <model package="msearch2" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="msearch2" version="1.1">
 
 	<object class="mseWord" table="mse2_words" extends="xPDOObject">
-		<field key="word" dbtype="varchar" precision="32" phptype="string" null="false" index="pk"  />
 		<field key="resource" dbtype="integer" precision="10" phptype="integer" attributes="unsigned" null="false" index="pk" />
-		<field key="weight" dbtype="integer" precision="10" phptype="integer" attributes="unsigned" null="false" />
+		<field key="field" dbtype="varchar" precision="50" phptype="string" null="false" index="pk" />
+		<field key="word" dbtype="varchar" precision="32" phptype="string" null="false" index="pk" />
+		<field key="count" dbtype="integer" precision="10" phptype="integer" attributes="unsigned" null="false" />
+		<field key="class_key" dbtype="varchar" precision="50" phptype="string" null="true" defaul="modResource" index="pk" />
 
 		<index alias="word" name="word" primary="true" unique="true" type="BTREE">
-			<column key="word" length="" collation="A" null="false" />
 			<column key="resource" length="" collation="A" null="false" />
+			<column key="field" length="" collation="A" null="false" />
+			<column key="word" length="" collation="A" null="false" />
+			<column key="class_key" length="" collation="A" null="false" />
 		</index>
 
 		<aggregate alias="Resource" class="modResource" local="resource" foreign="id" owner="foreign" cardinality="one" />
@@ -17,9 +21,11 @@
 	<object class="mseIntro" table="mse2_intro" extends="xPDOObject">
 		<field key="resource" dbtype="integer" precision="10" phptype="integer" attributes="unsigned" null="false" index="pk" />
 		<field key="intro" dbtype="mediumtext" phptype="string" null="false" />
+		<field key="class_key" dbtype="varchar" precision="50" phptype="string" null="true" defaul="modResource" index="pk" />
 
 		<index alias="resource" name="resource" primary="true" unique="true" type="BTREE">
 			<column key="resource" length="" collation="A" null="false" />
+			<column key="class_key" length="" collation="A" null="false" />
 		</index>
 
 		<composite alias="Words" class="mseWord" local="resource" foreign="resource" owner="local" cardinality="many" />

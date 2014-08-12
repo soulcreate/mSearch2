@@ -6,20 +6,13 @@ $xpdo_meta_map['mseWord']= array (
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'word' => NULL,
     'resource' => NULL,
-    'weight' => NULL,
+    'field' => NULL,
+    'word' => NULL,
+    'count' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'word' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-      'index' => 'pk',
-    ),
     'resource' => 
     array (
       'dbtype' => 'integer',
@@ -29,7 +22,23 @@ $xpdo_meta_map['mseWord']= array (
       'null' => false,
       'index' => 'pk',
     ),
-    'weight' => 
+    'field' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '50',
+      'phptype' => 'string',
+      'null' => false,
+      'index' => 'pk',
+    ),
+    'word' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'index' => 'pk',
+    ),
+    'count' => 
     array (
       'dbtype' => 'integer',
       'precision' => '10',
@@ -40,21 +49,27 @@ $xpdo_meta_map['mseWord']= array (
   ),
   'indexes' => 
   array (
-    'word' => 
+    'key' => 
     array (
-      'alias' => 'word',
+      'alias' => 'key',
       'primary' => true,
       'unique' => true,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'word' => 
+        'resource' => 
         array (
           'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
-        'resource' => 
+        'field' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'word' => 
         array (
           'length' => '',
           'collation' => 'A',

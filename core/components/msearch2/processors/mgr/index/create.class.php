@@ -38,26 +38,15 @@ class mseIndexCreateProcessor extends modProcessor {
 	 * {@inheritDoc}
 	 */
 	public function process() {
-		$fields = $this->modx->getOption('mse2_index_fields', null, 'content:3,description:2,introtext:2,pagetitle:3,longtitle:3', true);
-
-		// Preparing fields for indexing
-		$tmp = explode(',', preg_replace('/\s+/', '', $fields));
-		foreach ($tmp as $v) {
-			$tmp2 = explode(':', $v);
-			$this->fields[$tmp2[0]] = !empty($tmp2[1]) ? $tmp2[1] : 1;
-		}
+		$this->loadClass();
+		$this->mSearch2->getWorkFields();
 
 		$collection = $this->getResources();
 		if (!is_array($collection) && empty($collection)) {
 			return $this->failure('mse2_err_no_resources_for_index');
 		}
 
-		$this->loadClass();
-		if ($process_comments = $this->modx->getOption('mse2_index_comments', null, true, true) && class_exists('Ticket')) {
-			$this->fields['resource_comments'] = $this->modx->getOption('mse2_index_comments_weight', null, 1, true);
-		}
-		else {$process_comments = false;}
-
+		$process_comments = $this->modx->getOption('mse2_index_comments', null, true, true) && class_exists('Ticket');
 		$i = 0;
 		/* @var modResource|Ticket|msProduct $resource */
 		foreach ($collection as $data) {
@@ -83,7 +72,7 @@ class mseIndexCreateProcessor extends modProcessor {
 					}
 				}
 			}
-			$resource->set('resource_comments', $comments);
+			$resource->set('comment', $comments);
 
 			$this->Index($resource);
 			$i++;
@@ -104,7 +93,7 @@ class mseIndexCreateProcessor extends modProcessor {
 
 		$select_fields = array_intersect(
 			array_keys($this->modx->getFieldMeta('modResource'))
-			,array_keys($this->fields)
+			,array_keys($this->mSearch2->fields)
 		);
 		$select_fields = array_unique(array_merge($select_fields, array('id','class_key','deleted','searchable')));
 
@@ -143,24 +132,23 @@ class mseIndexCreateProcessor extends modProcessor {
 	/**
 	 * Create index of resource
 	 *
-	 * @param modResource $resource
+	 * @param xPDOObject $resource
 	 */
-	public function Index(modResource $resource) {
-		$words = array(); $intro = '';
+	public function Index(xPDOObject $resource) {
+		$words = array();
+		$intro = '';
+		// For proper transliterate umlauts
+		setlocale(LC_ALL, 'en_US.UTF8', LC_CTYPE);
 
-		foreach ($this->fields as $field => $weight) {
-			$text = (strpos($field, 'tv_') !== false) ? $resource->getTVValue(substr($field, 3)) : $resource->get($field);
+		foreach ($this->mSearch2->fields as $field => $weight) {
+			$text = strpos($field, 'tv_') !== false && $resource instanceof modResource
+				? $resource->getTVValue(substr($field, 3))
+				: $resource->get($field);
 
-			$forms = $this->mSearch2->getBaseForms($text);
+			$forms = $this->_getBaseForms($text);
 			$intro .= $this->modx->stripTags(is_array($text) ? $this->implode_r(' ', $text) : $text).' ';
-
-			foreach ($forms as $form) {
-				if (array_key_exists($form, $words)) {
-					$words[$form] += $weight;
-				}
-				else {
-					$words[$form] = $weight;
-				}
+			foreach ($forms as $form => $count) {
+				$words[$form][$field] = $count;
 			}
 		}
 
@@ -172,18 +160,20 @@ class mseIndexCreateProcessor extends modProcessor {
 		$intro = preg_replace('/\s+/', ' ', str_replace(array('\'','"','«','»','`'), '', $intro));
 		$sql = "INSERT INTO {$tintro} (`resource`, `intro`) VALUES ('$resource_id', '$intro') ON DUPLICATE KEY UPDATE `intro` = '$intro';";
 		$sql .= "DELETE FROM {$tword} WHERE `resource` = '$resource_id';";
-		$sql .= "INSERT INTO {$tword} (`resource`, `word`, `weight`) VALUES ";
 
+		if (!$class_key = $resource->get('class_key')) {
+			$class_key = get_class($resource);
+		}
 		if (!empty($words)) {
 			$rows = array();
-			foreach ($words as $word => $weight) {
-				$rows[] = '('.$resource_id.', "'.$word.'", '.$weight.')';
+			foreach ($words as $word => $fields) {
+				foreach ($fields as $field => $count) {
+					$rows[] = "({$resource_id}, '{$field}', '{$word}', '{$count}', '{$class_key}')";
+				}
 			}
-			if (!empty($rows)) {
-				$sql .= implode(',', $rows);
-			}
+			$sql .= "INSERT INTO {$tword} (`resource`, `field`, `word`, `count`, `class_key`) VALUES " . implode(',', $rows);
+			//$sql .= " ON DUPLICATE KEY UPDATE `resource` = '$resource_id';";
 		}
-		$sql .= " ON DUPLICATE KEY UPDATE `resource` = '$resource_id';";
 
 		$q = $this->modx->prepare($sql);
 		if (!$q->execute()) {
@@ -211,7 +201,9 @@ class mseIndexCreateProcessor extends modProcessor {
 	 * @return bool
 	 */
 	public function loadClass() {
+		/** @noinspection PhpUndefinedFieldInspection */
 		if (!empty($this->modx->mSearch2) && $this->modx->mSearch2 instanceof mSearch2) {
+			/** @noinspection PhpUndefinedFieldInspection */
 			$this->mSearch2 = & $this->modx->mSearch2;
 		}
 		else {
@@ -222,6 +214,39 @@ class mseIndexCreateProcessor extends modProcessor {
 		return $this->mSearch2 instanceof mSearch2;
 	}
 
+
+	protected function _getBaseForms($text) {
+		$text = str_ireplace('ё', 'е', $this->modx->stripTags($text));
+		$text = preg_replace('#\[.*\]#isU', '', $text);
+
+		$bulk_words = $this->mSearch2->getBulkWords($text, $this->mSearch2->config['split_all'], true);
+		$this->mSearch2->loadPhpMorphy();
+		/* @var phpMorphy $phpMorphy */
+		$base_forms = array();
+		foreach ($this->mSearch2->phpMorphy as $phpMorphy) {
+			$lang = $phpMorphy->getLocale();
+			foreach ($bulk_words as $word => $count) {
+				$base = $phpMorphy->getBaseForm(array($word));
+				foreach ($base as $form) {
+					if (empty($form)) {continue;}
+					$form = current($form);
+					if ($lang == 'en_EN') {
+						$form = iconv('UTF-8', 'ASCII//TRANSLIT', $word);
+					}
+					if (preg_match('/^[0-9]{2,}$/', $form) || mb_strlen($form,'UTF-8') >= $this->mSearch2->config['min_word_length']) {
+						if (!isset($base_forms[$form])) {
+							$base_forms[$form] = $count;
+						}
+						else {
+							$base_forms[$form] += $count;
+						}
+					}
+				}
+			}
+		}
+
+		return $base_forms;
+	}
 
 	/**
 	 * Recursive implode
