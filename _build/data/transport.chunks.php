@@ -7,13 +7,15 @@ $tmp = array(
 	'tpl.mSearch2.form' => 'msearch2.form',
 	'tpl.mSearch2.ac' => 'msearch2.ac',
 	'tpl.mFilter2.outer' => 'mfilter2.outer',
+
 	'tpl.mFilter2.filter.outer' => 'mfilter2.filter.outer',
-	'tpl.mFilter2.filter.outer.select' => 'mfilter2.filter.outer.select',
+	'tpl.mFilter2.filter.slider' => 'mfilter2.filter.slider',
+	'tpl.mFilter2.filter.select' => 'mfilter2.filter.select',
+
 	'tpl.mFilter2.filter.checkbox' => 'mfilter2.filter.checkbox',
 	'tpl.mFilter2.filter.number' => 'mfilter2.filter.number',
 	'tpl.mFilter2.filter.radio' => 'mfilter2.filter.radio',
-	'tpl.mFilter2.filter.slider' => 'mfilter2.filter.slider',
-	'tpl.mFilter2.filter.select' => 'mfilter2.filter.select',
+	'tpl.mFilter2.filter.option' => 'mfilter2.filter.option',
 );
 
 foreach ($tmp as $k => $v) {
