@@ -51,17 +51,37 @@ var mSearch2 = {
 		});
 
 		if (this.selected) {
-			$(document).on('change', this.options.filters + ' input[type="checkbox"]', function(e) {
+			var selectors = [
+				this.options.filters + ' input[type="checkbox"]',
+				this.options.filters + ' input[type="radio"]',
+				this.options.filters + ' select'
+			];
+			$(document).on('change', selectors.join(', '), function(e) {
 				mSearch2.handleSelected($(this));
 			});
 
-			this.filters.find('input[type="checkbox"]:checked').each(function(e) {
+			selectors = [
+				'input[type="checkbox"]:checked',
+				'input[type="radio"]:checked',
+				'select'
+			];
+			this.filters.find(selectors.join(', ')).each(function(e) {
 				mSearch2.handleSelected($(this));
 			});
 
 			$(document).on('click', this.options.selected + ' a', function(e) {
 				var id = $(this).data('id').replace(mse2Config.filter_delimeter, "\\" + mse2Config.filter_delimeter);
-				$('#' + id).trigger('click');
+				var elem = $('#' + id);
+				if (elem[0]) {
+					switch (elem[0].tagName) {
+						case 'INPUT':
+							elem.trigger('click');
+							break;
+						case 'SELECT':
+							elem.find('option:first').prop('selected',true).trigger('change');
+							break;
+					}
+				}
 				return false;
 			});
 		}
@@ -228,23 +248,44 @@ var mSearch2 = {
 	}
 
 	,handleSelected: function(input) {
+		if (!input[0]) {return;}
 		var id = input.prop('id');
-		var label = input.parents('label');
-		var match = label.html().match(/>(.*?)</);
-		if (match && match[1]) {
-			var title = match[1].replace(/(\s+$)/, '');
-		}
-		else {return;}
+		var title = '';
+		var elem = '';
 
-		if (input.is(':checked')) {
-			var elem = this.options.selected_tpl.replace('[[+id]]', id).replace('[[+title]]', title);
-			this.selected.find('span').append(elem);
+		switch (input[0].tagName) {
+			case 'INPUT':
+				var label = input.parents('label');
+				var match = label.html().match(/>(.*?)</);
+				if (match && match[1]) {
+					title = match[1].replace(/(\s+$)/, '');
+				}
+				if (input.is(':checked')) {
+					elem = this.options.selected_tpl.replace('[[+id]]', id).replace('[[+title]]', title);
+					this.selected.find('span').append(elem);
+				}
+				else {
+					$('[data-id="' + id + '"]', this.selected).remove();
+				}
+				break;
+
+			case 'SELECT':
+				var option = input.find('option:selected');
+				$('[data-id="' + id + '"]', this.selected).remove();
+				if (input.val()) {
+					title = ' ' + option.text().replace(/(\(.*\)$)/, '');
+					elem = this.options.selected_tpl.replace('[[+id]]', id).replace('[[+title]]', title);
+					this.selected.find('span').append(elem);
+				}
+				break;
+		}
+
+		if (this.selected.find('a').length) {
+			this.selected.show();
 		}
 		else {
-			$('[data-id="' + id + '"]', this.selected).remove();
+			this.selected.hide();
 		}
-		if (this.selected.find('a').length) {this.selected.show();}
-		else {this.selected.hide();}
 	}
 
 	,load: function(params, callback) {
@@ -297,6 +338,7 @@ var mSearch2 = {
 	,getFilters: function() {
 		var data = {};
 		$.map(this.filters.serializeArray(), function(n, i) {
+			if (n['value'] === '') {return;}
 			if (data[n['name']]) {
 				data[n['name']] += mse2Config.values_delimeter + n['value'];
 			}
@@ -317,27 +359,72 @@ var mSearch2 = {
 						var count = arr[value];
 						var selector = filter.replace(mse2Config.filter_delimeter, "\\" + mse2Config.filter_delimeter);
 						var input = $('#' + mSearch2.options.prefix + selector, mSearch2.filters).find('[value="' + value + '"]');
-						var proptype = input.prop('type');
-						if (proptype != 'checkbox' && proptype != 'radio') {continue;}
+						if (!input[0]) {continue;}
 
-						var label = $('#' + mSearch2.options.prefix + selector, mSearch2.filters).find('label[for="' + input.prop('id') + '"]');
-						var elem = input.parent().find(mSearch2.options.suggestion);
-						elem.text(count);
+						switch (input[0].tagName) {
+							case 'INPUT':
+								var proptype = input.prop('type');
+								if (proptype != 'checkbox' && proptype != 'radio') {continue;}
+								var label = $('#' + mSearch2.options.prefix + selector, mSearch2.filters).find('label[for="' + input.prop('id') + '"]');
+								var elem = input.parent().find(mSearch2.options.suggestion);
+								elem.text(count);
 
-						if (count == 0) {
-							input.prop('disabled', true);
-							label.addClass(mSearch2.options.disabled_class);
-							if (input.is(':checked')) {
-								input.prop('checked', false);
-								mSearch2.handleSelected(input);
-							}
+								if (count == 0) {
+									input.prop('disabled', true);
+									label.addClass(mSearch2.options.disabled_class);
+									if (input.is(':checked')) {
+										input.prop('checked', false);
+										mSearch2.handleSelected(input);
+									}
+								}
+								else {
+									input.prop('disabled', false);
+									label.removeClass(mSearch2.options.disabled_class);
+								}
+
+								if (input.is(':checked')) {
+									elem.hide();
+								}
+								else {
+									elem.show();
+								}
+								break;
+
+							case 'OPTION':
+								var text = input.text();
+								var matches = text.match(/\s\(.*\)$/);
+								var src = matches
+									? matches[0]
+									: '';
+								var dst = '';
+
+								if (!count) {
+									input.prop('disabled', true).addClass(mSearch2.options.disabled_class);
+									if (input.is(':selected')) {
+										input.prop('selected', false);
+										mSearch2.handleSelected(input);
+									}
+								}
+								else {
+									dst = ' (' + count + ')';
+									input.prop('disabled', false).removeClass(mSearch2.options.disabled_class);
+								}
+
+								if (input.is(':selected')) {
+									dst = '';
+								}
+
+								if (src) {
+									text = text.replace(src, dst);
+								}
+								else {
+									text += dst;
+								}
+								//console.log(count,text)
+								input.text(text);
+
+								break;
 						}
-						else {
-							input.prop('disabled', false);
-							label.removeClass(mSearch2.options.disabled_class);
-						}
-						if (input.is(':checked')) {elem.hide();}
-						else {elem.show();}
 					}
 				}
 			}
@@ -543,7 +630,8 @@ if ($('#mse2_mfilter').length) {
 		window.location.href = document.location.pathname + uri;
 	}
 	else {
-		mSearch2.initialize('#mse2_mfilter');
+		//mSearch2.initialize('#mse2_mfilter');
+		mSearch2.initialize('body');
 	}
 }
 // Initialize Form

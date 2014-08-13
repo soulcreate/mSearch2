@@ -9,6 +9,7 @@ Changelog for mSearch2.
 - Fixed loading Font Awesome.
 - Added support of AjaxManager.
 - [#27] Added ability to specify properties set in element and paginator name.
+- [#25] Added select filters.
 - [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.
 
 1.0.4 pl
