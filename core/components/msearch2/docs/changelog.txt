@@ -7,6 +7,7 @@ Changelog for mSearch2.
 - Ability to specify indexed fields for search by parameter &fields=``.
 - Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
 - Fixed loading Font Awesome.
+- Added support of AjaxManager.
 
 1.0.4 pl
 ==============

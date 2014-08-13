@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The home manager controller for mSearch2.
  *
@@ -9,24 +10,23 @@ class mSearch2HomeManagerController extends mSearch2MainController {
 	public $mSearch2;
 
 
-	public function process(array $scriptProperties = array()) {}
-	
+	public function getPageTitle() {
+		return $this->modx->lexicon('msearch2');
+	}
 
-	public function getPageTitle() { return $this->modx->lexicon('msearch2'); }
-	
 
 	public function loadCustomCssJs() {
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/index.form.js');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/search.grid.js');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/aliases.grid.js');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/queries.grid.js');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/dictionaries.grid.js');
-		$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/widgets/home.panel.js');
-	 	$this->modx->regClientStartupScript($this->mSearch2->config['jsUrl'].'mgr/sections/home.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/index.form.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/search.grid.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/aliases.grid.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/queries.grid.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/dictionaries.grid.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/widgets/home.panel.js');
+		$this->addJavascript($this->mSearch2->config['jsUrl'] . 'mgr/sections/home.js');
 	}
-	
+
 
 	public function getTemplateFile() {
-		return $this->mSearch2->config['templatesPath'].'home.tpl';
+		return $this->mSearch2->config['templatesPath'] . 'home.tpl';
 	}
 }

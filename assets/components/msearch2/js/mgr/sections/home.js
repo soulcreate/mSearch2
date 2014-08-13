@@ -1,7 +1,3 @@
-Ext.onReady(function() {
-	MODx.load({ xtype: 'msearch2-page-home'});
-});
-
 mSearch2.page.Home = function(config) {
 	config = config || {};
 	Ext.applyIf(config,{
