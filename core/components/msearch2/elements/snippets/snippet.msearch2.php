@@ -140,6 +140,9 @@ elseif (!empty($rows) && is_array($rows)) {
 		$output = implode($outputSeparator, $output);
 	}
 }
+else {
+	$output = $modx->lexicon('mse2_err_no_results');
+}
 
 if ($modx->user->hasSessionContext('mgr') && !empty($showLog)) {
 	$output .= '<pre class="mSearchLog">' . print_r($pdoFetch->getTime(), 1) . '</pre>';
