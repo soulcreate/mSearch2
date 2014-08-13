@@ -15,7 +15,7 @@ abstract class mSearch2MainController extends modExtraManagerController {
 		$version = $this->modx->getVersionData();
 		$modx23 = !empty($version) && version_compare($version['full_version'], '2.3.0', '>=');
 		if (!$modx23) {
-			$this->modx->controller->addCss(MODX_ASSETS_URL . 'components/ms2gallery/css/mgr/font-awesome.min.css');
+			$this->modx->controller->addCss(MODX_ASSETS_URL . 'components/msearch2/css/mgr/font-awesome.min.css');
 		}
 
 		$this->mSearch2 = new mSearch2($this->modx);

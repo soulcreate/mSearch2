@@ -6,6 +6,7 @@ Changelog for mSearch2.
 - [#29] Returned lost button "Remove all queries".
 - Ability to specify indexed fields for search by parameter &fields=``.
 - Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
+- Fixed loading Font Awesome.
 
 1.0.4 pl
 ==============
