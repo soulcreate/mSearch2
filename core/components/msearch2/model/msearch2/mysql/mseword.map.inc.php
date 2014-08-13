@@ -10,6 +10,7 @@ $xpdo_meta_map['mseWord']= array (
     'field' => NULL,
     'word' => NULL,
     'count' => NULL,
+    'class_key' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -46,12 +47,21 @@ $xpdo_meta_map['mseWord']= array (
       'attributes' => 'unsigned',
       'null' => false,
     ),
+    'class_key' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '50',
+      'phptype' => 'string',
+      'null' => true,
+      'defaul' => 'modResource',
+      'index' => 'pk',
+    ),
   ),
   'indexes' => 
   array (
-    'key' => 
+    'word' => 
     array (
-      'alias' => 'key',
+      'alias' => 'word',
       'primary' => true,
       'unique' => true,
       'type' => 'BTREE',
@@ -70,6 +80,12 @@ $xpdo_meta_map['mseWord']= array (
           'null' => false,
         ),
         'word' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'class_key' => 
         array (
           'length' => '',
           'collation' => 'A',

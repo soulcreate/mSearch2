@@ -8,6 +8,7 @@ $xpdo_meta_map['mseIntro']= array (
   array (
     'resource' => NULL,
     'intro' => NULL,
+    'class_key' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -26,6 +27,15 @@ $xpdo_meta_map['mseIntro']= array (
       'phptype' => 'string',
       'null' => false,
     ),
+    'class_key' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '50',
+      'phptype' => 'string',
+      'null' => true,
+      'defaul' => 'modResource',
+      'index' => 'pk',
+    ),
   ),
   'indexes' => 
   array (
@@ -38,6 +48,12 @@ $xpdo_meta_map['mseIntro']= array (
       'columns' => 
       array (
         'resource' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'class_key' => 
         array (
           'length' => '',
           'collation' => 'A',
