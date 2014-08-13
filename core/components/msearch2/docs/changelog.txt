@@ -8,6 +8,7 @@ Changelog for mSearch2.
 - Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
 - Fixed loading Font Awesome.
 - Added support of AjaxManager.
+- [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.
 
 1.0.4 pl
 ==============

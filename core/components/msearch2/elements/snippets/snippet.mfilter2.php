@@ -20,6 +20,7 @@ if (empty($toPlaceholders) && !empty($toPlaceholder)) {$toPlaceholders = $toPlac
 if (empty($plPrefix)) {$plPrefix = 'mse2_';}
 if (isset($_REQUEST['limit']) && is_numeric($_REQUEST['limit']) && abs($_REQUEST['limit']) > 0) {$limit = abs($_REQUEST['limit']);}
 elseif ($limit == '') {$limit = 10;}
+if (!isset($outputSeparator)) {$outputSeparator = "\n";}
 $fastMode = !empty($fastMode);
 // All templates of filters are converted to lowercase
 foreach ($scriptProperties as $k => $v) {
@@ -413,13 +414,24 @@ if (!empty($toSeparatePlaceholders)) {
 	$modx->setPlaceholders($output['filters'], $toSeparatePlaceholders);
 	$output['log'] = $log;
 	if (is_array($output['filters'])) {
-		$output['filters'] = implode($output['filters']);
+		$output['filters'] = implode($outputSeparator, $output['filters']);
 	}
+
+	if (empty($output['results'])) {
+		$pcre = '/^' . preg_quote($toSeparatePlaceholders) .'(\d+)$/';
+		foreach ($modx->placeholders as $k => $v) {
+			if (preg_match($pcre, $k)) {
+				$output['results'][] = $v;
+			}
+		}
+		$output['results'] = implode($outputSeparator, $output['results']);
+	}
+
 	$modx->setPlaceholders($output, $toSeparatePlaceholders);
 }
 else {
 	if (is_array($output['filters'])) {
-		$output['filters'] = implode($output['filters']);
+		$output['filters'] = implode($outputSeparator, $output['filters']);
 	}
 	if (!empty($toPlaceholders)) {
 		$output['log'] = $log;
