@@ -3,11 +3,11 @@ Changelog for mSearch2.
 1.1.0 rc
 ==============
 - Improved search index and algorithm.
-- [#29] Returned lost button "Remove all queries".
 - Ability to specify indexed fields for search by parameter &fields=``.
 - Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
 - Fixed loading Font Awesome.
 - Added support of AjaxManager.
+- [#29] Returned lost button "Remove all queries".
 - [#27] Added ability to specify properties set in element and paginator name.
 - [#25] Added select filters.
 - [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.

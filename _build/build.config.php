@@ -4,9 +4,9 @@
 define('PKG_NAME','mSearch2');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 
-define('PKG_VERSION','1.0.4');
-define('PKG_RELEASE','pl');
-define('PKG_AUTO_INSTALL', true);
+define('PKG_VERSION','1.1.0');
+define('PKG_RELEASE','rc');
+define('PKG_AUTO_INSTALL', false);
 
 /* define paths */
 if (isset($_SERVER['MODX_BASE_PATH'])) {
