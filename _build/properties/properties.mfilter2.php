@@ -12,130 +12,138 @@ $tmp = array(
 	'paginator' => array(
 		'type' => 'textfield'
 		,'value' => 'pdoPage'
-	)
-	,'element' => array(
+	),
+	'element' => array(
 		'type' => 'textfield'
 		,'value' => 'mSearch2'
-	)
+	),
 
-	,'sort' => array(
+	'sort' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
-	,'filters' => array(
+	),
+	'filters' => array(
 		'type' => 'textarea'
 		,'value' => 'resource|parent:parents'
-	)
-	,'showEmptyFilters' => array(
+	),
+	'showEmptyFilters' => array(
 		'type' => 'combo-boolean'
 		,'value' => true
-	)
+	),
 
-	,'resources' => array(
+	'resources' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
-	,'parents' => array(
+	),
+	'parents' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
-	,'depth' => array(
+	),
+	'depth' => array(
 		'type' => 'numberfield'
 		,'value' => 10
-	)
+	),
 
-	,'tplOuter' => array(
+	'tplOuter' => array(
 		'type' => 'textfield'
 		,'value' => 'tpl.mFilter2.outer'
-	)
-	,'tplFilter.outer.default' => array(
+	),
+	'tplFilter.outer.default' => array(
 		'type' => 'textfield'
 		,'value' => 'tpl.mFilter2.filter.outer'
-	)
-	,'tplFilter.row.default' => array(
+	),
+	'tplFilter.row.default' => array(
 		'type' => 'textfield'
 		,'value' => 'tpl.mFilter2.filter.checkbox'
-	)
+	),
 
-	,'showHidden' => array(
+	'showHidden' => array(
 		'type' => 'combo-boolean'
 		,'value' => true
-	)
-	,'showDeleted' => array(
+	),
+	'showDeleted' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
-	,'showUnpublished' => array(
+	),
+	'showUnpublished' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
-	,'hideContainers' => array(
+	),
+	'hideContainers' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
+	),
 
-	,'showLog' => array(
+	'showLog' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
-	,'fastMode' => array(
+	),
+	'fastMode' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
-	,'suggestions' => array(
+	),
+	'suggestions' => array(
 		'type' => 'combo-boolean'
 		,'value' => true
-	)
-	,'suggestionsMaxFilters' => array(
+	),
+	'suggestionsMaxFilters' => array(
 		'type' => 'numberfield'
 		,'value' => 200
-	)
-	,'suggestionsMaxResults' => array(
+	),
+	'suggestionsMaxResults' => array(
 		'type' => 'numberfield'
 		,'value' => 1000
-	)
-	,'suggestionsRadio' => array(
+	),
+	'suggestionsRadio' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
+	),
 
-	,'toPlaceholders' => array(
+	'toPlaceholders' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
-	,'toSeparatePlaceholders' => array(
+	),
+	'toSeparatePlaceholders' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
+	),
 
-	,'filter_delimeter' => array(
+	'filter_delimeter' => array(
 		'type' => 'textfield'
 		,'value' => '|'
-	)
-	,'method_delimeter' => array(
+	),
+	'method_delimeter' => array(
 		'type' => 'textfield'
 		,'value' => ':'
-	)
-	,'values_delimeter' => array(
+	),
+	'values_delimeter' => array(
 		'type' => 'textfield'
 		,'value' => ','
-	)
-	,'tpls' => array(
+	),
+	'tpls' => array(
 		'type' => 'textfield'
 		,'value' => ''
-	)
+	),
 
-	,'forceSearch' => array(
+	'forceSearch' => array(
 		'type' => 'combo-boolean'
 		,'value' => false
-	)
+	),
+	'fields' => array(
+		'type' => 'textfield',
+		'value' => '',
+	),
+	'onlyIndex' => array(
+		'type' => 'combo-boolean',
+		'value' => false,
+	),
 );
 
 foreach ($tmp as $k => $v) {
 	$properties[] = array_merge(array(
-			'name' => $k
-			,'desc' => 'mse2_prop_'.$k
-			,'lexicon' => 'msearch2:properties'
+			'name' => $k,
+			'desc' => 'mse2_prop_'.$k,
+			'lexicon' => 'msearch2:properties',
 		), $v
 	);
 }

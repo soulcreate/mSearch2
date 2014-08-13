@@ -40,40 +40,41 @@ class mSearch2 {
 		$connectorUrl = $assetsUrl.'connector.php';
 
 		$this->config = array_merge(array(
-			'assetsUrl' => $assetsUrl
-			,'cssUrl' => $assetsUrl.'css/'
-			,'jsUrl' => $assetsUrl.'js/'
-			,'jsPath' => $assetsPath.'js/'
-			,'imagesUrl' => $assetsUrl.'images/'
-			,'customPath' => $corePath.'custom/'
-			,'dictsPath' => $corePath.'phpmorphy/dicts/'
+			'assetsUrl' => $assetsUrl,
+			'cssUrl' => $assetsUrl.'css/',
+			'jsUrl' => $assetsUrl.'js/',
+			'jsPath' => $assetsPath.'js/',
+			'imagesUrl' => $assetsUrl.'images/',
+			'customPath' => $corePath.'custom/',
+			'dictsPath' => $corePath.'phpmorphy/dicts/',
 
-			,'connectorUrl' => $connectorUrl
-			,'actionUrl' => $actionUrl
+			'connectorUrl' => $connectorUrl,
+			'actionUrl' => $actionUrl,
 
-			,'corePath' => $corePath
-			,'modelPath' => $corePath.'model/'
-			,'templatesPath' => $corePath.'elements/templates/'
-			,'processorsPath' => $corePath.'processors/'
+			'corePath' => $corePath,
+			'modelPath' => $corePath.'model/',
+			'templatesPath' => $corePath.'elements/templates/',
+			'processorsPath' => $corePath.'processors/',
 
-			,'cacheTime' => 1800
-			,'min_word_length' => $this->modx->getOption('mse2_index_min_words_length', null, 3, true)
-			,'exact_match_bonus' => $this->modx->getOption('mse2_search_exact_match_bonus', null, 5, true)
-			,'like_match_bonus' => $this->modx->getOption('mse2_search_like_match_bonus', null, 3, true)
-			,'all_words_bonus' => $this->modx->getOption('mse2_search_all_words_bonus', null, 5, true)
-			,'introCutBefore' => 50
-			,'introCutAfter' => 250
-			,'filter_delimeter' => '|'
-			,'method_delimeter' => ':'
-			,'values_delimeter' => ','
-			,'split_words' => $this->modx->getOption('mse2_search_split_words', null, '#\s#', true)
-			,'split_all' => '#\s|[,.:;!?"\'(){}\\/\#]#'
-			,'suggestionsRadio' => array()
+			'cacheTime' => 1800,
+			'min_word_length' => $this->modx->getOption('mse2_index_min_words_length', null, 3, true),
+			'exact_match_bonus' => $this->modx->getOption('mse2_search_exact_match_bonus', null, 5, true),
+			'like_match_bonus' => $this->modx->getOption('mse2_search_like_match_bonus', null, 3, true),
+			'all_words_bonus' => $this->modx->getOption('mse2_search_all_words_bonus', null, 5, true),
+			'introCutBefore' => 50,
+			'introCutAfter' => 250,
+			'filter_delimeter' => '|',
+			'method_delimeter' => ':',
+			'values_delimeter' => ',',
+			'split_words' => $this->modx->getOption('mse2_search_split_words', null, '#\s#', true),
+			'split_all' => '#\s|[,.:;!?"\'(){}\\/\#]#',
+			'suggestionsRadio' => array(),
 
-			,'autocomplete' => 0
-			,'queryVar' => 'query'
-			,'minQuery' => 3
-			,'config_file' => $assetsPath.'js/web/config.js'
+			'autocomplete' => 0,
+			'queryVar' => 'query',
+			'minQuery' => 3,
+			'onlyIndex' => false,
+			'config_file' => $assetsPath.'js/web/config.js',
 		), $config);
 
 		if (!is_array($this->config['suggestionsRadio'])) {
@@ -445,78 +446,79 @@ class mSearch2 {
 		}
 
 		// Add bonuses
-		$bulk_words = $this->getBulkWords($query);
-		$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
-		if (count($bulk_words) > 1 || count($tmp_words) > 1 || empty($result)) {
-			if (!empty($this->config['exact_match_bonus']) || !empty($this->config['all_words_bonus'])) {
-				$exact = $this->simpleSearch($query);
-				// Exact match bonus
-				if (!empty($this->config['exact_match_bonus'])) {
-					foreach ($exact as $v) {
-						if (isset($result[$v])) {
-							$result[$v] += $this->config['exact_match_bonus'];
-							//$this->log('Added "exact match bonus" for a resource '.$v.' for words "'.implode(', ', $words).'": +'.$this->config['exact_match_bonus']);
-						}
-						else {
-							$result[$v] = $this->config['exact_match_bonus'];
-							//$this->log('Found resource '.$v.' by LIKE search with all words "'.implode(', ',$words).'": +'.$this->config['exact_match_bonus']);
-							$added ++;
+		if (empty($this->config['onlyIndex'])) {
+			$bulk_words = $this->getBulkWords($query);
+			$tmp_words = preg_split($this->config['split_words'], $query, -1, PREG_SPLIT_NO_EMPTY);
+			if (count($bulk_words) > 1 || count($tmp_words) > 1 || empty($result)) {
+				if (!empty($this->config['exact_match_bonus']) || !empty($this->config['all_words_bonus'])) {
+					$exact = $this->simpleSearch($query);
+					// Exact match bonus
+					if (!empty($this->config['exact_match_bonus'])) {
+						foreach ($exact as $v) {
+							if (isset($result[$v])) {
+								$result[$v] += $this->config['exact_match_bonus'];
+								//$this->log('Added "exact match bonus" for a resource '.$v.' for words "'.implode(', ', $words).'": +'.$this->config['exact_match_bonus']);
+							}
+							else {
+								$result[$v] = $this->config['exact_match_bonus'];
+								//$this->log('Found resource '.$v.' by LIKE search with all words "'.implode(', ',$words).'": +'.$this->config['exact_match_bonus']);
+								$added ++;
+							}
 						}
 					}
-				}
 
-				if (!empty($this->config['all_words_bonus'])) {
-					if (count($bulk_words) > 1) {
-						// All words bonus
-						foreach ($all_words as $k => $v) {
-							if (count($bulk_words) == count($v)) {
-								$result[$k] += $this->config['all_words_bonus'];
-								//$this->log('Added "all words bonus" for a resource '.$k.' for words "'.implode(', ', $words).'": +'.$this->config['all_words_bonus']);
+					if (!empty($this->config['all_words_bonus'])) {
+						if (count($bulk_words) > 1) {
+							// All words bonus
+							foreach ($all_words as $k => $v) {
+								if (count($bulk_words) == count($v)) {
+									$result[$k] += $this->config['all_words_bonus'];
+									//$this->log('Added "all words bonus" for a resource '.$k.' for words "'.implode(', ', $words).'": +'.$this->config['all_words_bonus']);
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		elseif (!empty($this->config['like_match_bonus'])) {
-			// Add the whole possible results for query
-			$all_results = $this->simpleSearch($query);
-			foreach ($all_results as $v) {
-				if (!isset($result[$v])) {
-					$weight = round($this->config['like_match_bonus']);
-					$result[$v] = $weight;
-					//$this->log('Found resource '.$v.' by LIKE search with all words "'.$query.'": +'.$weight);
-					$added ++;
-				}
-			}
-		}
-
-		// Add matches by %LIKE% search
-		if (!empty($this->config['like_match_bonus']) && $not_found = array_diff($bulk_words, $words)) {
-			foreach ($not_found as $word) {
-				$found = $this->simpleSearch($word);
-				foreach ($found as $v) {
-					$weight = round($this->config['like_match_bonus']);
+			elseif (!empty($this->config['like_match_bonus'])) {
+				// Add the whole possible results for query
+				$all_results = $this->simpleSearch($query);
+				foreach ($all_results as $v) {
 					if (!isset($result[$v])) {
+						$weight = round($this->config['like_match_bonus']);
 						$result[$v] = $weight;
-						//$this->log('Found resource '.$v.' by LIKE search with single word "'.$word.'": +'.$weight);
+						//$this->log('Found resource '.$v.' by LIKE search with all words "'.$query.'": +'.$weight);
 						$added ++;
 					}
-					else {
-						$result[$v] += $weight;
-						//$this->log('Added "LIKE bonus" for a resource '.$v.' for word "'.$word.'": +'.$weight);
-					}
-
 				}
 			}
-		}
 
-		$this->log('Added resources by LIKE search: '.$added);
+			// Add matches by %LIKE% search
+			if (!empty($this->config['like_match_bonus']) && $not_found = array_diff($bulk_words, $words)) {
+				foreach ($not_found as $word) {
+					$found = $this->simpleSearch($word);
+					foreach ($found as $v) {
+						$weight = round($this->config['like_match_bonus']);
+						if (!isset($result[$v])) {
+							$result[$v] = $weight;
+							//$this->log('Found resource '.$v.' by LIKE search with single word "'.$word.'": +'.$weight);
+							$added ++;
+						}
+						else {
+							$result[$v] += $weight;
+							//$this->log('Added "LIKE bonus" for a resource '.$v.' for word "'.$word.'": +'.$weight);
+						}
+
+					}
+				}
+			}
+			$this->log('Added resources by LIKE search: '.$added);
+		}
 
 		// Log the search query
 		/** @var mseQuery $object */
 		if ($object = $this->modx->getObject('mseQuery', array('query' => $query))) {
-			$object->set('quantity', $object->quantity + 1);
+			$object->set('quantity', $object->get('quantity') + 1);
 		}
 		else {
 			$object = $this->modx->newObject('mseQuery');

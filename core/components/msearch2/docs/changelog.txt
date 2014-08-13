@@ -4,6 +4,8 @@ Changelog for mSearch2.
 ==============
 - Improved search index and algorithm.
 - [#29] Returned lost button "Remove all queries".
+- Ability to specify indexed fields for search by parameter &fields=``.
+- Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
 
 1.0.4 pl
 ==============

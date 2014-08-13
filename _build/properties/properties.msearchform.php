@@ -46,13 +46,21 @@ $tmp = array(
 		'type' => 'textfield',
 		'value' => 3
 	),
+	'fields' => array(
+		'type' => 'textfield',
+		'value' => '',
+	),
+	'onlyIndex' => array(
+		'type' => 'combo-boolean',
+		'value' => false,
+	),
 );
 
 foreach ($tmp as $k => $v) {
 	$properties[] = array_merge(array(
-			'name' => $k
-			,'desc' => 'mse2_prop_'.$k
-			,'lexicon' => 'msearch2:properties'
+			'name' => $k,
+			'desc' => 'mse2_prop_'.$k,
+			'lexicon' => 'msearch2:properties',
 		), $v
 	);
 }

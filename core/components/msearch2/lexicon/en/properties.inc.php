@@ -68,3 +68,6 @@ $_lang['mse2_prop_forceSearch'] = 'Search is required to display the results. If
 $_lang['mse2_prop_tplForm'] = 'Chunk with form for output.';
 $_lang['mse2_prop_autocomplete'] = 'Configuring autocompletion. The options are: "results" - site search (for output will be called the snippet specified in the "element"), the "queries" - search by table with queries, the "0" - disable autocompletion.';
 $_lang['mse2_prop_pageId'] = 'Id of the page that will be sent to the search query. By default, the current page.';
+
+$_lang['mse2_prop_fields'] = 'List of indexed fields of the resource to search for. Each field you can specify the search weight through colon.';
+$_lang['mse2_prop_onlyIndex'] = 'Search by index words, without the addition of bonuses for exact phrases in a simple search through LIKE.';

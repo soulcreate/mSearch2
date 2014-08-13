@@ -123,6 +123,14 @@ $tmp = array(
 		'type' => 'textfield',
 		'value' => 3
 	),
+	'fields' => array(
+		'type' => 'textfield',
+		'value' => '',
+	),
+	'onlyIndex' => array(
+		'type' => 'combo-boolean',
+		'value' => false,
+	),
 );
 
 foreach ($tmp as $k => $v) {
