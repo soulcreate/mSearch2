@@ -146,7 +146,7 @@ class mseIndexCreateProcessor extends modProcessor {
 				: $resource->get($field);
 
 			$forms = $this->_getBaseForms($text);
-			$intro .= $this->modx->stripTags(is_array($text) ? $this->implode_r(' ', $text) : $text).' ';
+			$intro .= $this->modx->stripTags(is_array($text) ? $this->_implode_r(' ', $text) : $text).' ';
 			foreach ($forms as $form => $count) {
 				$words[$form][$field] = $count;
 			}
@@ -256,11 +256,12 @@ class mseIndexCreateProcessor extends modProcessor {
 	 *
 	 * @return string
 	 */
-	function implode_r($glue, array $array) {
+	protected function _implode_r($glue, array $array) {
 		$result = array();
 		foreach ($array as $v) {
-			$result[] = is_array($v) ? $this->implode_r($glue, $v) : $v;
+			$result[] = is_array($v) ? $this->_implode_r($glue, $v) : $v;
 		}
+
 		return implode($glue, $result);
 	}
 
