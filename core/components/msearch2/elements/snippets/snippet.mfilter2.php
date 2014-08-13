@@ -95,30 +95,46 @@ if (!empty($output['results'])) {
 }
 
 // ---------------------- Checking resources by status and custom "where" parameter
+// Support for specifying property set in the element name
+$elementName = $scriptProperties['element'];
+$elementSet = array();
+if (strpos($elementName, '@') !== false) {
+	list($elementName, $elementSet) = explode('@', $elementName);
+}
 /** @var modSnippet $snippet */
-if (!empty($scriptProperties['element']) && $snippet = $modx->getObject('modSnippet', array('name' => $scriptProperties['element']))) {
-	$snippet->setCacheable(false);
-	$params = array_merge($scriptProperties, array(
-		'parents' => empty($scriptProperties[$parentsVar]) && !empty($_REQUEST[$parentsVar])
-			? $_REQUEST[$parentsVar]
-			: $scriptProperties[$parentsVar],
-		'returnIds' => 1,
-		'limit' => 0,
-	));
+if (!empty($elementName) && $element = $modx->getObject('modSnippet', array('name' => $elementName))) {
+	$elementProperties = $element->getProperties();
+	$elementPropertySet = !empty($elementSet)
+		? $element->getPropertySet($elementSet)
+		: array();
+	if (!is_array($elementPropertySet)) {$elementPropertySet = array();}
+	$params = array_merge(
+		$elementProperties,
+		$elementPropertySet,
+		$scriptProperties,
+		array(
+			'parents' => empty($scriptProperties[$parentsVar]) && !empty($_REQUEST[$parentsVar])
+				? $_REQUEST[$parentsVar]
+				: $scriptProperties[$parentsVar],
+			'returnIds' => 1,
+			'limit' => 0,
+		)
+	);
 	if (!empty($ids)) {
 		$params['resources'] = implode(',', $ids);
 	}
-	$tmp = $snippet->process($params);
+	$element->setCacheable(false);
+	$tmp = $element->process($params);
 	if (!empty($tmp)) {
 		$tmp = explode(',', $tmp);
 		$ids = !empty($ids)
 			? array_intersect($ids, $tmp)
 			: $tmp;
 	}
-	$pdoFetch->addTime('Fetched ids for building filters: "'.implode(',',$ids).'" from snippet "'.$snippet->name.'"');
+	$pdoFetch->addTime('Fetched ids for building filters: "'.implode(',',$ids).'" from element "'.$elementName.'"');
 }
 else {
-	$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find main snippet with name: "'.$scriptProperties['element'].'"');
+	$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find main snippet with name: "'.$elementName.'"');
 	return '';
 }
 
@@ -186,16 +202,30 @@ $start_sort = implode(',', array_map('trim' , explode(',', $scriptProperties['so
 $start_limit = !empty($scriptProperties['limit']) ? $scriptProperties['limit'] : 0;
 $suggestions = array();
 $page = $sort = '';
+
+// Support for specifying property set in the paginator name
+$paginatorName = $scriptProperties['paginator'];
+$paginatorSet = array();
+if (strpos($paginatorName, '@') !== false) {
+	list($paginatorName, $paginatorSet) = explode('@', $paginatorName);
+}
 if (!empty($ids)) {
 	/* @var modSnippet $paginator */
-	if ($paginator = $modx->getObject('modSnippet', array('name' => $scriptProperties['paginator']))) {
+	if ($paginator = $modx->getObject('modSnippet', array('name' => $paginatorName))) {
+		$paginatorProperties = $paginator->getProperties();
+		$paginatorPropertySet = !empty($paginatorSet)
+			? $paginator->getPropertySet($paginatorSet)
+			: array();
+		if (!is_array($paginatorPropertySet)) {$paginatorPropertySet = array();}
 		$paginatorProperties = array_merge(
-			$paginator->getProperties()
+			$paginatorProperties
+			,$paginatorPropertySet
+			,$elementPropertySet
 			,$scriptProperties
 			,array(
 				'resources' => implode(',',$ids)
 				,'parents' => '0'
-				,'element' => $scriptProperties['element']
+				,'element' => $elementName
 				,'defaultSort' => $start_sort
 				,'toPlaceholder' => false
 				,'limit' => $limit
@@ -215,9 +245,13 @@ if (!empty($ids)) {
 
 		// Trying to save weight of found ids if using mSearch2
 		$weight = false;
-		if (!empty($found) && strtolower($paginatorProperties['element']) == 'msearch2') {
+		if (!empty($found) && strtolower($paginatorName) == 'msearch2') {
 			$tmp = array();
-			foreach ($ids as $v) {$tmp[$v] = isset($found[$v]) ? $found[$v] : 0;}
+			foreach ($ids as $v) {
+				$tmp[$v] = isset($found[$v])
+					? $found[$v]
+					: 0;
+			}
 			$paginatorProperties['resources'] = $modx->toJSON($tmp);
 			$weight = true;
 		}
@@ -263,31 +297,30 @@ if (!empty($ids)) {
 				$paginatorProperties['resources'] = implode(',', $matched);
 			}
 		}
-		$paginator->setProperties($paginatorProperties);
-		$paginator->setCacheable(false);
-
 		// Saving log
 		$log = $pdoFetch->timings;
 		$pdoFetch->timings = array();
 
+		//$paginator->setProperties($paginatorProperties);
+		$paginator->setCacheable(false);
 		$output['results'] = !empty($paginatorProperties['resources'])
-			? $paginator->process()
+			? $paginator->process($paginatorProperties)
 			: $modx->lexicon('mse2_err_no_results');
 		$output['total'] = $modx->getPlaceholder($paginatorProperties['totalVar']);
 	}
 	else {
-		$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find pagination snippet with name: "'.$scriptProperties['paginator'].'"');
+		$modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Could not find pagination snippet with name: "'.$paginatorName.'"');
 		return '';
 	}
 }
 
 // ----------------------  Loading filters
 $pdoFetch->timings = $log;
-if (is_object($paginator)) {
-	$pdoFetch->addTime('Fired paginator: "'.$scriptProperties['paginator'].'"');
+if (!empty($paginator)) {
+	$pdoFetch->addTime('Fired paginator: "'.$paginatorName.'"');
 }
 else {
-	$pdoFetch->addTime('Could not find pagination snippet with name: "'.$scriptProperties['paginator'].'"');
+	$pdoFetch->addTime('Could not find pagination snippet with name: "'.$paginatorName.'"');
 }
 if (empty($filters)) {
 	$pdoFetch->addTime('No filters retrieved');
@@ -390,7 +423,9 @@ $config = array(
 	'sort' => $sort == $start_sort ? '' : $sort,
 	'limit' => $limit == $start_limit ? '' : $limit,
 	'page' => $page,
-	'tpl' => !empty($paginatorProperties['tpl_idx']) ? $paginatorProperties['tpl_idx'] : '',
+	'tpl' => !empty($paginatorProperties['tpl_idx'])
+			? $paginatorProperties['tpl_idx']
+			: '',
 	'parentsVar' => $parentsVar,
 	'key' => $hash,
 	'pageId' => !empty($pageId) ? (integer) $pageId : $modx->resource->id,

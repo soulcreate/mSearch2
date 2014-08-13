@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.1.0 pl
+1.1.0 rc
 ==============
 - Improved search index and algorithm.
 - [#29] Returned lost button "Remove all queries".
@@ -8,6 +8,7 @@ Changelog for mSearch2.
 - Ability to disable additional results by LIKE search by parameter &onlyIndex=``.
 - Fixed loading Font Awesome.
 - Added support of AjaxManager.
+- [#27] Added ability to specify properties set in element and paginator name.
 - [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.
 
 1.0.4 pl
