@@ -329,7 +329,7 @@ class mSearch2 {
 						foreach ($forms as $form) {
 							if (preg_match('/^[0-9]{2,}$/', $form) || mb_strlen($form,'UTF-8') >= $this->config['min_word_length']) {
 								$result[$form] = $lang == 'en_EN'
-									? iconv('WINDOWS-1250', 'UTF-8//IGNORE', $word)
+									? @iconv('WINDOWS-1250', 'UTF-8//IGNORE', $word)
 									: $word;
 							}
 						}
