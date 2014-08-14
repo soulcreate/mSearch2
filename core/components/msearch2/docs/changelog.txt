@@ -11,6 +11,7 @@ Changelog for mSearch2.
 - [#29] Returned lost button "Remove all queries".
 - [#27] Added ability to specify properties set in element and paginator name.
 - [#25] Added select filters.
+- [#24] [mFilter2] Added filtering of negative numbers in slider.
 - [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.
 
 1.0.4 pl
