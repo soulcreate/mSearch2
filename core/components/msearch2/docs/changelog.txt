@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.1.0 rc1
+1.1.0 rc2
 ==============
 - Improved search index and algorithm.
 - Ability to specify indexed fields for search by parameter &fields=``.
@@ -13,6 +13,7 @@ Changelog for mSearch2.
 - [#25] Added select filters.
 - [#24] [mFilter2] Added filtering of negative numbers in slider.
 - [#23] Added placeholder "results" to &toSeparatePlaceholders=`1` mode.
+- Fixed ajax filtering with &toSeparatePlaceholders=`1`.
 
 1.0.4 pl
 ==============

@@ -47,6 +47,9 @@ unset($_REQUEST['pageId'], $_REQUEST['action'], $_REQUEST['key']);
 switch ($action) {
 	case 'filter':
 		$paginatorProperties = $config['paginatorProperties'];
+		$paginatorProperties['toPlaceholder'] = '';
+		$paginatorProperties['toPlaceholders'] = '';
+		$paginatorProperties['toSeparatePlaceholders'] = '';
 
 		// Get sorting parameters
 		if (!empty($_REQUEST['sort'])) {
