@@ -40,14 +40,21 @@ if (empty($resources)) {
 	$modx->setPlaceholder($plPrefix.$queryVar, $query);
 
 	if (!empty($output)) {
-		return $output;
+		return !$returnIds
+			? $output
+			: '';
 	}
 	elseif (!empty($query)) {
 		$found = $mSearch2->Search($query);
 		$ids = array_keys($found);
 		$resources = implode(',', $ids);
 		if (empty($found)) {
-			if (!empty($query)) {$output = $modx->lexicon('mse2_err_no_results');}
+			if ($returnIds) {
+				return '';
+			}
+			elseif (!empty($query)) {
+				$output = $modx->lexicon('mse2_err_no_results');
+			}
 			if (!empty($tplWrapper) && !empty($wrapIfEmpty)) {
 				$output = $pdoFetch->getChunk(
 					$tplWrapper,
@@ -96,6 +103,17 @@ $select = array(
 	'Intro' => 'intro'
 );
 
+// Add custom parameters
+foreach (array('leftJoin','select') as $v) {
+	if (!empty($scriptProperties[$v])) {
+		$tmp = $modx->fromJSON($scriptProperties[$v]);
+		if (is_array($tmp)) {
+			$$v = array_merge($$v, $tmp);
+		}
+	}
+	unset($scriptProperties[$v]);
+}
+
 // Default parameters
 $default = array(
 	'class' => $class,
@@ -104,7 +122,9 @@ $default = array(
 	'select' => $modx->toJSON($select),
 	'groupby' => $class.'.id',
 	'fastMode' => $fastMode,
-	'return' => !empty($returnIds) ? 'ids' : 'data',
+	'return' => !empty($returnIds)
+			? 'ids'
+			: 'data',
 	'nestedChunkPrefix' => 'msearch2_',
 );
 if (!empty($resources)) {
@@ -119,7 +139,7 @@ $pdoFetch->addTime('Query parameters are prepared.');
 $rows = $pdoFetch->run();
 
 // Processing results
-if (!empty($returnIds)) {
+if ($returnIds) {
 	return $rows;
 }
 elseif (!empty($rows) && is_array($rows)) {
