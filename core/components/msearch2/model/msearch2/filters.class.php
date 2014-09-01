@@ -407,15 +407,16 @@ class mse2FiltersHandler {
 			return array();
 		}
 
-		$results = $parents = array();
+		$results = $parents = $menuindex = array();
 		$q = $this->modx->newQuery('modResource', array('id:IN' => array_keys($values), 'published' => 1));
-		$q->select('id,pagetitle,context_key');
+		$q->select('id,pagetitle,context_key,menuindex');
 		$tstart = microtime(true);
 		if ($q->prepare() && $q->stmt->execute()) {
 			$this->modx->queryTime += microtime(true) - $tstart;
 			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
 				$parents[$row['id']] = $row;
+				$menuindex[$row['id']] = $row['menuindex'];
 			}
 		}
 
@@ -442,16 +443,23 @@ class mse2FiltersHandler {
 			$titles[$value] = $parent['pagetitle'];
 
 			$title = implode($separator, $titles);
-			$results[$title] = array(
-				'title' => $title
-				,'value' => $value
-				,'type' => 'parents'
-				,'resources' => $ids
+			$results[$menuindex[$value]][$title] = array(
+				'title' => $title,
+				'value' => $value,
+				'type' => 'parents',
+				'resources' => $ids,
 			);
 		}
 
 		ksort($results);
-		return $results;
+		$tmp = array();
+		foreach ($results as $v) {
+			foreach ($v as $k2 => $v2) {
+				$tmp[$k2] = $v2;
+			}
+		}
+
+		return $tmp;
 	}
 
 

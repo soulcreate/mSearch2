@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.1 pl
+==============
+- Changed sort of parents filters to menuindex.
+
 1.1.0 pl
 ==============
 - Improved search index and algorithm.
