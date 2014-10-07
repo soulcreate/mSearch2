@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.1.1 pl
 ==============
 - Changed sort of parents filters to menuindex.
+- Fixed autocomplete when unpublished resources are found.
 
 1.1.0 pl
 ==============

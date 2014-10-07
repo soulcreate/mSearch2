@@ -222,7 +222,8 @@ switch ($action) {
 						$processed = explode('<!-- msearch2 -->', $html);
 
 						$scriptProperties['select'] = 'id,pagetitle';
-						$scriptProperties['resources'] = implode(',', array_keys($found));
+						$scriptProperties['returnIds'] = 1;
+						$scriptProperties['resources'] = $modx->runSnippet($snippet, $scriptProperties);
 						$rows = $pdoFetch->getCollection('modResource', null, $scriptProperties);
 
 						if (!empty($processed[0])) {
