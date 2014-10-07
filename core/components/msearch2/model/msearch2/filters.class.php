@@ -161,8 +161,13 @@ class mse2FiltersHandler {
 	 */
 	public function getResourceValues(array $fields, array $ids) {
 		$filters = array();
+		$no_id = false;
+		if (!in_array('id', $fields)) {
+			$fields[] = 'id';
+			$no_id = true;
+		}
 		$q = $this->modx->newQuery('modResource');
-		$q->select('id,' . implode(',', $fields));
+		$q->select(implode(',', $fields));
 		$q->where(array('modResource.id:IN' => $ids));
 		if (in_array('parent', $fields) && $this->mse2->checkMS2()) {
 			$q->leftJoin('msCategoryMember','Member', '`Member`.`product_id` = `modResource`.`id`');
@@ -180,7 +185,9 @@ class mse2FiltersHandler {
 						if ($row['parent'] == $v) {continue;}
 						else {$k = 'parent';}
 					}
-					if ($v == '' || $k == 'id') {continue;}
+					if ($v == '' || ($k == 'id' && $no_id)) {
+						continue;
+					}
 					elseif (isset($filters[$k][$v])) {
 						$filters[$k][$v][] = $row['id'];
 					}

@@ -745,7 +745,9 @@ class mSearch2 {
 		$tmp_filters = array_map('trim', explode(',', $this->config['filters']));
 		foreach ($tmp_filters as $v) {
 			$v = strtolower($v);
-			if (strpos($v, $this->config['filter_delimeter']) !== false) {
+			if (empty($v)) {
+				continue;}
+			elseif (strpos($v, $this->config['filter_delimeter']) !== false) {
 				@list($table, $filter) = explode($this->config['filter_delimeter'], $v);
 			}
 			else {
@@ -763,7 +765,7 @@ class mSearch2 {
 			$method = 'get'.ucfirst($table).'Values';
 			$keys = array_keys($fields);
 			if (method_exists($this->filtersHandler, $method)) {
-				$fields = call_user_func_array(array($this->filtersHandler, $method), array(array_keys($fields), $ids));
+				$fields = call_user_func_array(array($this->filtersHandler, $method), array($keys, $ids));
 
 				foreach ($keys as $key) {
 					if (!isset($fields[$key])) {
