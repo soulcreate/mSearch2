@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.2 pl
+==============
+- [mSearch2] Fixed parameter &toPlaceholder.
+
 1.1.1 pl
 ==============
 - Changed sort of parents filters to menuindex.

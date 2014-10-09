@@ -72,6 +72,7 @@ if (empty($resources)) {
 			}
 			if (!empty($toPlaceholder)) {
 				$modx->setPlaceholder($toPlaceholder, $output);
+				return;
 			}
 			else {
 				return $output;
@@ -84,7 +85,6 @@ elseif (strpos($resources, '{') === 0) {
 	$resources = implode(',', array_keys($found));
 	unset($scriptProperties['resources']);
 }
-
 /*----------------------------------------------------------------------------------*/
 // Joining tables
 $leftJoin = array(
