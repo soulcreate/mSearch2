@@ -16,7 +16,9 @@ class mseIndexCreateProcessor extends modProcessor {
 	public $permission = '';
 	/** @var mSearch2 $mSearch2 */
 	public $mSearch2;
-	protected $fields = array();
+	protected $_limit = 100;
+	protected $_offset = 0;
+	protected $_total = 0;
 
 
 	/**
@@ -78,7 +80,13 @@ class mseIndexCreateProcessor extends modProcessor {
 			$i++;
 		}
 
-		return $this->success('', array('indexed' => $i));
+		$offset = $this->_offset + $this->_limit;
+		$done = $offset >= $this->_total;
+		return $this->success('', array(
+			'indexed' => $i,
+			'offset' => $done ? 0 : $offset,
+			'done' => $done,
+		));
 	}
 
 
@@ -88,8 +96,8 @@ class mseIndexCreateProcessor extends modProcessor {
 	 * @return array|null
 	 */
 	public function getResources() {
-		$limit = $this->getProperty('limit', 100);
-		$offset = $this->getProperty('offset', 0);
+		$this->_limit = $this->getProperty('limit', 100);
+		$this->_offset = $this->getProperty('offset', 0);
 
 		$select_fields = array_intersect(
 			array_keys($this->modx->getFieldMeta('modResource'))
@@ -98,10 +106,11 @@ class mseIndexCreateProcessor extends modProcessor {
 		$select_fields = array_unique(array_merge($select_fields, array('id','class_key','deleted','searchable')));
 
 		$c = $this->modx->newQuery('modResource');
-		$c->limit($limit, $offset);
 		$c->sortby('id','ASC');
 		$c->select($this->modx->getSelectColumns('modResource', 'modResource', '', $select_fields));
 		$c = $this->prepareQuery($c);
+		$this->_total = $this->modx->getCount('modResource', $c);
+		$c->limit($this->_limit, $this->_offset);
 
 		$collection = array();
 		if ($c->prepare() && $c->stmt->execute()) {

@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.3 pl
+==============
+- Improved indexing manager page.
+
 1.1.2 pl
 ==============
 - [mSearch2] Fixed parameter &toPlaceholder.

@@ -41,9 +41,9 @@ mSearch2.panel.Index = function(config) {
 				var data = response.result.object;
 				var form = this.getForm();
 				var values = form.getValues();
-				if (data.indexed > 0) {
+				if (!data.done) {
 					form.setValues({
-						offset: Number(data.indexed) + Number(values.offset)
+						offset: Number(data.offset)
 					});
 					this.submit(this);
 				}
