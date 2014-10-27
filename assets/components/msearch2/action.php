@@ -23,6 +23,7 @@ if (!$pdoClass = $modx->loadClass($fqn, '', false, true)) {return false;}
 $pdoFetch = new $pdoClass($modx, array());
 $pdoFetch->addTime('pdoTools loaded.');
 
+// Switch context if need
 if (!empty($_REQUEST['pageId']) && !empty($_REQUEST['key'])) {
 	$modx->resource = $modx->getObject('modResource', $_REQUEST['pageId']);
 	if ($modx->resource->get('context_key') != 'web') {
@@ -31,6 +32,7 @@ if (!empty($_REQUEST['pageId']) && !empty($_REQUEST['key'])) {
 	$config = @$_SESSION['mSearch2'][$_REQUEST['key']];
 }
 
+// Load config
 if (empty($config) || !is_array($config)) {
 	$action = 'no_config';
 	$config = $scriptProperties = array();
@@ -42,6 +44,18 @@ else {
 	/** @var mSearch2 $mSearch2 */
 	$mSearch2 = $modx->getService('msearch2','mSearch2', MODX_CORE_PATH.'components/msearch2/model/msearch2/', $scriptProperties);
 }
+
+// Base url for pdoPage
+if ($modx->getOption('friendly_urls')) {
+	$q_var = $modx->getOption('request_param_alias', null, 'q');
+	$_REQUEST[$q_var] = $modx->makeUrl($_REQUEST['pageId']);
+}
+else {
+	$id_var = $this->modx->getOption('request_param_id', null, 'id');
+	$_GET[$id_var] = $_REQUEST['pageId'];
+}
+
+// Unset service variables
 unset($_REQUEST['pageId'], $_REQUEST['action'], $_REQUEST['key']);
 
 switch ($action) {

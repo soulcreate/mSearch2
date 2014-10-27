@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.4 pl
+==============
+- Fixed pagination links in ajax requests.
+
 1.1.3 pl
 ==============
 - Improved indexing manager page.
