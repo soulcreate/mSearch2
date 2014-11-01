@@ -1,6 +1,6 @@
 Changelog for mSearch2.
 
-1.1.4 pl
+1.1.4 pl1
 ==============
 - Fixed pagination links in ajax requests.
 
