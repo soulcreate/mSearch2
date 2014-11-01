@@ -51,7 +51,7 @@ if ($modx->getOption('friendly_urls')) {
 	$_REQUEST[$q_var] = $modx->makeUrl($_REQUEST['pageId']);
 }
 else {
-	$id_var = $this->modx->getOption('request_param_id', null, 'id');
+	$id_var = $modx->getOption('request_param_id', null, 'id');
 	$_GET[$id_var] = $_REQUEST['pageId'];
 }
 
