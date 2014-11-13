@@ -115,6 +115,37 @@ class mse2FiltersHandler {
 	}
 
 
+	public function getMsVendorValues(array $fields, array $ids) {
+		$filters = array();
+		$q = $this->modx->newQuery('msVendor');
+		$q->innerJoin('msProductData','Product','Product.vendor = msVendor.id');
+		$q->where(array('Product.id:IN' => $ids));
+		$q->select('Product.id,' . $this->modx->getSelectColumns('msVendor','msVendor','',$fields));
+		$tstart = microtime(true);
+		if ($q->prepare() && $q->stmt->execute()) {
+			$this->modx->queryTime += microtime(true) - $tstart;
+			$this->modx->executedQueries++;
+			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+				foreach ($row as $k => $v) {
+					$v = trim($v);
+					if ($v == '' || $k == 'id') {continue;}
+					else if (isset($filters[$k][$v])) {
+						$filters[$k][$v][] = $row['id'];
+					}
+					else {
+						$filters[$k][$v] = array($row['id']);
+					}
+
+				}
+			}
+		}
+		else {
+			$this->modx->log(modX::LOG_LEVEL_ERROR, "[mSearch2] Error on get filter params.\nQuery: " . $q->toSql() . "\nResponse: " . print_r($q->stmt->errorInfo(), 1));
+		}
+
+		return $filters;
+	}
+
 	/**
 	 * Retrieves values from miniShop2 Product table
 	 *
@@ -316,7 +347,6 @@ class mse2FiltersHandler {
 		ksort($results);
 		return $results;
 	}
-
 
 
 	/**

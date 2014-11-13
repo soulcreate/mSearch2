@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.1.5 pl
+==============
+- [#11] Added support of msVendor.
+
 1.1.4 pl1
 ==============
 - Fixed pagination links in ajax requests.
