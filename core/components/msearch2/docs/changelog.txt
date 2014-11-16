@@ -1,8 +1,9 @@
 Changelog for mSearch2.
 
-1.1.5 pl
+1.1.5 pl1
 ==============
 - [#11] Added support of msVendor.
+- Improved processing of tags in quick search.
 
 1.1.4 pl1
 ==============

@@ -203,10 +203,8 @@ switch ($action) {
 						$row['pagetitle'] = $row['title'] = $intro;
 						$row['idx'] = $i;
 						$results[] = array(
-							//'id' => $row['id'],
-							//'url' => $modx->makeUrl($row['id'], '', '', 'full'),
 							'value' => html_entity_decode($row['query'], ENT_QUOTES, 'UTF-8'),
-							'label' => preg_replace('/\[\[.*?\]\]/', '', $pdoFetch->getChunk($scriptProperties['tpl'], $row)),
+							'label' => $pdoFetch->getChunk($scriptProperties['tpl'], $row),
 						);
 						$i++;
 					}
@@ -248,15 +246,31 @@ switch ($action) {
 									'id' => $row['id'],
 									'url' => $modx->makeUrl($row['id'], '', '', 'full'),
 									'value' => html_entity_decode($row['pagetitle'], ENT_QUOTES, 'UTF-8'),
-									'label' => preg_replace('/\[\[.*?\]\]/', '',
-										isset($processed[$i])
+									'label' => isset($processed[$i])
 											? $processed[$i]
-											: $pdoFetch->getChunk($scriptProperties['tpl'], $row)),
+											: $pdoFetch->getChunk($scriptProperties['tpl'], $row),
 								);
 								$i++;
 							}
 						}
 					}
+			}
+		}
+
+		if (!empty($scriptProperties['fastMode'])) {
+			foreach ($results as &$v) {
+				if (!empty($v['label'])) {
+					$v['label'] = $pdoFetch->fastProcess($v['label']);
+				}
+			}
+		}
+		else {
+			$maxIterations = (integer) $modx->getOption('parser_max_iterations', null, 10);
+			foreach ($results as &$v) {
+				if (!empty($v['label'])) {
+					$modx->getParser()->processElementTags('', $v['label'], false, false, '[[', ']]', array(), $maxIterations);
+					$modx->getParser()->processElementTags('', $v['label'], true, true, '[[', ']]', array(), $maxIterations);
+				}
 			}
 		}
 
