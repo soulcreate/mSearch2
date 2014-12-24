@@ -1,5 +1,10 @@
 Changelog for mSearch2.
 
+1.2.0 rc1
+==============
+- [mFilter2] Ability to add new filters from build methods.
+- [mFilter2] Support of special options of miniShop2 products in "key==value" format.
+
 1.1.5 pl1
 ==============
 - [#11] Added support of msVendor.

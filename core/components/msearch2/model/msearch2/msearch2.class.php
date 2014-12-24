@@ -766,43 +766,42 @@ class mSearch2 {
 			$keys = array_keys($fields);
 			if (method_exists($this->filtersHandler, $method)) {
 				$fields = call_user_func_array(array($this->filtersHandler, $method), array($keys, $ids));
-
-				foreach ($keys as $key) {
-					if (!isset($fields[$key])) {
-						$fields[$key] = array();
-					}
-				}
-
 			}
 			else {
 				$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not retrieve filters from "'.$table.'"');
 			}
 		}
 
+		if (!$build) {
+			return $filters;
+		}
 		$this->filters = $filters;
-		// Building filters
-		if ($build) {
-			foreach ($built as $filter => &$value) {
-				list($table, $filter) = explode($this->config['filter_delimeter'], $filter);
-				$values = $filters[$table][$filter];
-				if ($table == 'tv' && $value == 'default') {
-					$value = 'tvs';
+		$prepared = array();
+		foreach ($this->filters as $table => $filters) {
+			foreach ($filters as $key => $values) {
+				$key = $table . $this->config['filter_delimeter'] . $key;
+				$filter = !empty($built[$key])
+					? $built[$key]
+					: 'default';
+				if ($table == 'tv' && $filter == 'default') {
+					$filter = 'tvs';
 				}
-				$method = 'build'.ucfirst($value).'Filter';
+				$method = 'build'.ucfirst($filter).'Filter';
 				if (method_exists($this->filtersHandler, $method)) {
-					$value = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
+					$prepared[$key] = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
+				}
+				elseif (method_exists($this->filtersHandler, 'buildDefaultFilter')) {
+					$prepared[$key] = call_user_func_array(array($this->filtersHandler, 'buildDefaultFilter'), array($values, $filter));
 				}
 				else {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not build filter "'.$table.$this->config['filter_delimeter'].$filter.'"');
-					$value = $values;
+					$prepared[$key] = $values;
 				}
 			}
-			$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $built, $this->config['cacheTime']);
-			return $built;
 		}
-		else {
-			return $filters;
-		}
+		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $prepared, $this->config['cacheTime']);
+
+		return $prepared;
 	}
 
 

@@ -39,9 +39,9 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
 			if (!class_exists('PclZip')) {require MODX_CORE_PATH . 'xpdo/compression/pclzip.lib.php';}
 			$dicts = $path.'phpmorphy/dicts/';
-			$src_ru = 'http://downloads.sourceforge.net/project/phpmorphy/phpmorphy-dictionaries/0.3.x/ru_RU/morphy-0.3.x-ru_RU-nojo-utf8.zip?use_mirror=netcologne';
+			$src_ru = 'http://h.simpledream.ru/dists/morphy-0.3.x-ru_RU-nojo-utf8.zip';
 			$dst_ru = $dicts . 'dict_ru.zip';
-			$src_en = 'http://downloads.sourceforge.net/project/phpmorphy/phpmorphy-dictionaries/0.3.x/en_EN/morphy-0.3.x-en_EN-windows-1250.zip?use_mirror=netcologne';
+			$src_en = 'http://h.simpledream.ru/dists/morphy-0.3.x-en_EN-windows-1250.zip';
 			$dst_en = $dicts . 'dict_en.zip';
 
 			$modx->log(modX::LOG_LEVEL_INFO, 'Trying to download <b>russian</b> dictionary. Please wait...');

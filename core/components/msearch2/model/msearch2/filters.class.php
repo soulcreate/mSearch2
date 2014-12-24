@@ -164,13 +164,20 @@ class mse2FiltersHandler {
 			$this->modx->queryTime += microtime(true) - $tstart;
 			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
-				$row['value'] = trim($row['value']);
-				if ($row['value'] == '') {continue;}
-				if (isset($filters[$row['key']][$row['value']])) {
-					$filters[$row['key']][$row['value']][] = $row['product_id'];
+				$value = trim($row['value']);
+				if ($value == '') {continue;}
+				$key = $row['key'];
+				// Get ready for the special options in "key==value" format
+				if (strpos($value, '==')) {
+					list($key, $value) = explode('==', $value);
+					$key = preg_replace('/\s+/', '_', $key);
+				}
+				// --
+				if (isset($filters[$key][$value])) {
+					$filters[$key][$value][] = $row['product_id'];
 				}
 				else {
-					$filters[$row['key']][$row['value']] = array($row['product_id']);
+					$filters[$key][$value] = array($row['product_id']);
 				}
 			}
 		}
