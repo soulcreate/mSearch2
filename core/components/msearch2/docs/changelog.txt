@@ -1,5 +1,10 @@
 Changelog for mSearch2.
 
+1.2.0 rc2
+==============
+- [mFilter2] Added triggering of jQuery event "mse2_load".
+- [mFilter2] Added support of pdoTools 1.10.
+
 1.2.0 rc1
 ==============
 - [mFilter2] Ability to add new filters from build methods.

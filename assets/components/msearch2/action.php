@@ -64,6 +64,8 @@ switch ($action) {
 		$paginatorProperties['toPlaceholder'] = '';
 		$paginatorProperties['toPlaceholders'] = '';
 		$paginatorProperties['toSeparatePlaceholders'] = '';
+		$paginatorProperties['ajax'] = 0;
+		$paginatorProperties['ajaxMode'] = '';
 
 		// Get sorting parameters
 		if (!empty($_REQUEST['sort'])) {

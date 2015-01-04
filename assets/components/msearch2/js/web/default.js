@@ -332,6 +332,7 @@ var mSearch2 = {
 				if (callback && $.isFunction(callback)) {
 					callback.call(this, response, params);
 				}
+				$(document).trigger('mse2_load', response);
 			}
 			else {
 				mSearch2.Message.error(response.message);
