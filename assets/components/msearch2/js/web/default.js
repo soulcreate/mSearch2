@@ -186,14 +186,15 @@ var mSearch2 = {
 				,max: vmax
 				,values: [vmin, vmax]
 				,range: true
+				//,step: 0.1
 				,stop: function(event, ui) {
-					imin.val($this.slider('values',0));
-					imax.val($this.slider('values',1));
+					imin.val($this.slider('values',0)/*.toFixed(2)*/);
+					imax.val($this.slider('values',1)/*.toFixed(2)*/);
 					imin.trigger('change');
 				},
 				slide: function(event, ui){
-					imin.val($this.slider('values',0));
-					imax.val($this.slider('values',1));
+					imin.val($this.slider('values',0)/*.toFixed(2)*/);
+					imax.val($this.slider('values',1)/*.toFixed(2)*/);
 				}
 			});
 
@@ -201,9 +202,9 @@ var mSearch2 = {
 			var values = mSearch2.Hash.get();
 			if (values[name]) {
 				var tmp = values[name].split(mse2Config.values_delimeter);
-				if (tmp[0].match(/(?!^-)[^0-9]/g)) {tmp[0] = tmp[0].replace(/(?!^-)[^0-9]/g, '');}
+				if (tmp[0].match(/(?!^-)[^0-9\.]/g)) {tmp[0] = tmp[0].replace(/(?!^-)[^0-9\.]/g, '');}
 				if (tmp.length > 1) {
-					if (tmp[1].match(/(?!^-)[^0-9]/g)) {tmp[1] = tmp[1].replace(/(?!^-)[^0-9]/g, '');}	
+					if (tmp[1].match(/(?!^-)[^0-9\.]/g)) {tmp[1] = tmp[1].replace(/(?!^-)[^0-9\.]/g, '');}
 				}
 				imin.val(tmp[0]);
 				imax.val(tmp.length > 1 ? tmp[1] : tmp[0]);
@@ -211,7 +212,7 @@ var mSearch2 = {
 
 			//imin.attr('readonly', true);
 			imin.on('change keyup input click', function(e) {
-				if (this.value.match(/(?!^-)[^0-9]/g)) {this.value = this.value.replace(/(?!^-)[^0-9]/g, '');}
+				if (this.value.match(/(?!^-)[^0-9\.]/g)) {this.value = this.value.replace(/(?!^-)[^0-9\.]/g, '');}
 				if (e.type != 'keyup' && e.type != 'input') {
 					if (this.value > vmax) {this.value = vmax;}
 					else if (this.value < vmin) {this.value = vmin;}
@@ -220,7 +221,7 @@ var mSearch2 = {
 			});
 			//imax.attr('readonly', true);
 			imax.on('change keyup input click', function(e) {
-				if (this.value.match(/(?!^-)[^0-9]/g)) {this.value = this.value.replace(/(?!^-)[^0-9]/g, '');}
+				if (this.value.match(/(?!^-)[^0-9\.]/g)) {this.value = this.value.replace(/(?!^-)[^0-9\.]/g, '');}
 				if (e.type != 'keyup' && e.type != 'input') {
 					if (this.value > vmax) {this.value = vmax;}
 					else if (this.value < vmin) {this.value = vmin;}

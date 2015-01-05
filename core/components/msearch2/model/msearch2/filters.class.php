@@ -115,6 +115,14 @@ class mse2FiltersHandler {
 	}
 
 
+	/**
+	 * Retrieves values from miniShop2 Vendor table
+	 *
+	 * @param array $fields
+	 * @param array $ids
+	 *
+	 * @return array
+	 */
 	public function getMsVendorValues(array $fields, array $ids) {
 		$filters = array();
 		$q = $this->modx->newQuery('msVendor');
@@ -281,7 +289,7 @@ class mse2FiltersHandler {
 	 *
 	 * @return array Prepared values
 	 */
-	public function buildNumberFilter(array $values, $name = '') {
+	public function buildDecimalFilter(array $values, $name = '') {
 		$tmp = array_keys($values);
 		if (empty($values) || (count($tmp) < 2 && empty($this->config['showEmptyFilters']))) {
 			return array();
@@ -289,8 +297,8 @@ class mse2FiltersHandler {
 
 		sort($tmp);
 		if (count($values) >= 2) {
-			$min = floor(array_shift($tmp));
-			$max = ceil(array_pop($tmp));
+			$min = array_shift($tmp);
+			$max = array_pop($tmp);
 		}
 		else {
 			$min = $max = $tmp[0];
@@ -310,6 +318,24 @@ class mse2FiltersHandler {
 				,'resources' => null
 			)
 		);
+	}
+
+
+	/**
+	 * Returns array with rounded minimum and maximum value
+	 *
+	 * @param array $values
+	 * @param string $name
+	 *
+	 * @return array
+	 */
+	public function buildNumberFilter(array $values, $name = '') {
+		if ($filters = $this->buildDecimalFilter($values, $name)) {
+			$filters[0]['value'] = floor($filters[0]['value']);
+			$filters[1]['value'] = ceil($filters[1]['value']);
+		}
+
+		return $filters;
 	}
 
 
@@ -790,6 +816,36 @@ class mse2FiltersHandler {
 
 		$min = floor(min($requested));
 		$max = ceil(max($requested));
+
+		$tmp = array_flip($ids);
+		foreach ($values as $number => $resources) {
+			if ($number >= $min && $number <= $max) {
+				foreach ($resources as $id) {
+					if (isset($tmp[$id])) {
+						$matched[] = $id;
+					}
+				}
+			}
+		}
+
+		return $matched;
+	}
+
+
+	/**
+	 * Filters decimals. Values must be between min and max number
+	 *
+	 * @param array $requested
+	 * @param array $values
+	 * @param array $ids
+	 *
+	 * @return array
+	 */
+	public function filterDecimal(array $requested, array $values, array $ids) {
+		$matched = array();
+
+		$min = min($requested);
+		$max = max($requested);
 
 		$tmp = array_flip($ids);
 		foreach ($values as $number => $resources) {

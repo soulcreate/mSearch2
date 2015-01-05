@@ -1,9 +1,11 @@
 Changelog for mSearch2.
 
-1.2.0 rc2
+1.2.0 rc3
 ==============
 - [mFilter2] Added triggering of jQuery event "mse2_load".
 - [mFilter2] Added support of pdoTools 1.10.
+- [mFilter2] Added filter "decimal".
+- [mFilter2] Fixed default javascript for decimal values in slider.
 
 1.2.0 rc1
 ==============
