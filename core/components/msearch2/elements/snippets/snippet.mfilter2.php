@@ -65,6 +65,11 @@ elseif (isset($_REQUEST[$queryVar])) {
 		$output['results'] = $modx->lexicon('mse2_err_no_results');
 	}
 	else {
+		$tmp = $scriptProperties;
+		$tmp['returnIds'] = 1;
+		$tmp['resources'] = implode(',', $ids);
+		$tmp['parents'] = (int) $scriptProperties['parents'];
+		$ids = explode(',', $modx->runSnippet($scriptProperties['element'], $tmp));
 		$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
 	}
 }
