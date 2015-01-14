@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.1 pl
+==============
+- [mFilter2] Added support of "autotag" TVs.
+
 1.2.0 pl
 ==============
 - [mFilter2] Added triggering of jQuery event "mse2_load".

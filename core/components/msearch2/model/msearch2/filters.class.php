@@ -49,7 +49,7 @@ class mse2FiltersHandler {
 			$this->modx->queryTime += microtime(true) - $tstart;
 			$this->modx->executedQueries++;
 			while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
-				if ($row['type'] == 'tag') {
+				if ($row['type'] == 'tag' || $row['type'] == 'autotag') {
 					$row['value'] = str_replace(',', '||', $row['value']);
 				}
 				$tmp = strpos($row['value'], '||') !== false
