@@ -1,5 +1,10 @@
 Changelog for mSearch2.
 
+1.2.2 pl
+==============
+- [mFilter2] Fixed display order of specified &filters.
+- [Main] Removed register of jQuery on frontend.
+
 1.2.1 pl
 ==============
 - [mFilter2] Added support of "autotag" TVs.

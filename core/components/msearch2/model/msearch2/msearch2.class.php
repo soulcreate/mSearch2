@@ -157,7 +157,6 @@ class mSearch2 {
 			default:
 				$this->config = array_merge($this->config, $scriptProperties);
 				$this->config['ctx'] = $ctx;
-				//$initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/config.js']);
 
 				if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
 					$config = $this->makePlaceholders($this->config);
@@ -165,13 +164,6 @@ class mSearch2 {
 						$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
 					}
 					if ($js = trim($this->modx->getOption('mse2_frontend_js'))) {
-						$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
-						<script type="text/javascript">
-						if(typeof jQuery == "undefined") {
-							document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
-						}
-						</script>
-						'), true);
 						$this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
 					}
 				}
@@ -746,7 +738,8 @@ class mSearch2 {
 		foreach ($tmp_filters as $v) {
 			$v = strtolower($v);
 			if (empty($v)) {
-				continue;}
+				continue;
+			}
 			elseif (strpos($v, $this->config['filter_delimeter']) !== false) {
 				@list($table, $filter) = explode($this->config['filter_delimeter'], $v);
 			}
@@ -799,9 +792,18 @@ class mSearch2 {
 				}
 			}
 		}
-		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $prepared, $this->config['cacheTime']);
 
-		return $prepared;
+		// Sort filters
+		foreach ($built as $key => &$values) {
+			if (isset($prepared[$key])) {
+				$values = $prepared[$key];
+			}
+		}
+
+		// Set cache
+		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $built, $this->config['cacheTime']);
+
+		return $built;
 	}
 
 
