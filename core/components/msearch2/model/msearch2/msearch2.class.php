@@ -772,23 +772,26 @@ class mSearch2 {
 		$prepared = array();
 		foreach ($this->filters as $table => $filters) {
 			foreach ($filters as $key => $values) {
-				$key = $table . $this->config['filter_delimeter'] . $key;
-				$filter = !empty($built[$key])
-					? $built[$key]
+				$new_key = $table . $this->config['filter_delimeter'] . $key;
+				$filter = !empty($built[$new_key])
+					? $built[$new_key]
 					: 'default';
 				if ($table == 'tv' && $filter == 'default') {
-					$filter = 'tvs';
-				}
-				$method = 'build'.ucfirst($filter).'Filter';
-				if (method_exists($this->filtersHandler, $method)) {
-					$prepared[$key] = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
-				}
-				elseif (method_exists($this->filtersHandler, 'buildDefaultFilter')) {
-					$prepared[$key] = call_user_func_array(array($this->filtersHandler, 'buildDefaultFilter'), array($values, $filter));
+					$filter = $key;
+					$method = 'buildTVsFilter';
 				}
 				else {
-					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not build filter "'.$table.$this->config['filter_delimeter'].$filter.'"');
-					$prepared[$key] = $values;
+					$method = 'build'.ucfirst($filter).'Filter';
+				}
+				if (method_exists($this->filtersHandler, $method)) {
+					$prepared[$new_key] = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
+				}
+				elseif (method_exists($this->filtersHandler, 'buildDefaultFilter')) {
+					$prepared[$new_key] = call_user_func_array(array($this->filtersHandler, 'buildDefaultFilter'), array($values, $filter));
+				}
+				else {
+					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not build filter for "'. $new_key .'"');
+					$prepared[$new_key] = $values;
 				}
 			}
 		}

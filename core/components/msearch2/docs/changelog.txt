@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.3 pl
+==============
+- [#33] [mFilter2] Fixed build of TVs filters.
+
 1.2.2 pl
 ==============
 - [mFilter2] Fixed display order of specified &filters.
