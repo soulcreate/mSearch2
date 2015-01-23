@@ -69,6 +69,7 @@ elseif (isset($_REQUEST[$queryVar])) {
 		$tmp['returnIds'] = 1;
 		$tmp['resources'] = implode(',', $ids);
 		$tmp['parents'] = (int) $scriptProperties['parents'];
+		$tmp['limit'] = 0;
 		$ids = explode(',', $modx->runSnippet($scriptProperties['element'], $tmp));
 		$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
 	}

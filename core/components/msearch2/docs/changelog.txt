@@ -3,6 +3,7 @@ Changelog for mSearch2.
 1.2.3 pl
 ==============
 - [#33] [mFilter2] Fixed build of TVs filters.
+- [mFilter2] Fixed limit on search.
 
 1.2.2 pl
 ==============
