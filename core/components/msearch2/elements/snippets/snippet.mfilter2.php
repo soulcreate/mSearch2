@@ -61,10 +61,7 @@ elseif (isset($_REQUEST[$queryVar])) {
 	$found = $mSearch2->Search($query);
 	$ids = array_keys($found);
 
-	if (empty($ids)) {
-		$output['results'] = $modx->lexicon('mse2_err_no_results');
-	}
-	else {
+	if (!empty($ids)) {
 		$tmp = $scriptProperties;
 		$tmp['returnIds'] = 1;
 		$tmp['resources'] = implode(',', $ids);
@@ -72,6 +69,10 @@ elseif (isset($_REQUEST[$queryVar])) {
 		$tmp['limit'] = 0;
 		$ids = explode(',', $modx->runSnippet($scriptProperties['element'], $tmp));
 		$pdoFetch->addTime('Found ids: "'.implode(',',$ids).'"');
+	}
+
+	if (empty($ids[0])) {
+		$output['results'] = $modx->lexicon('mse2_err_no_results');
 	}
 }
 
