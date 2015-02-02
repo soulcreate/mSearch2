@@ -1,9 +1,10 @@
 Changelog for mSearch2.
 
-1.2.3 pl1
+1.2.3 pl2
 ==============
 - [#33] [mFilter2] Fixed build of TVs filters.
 - [mFilter2] Fixed limit on search.
+- [mFilter2] Fixed displaying of empty filters on page.
 
 1.2.2 pl
 ==============
