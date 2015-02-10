@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.4 pl
+==============
+- [mFilter2] Fixed adding new filters from build methods.
+
 1.2.3 pl2
 ==============
 - [#33] [mFilter2] Fixed build of TVs filters.

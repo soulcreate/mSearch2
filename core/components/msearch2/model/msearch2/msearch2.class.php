@@ -800,8 +800,11 @@ class mSearch2 {
 		foreach ($built as $key => &$values) {
 			if (isset($prepared[$key])) {
 				$values = $prepared[$key];
+				unset($prepared[$key]);
 			}
 		}
+		// Add new generated filters to the end of list
+		$built = array_merge($built, $prepared);
 
 		// Set cache
 		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $built, $this->config['cacheTime']);
