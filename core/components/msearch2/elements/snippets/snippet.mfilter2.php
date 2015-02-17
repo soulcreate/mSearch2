@@ -190,6 +190,7 @@ if (!empty($ids)) {
 	// And checking by filters count
 	if (!empty($filters) && $scriptProperties['suggestions']) {
 		foreach ($filters as $tmp) {
+			if (!is_array($tmp)) {continue;}
 			$count += count(array_values($tmp));
 		}
 		if (!empty($scriptProperties['suggestionsMaxFilters']) && $count > $scriptProperties['suggestionsMaxFilters']) {
