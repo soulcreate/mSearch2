@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.5 pl
+==============
+- [#34] [mSearchForm] Fixed &autocomplete=`0`.
+
 1.2.4 pl1
 ==============
 - [mFilter2] Fixed adding new filters from build methods.
