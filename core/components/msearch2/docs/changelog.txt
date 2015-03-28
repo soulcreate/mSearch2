@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.6 pl
+==============
+- [mSearch2] Improved simple search for additional bonuses.
+
 1.2.5 pl
 ==============
 - [#34] [mSearchForm] Fixed &autocomplete=`0`.

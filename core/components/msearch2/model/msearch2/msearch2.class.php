@@ -533,7 +533,8 @@ class mSearch2 {
 	 * @return array
 	 */
 	public function simpleSearch($query) {
-		$string = preg_replace('/[^_-а-яёa-z0-9\s\.\/]+/iu', ' ', $this->modx->stripTags($query));
+		//$string = preg_replace('/[^_-а-яёa-z0-9\s\.\/]+/iu', ' ', $this->modx->stripTags($query));
+		$string = $this->modx->stripTags($query);
 
 		$result = array();
 		$q = $this->modx->newQuery('mseIntro');
