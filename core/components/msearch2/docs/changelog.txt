@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.7 pl
+==============
+- [mFilter2] Fixed search with &parents parameter.
+
 1.2.6 pl
 ==============
 - [mSearch2] Improved simple search for additional bonuses.
