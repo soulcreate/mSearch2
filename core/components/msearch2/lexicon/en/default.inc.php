@@ -56,6 +56,19 @@ $_lang['mse2_filter_total'] = 'Total items:';
 $_lang['mse2_filter_msoption_color'] = 'Colors';
 $_lang['mse2_filter_msoption_size'] = 'Sizes';
 
+$_lang['mse2_filter_month_01'] = 'January';
+$_lang['mse2_filter_month_02'] = 'February';
+$_lang['mse2_filter_month_03'] = 'March';
+$_lang['mse2_filter_month_04'] = 'April';
+$_lang['mse2_filter_month_05'] = 'May';
+$_lang['mse2_filter_month_06'] = 'June';
+$_lang['mse2_filter_month_07'] = 'July';
+$_lang['mse2_filter_month_08'] = 'August';
+$_lang['mse2_filter_month_09'] = 'September';
+$_lang['mse2_filter_month_10'] = 'October';
+$_lang['mse2_filter_month_11'] = 'November';
+$_lang['mse2_filter_month_12'] = 'December';
+
 $_lang['mse2_sort'] = 'Sort by:';
 $_lang['mse2_sort_asc'] = 'ascending';
 $_lang['mse2_sort_desc'] = 'descending';

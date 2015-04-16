@@ -703,6 +703,39 @@ class mse2FiltersHandler {
 
 
 	/**
+	 * Shorthand for group resources by month
+	 *
+	 * @param array $values
+	 * @param string $name
+	 * @param string $sort
+	 *
+	 * @return array Prepared values
+	 */
+	public function buildMonthFilter(array $values, $name = '', $sort = 'asc') {
+		$values = $this->buildDateFilter($values, $name, 'm', $sort);
+		foreach ($values as $k => &$v) {
+			$v['title'] = $this->modx->lexicon('mse2_filter_month_' . $v['title']);
+		}
+
+		return $values;
+	}
+
+
+	/**
+	 * Shorthand for group resources by day
+	 *
+	 * @param array $values
+	 * @param string $name
+	 * @param string $sort
+	 *
+	 * @return array Prepared values
+	 */
+	public function buildDayFilter(array $values, $name = '', $sort = 'asc') {
+		return $this->buildDateFilter($values, $name, 'd', $sort);
+	}
+
+
+	/**
 	 * Returns string for insert into sorting properties of pdoTools snippet
 	 *
 	 * @param string
@@ -905,4 +938,33 @@ class mse2FiltersHandler {
 	public function filterYear(array $requested, array $values, array $ids) {
 		return $this->filterDate($requested, $values, $ids, 'Y');
 	}
+
+
+	/**
+	 * Shorthand for filter by year
+	 *
+	 * @param array $requested Filtered ids of resources
+	 * @param array $values Filter data with min and max number
+	 * @param array $ids Ids of currently active resources
+	 *
+	 * @return array
+	 */
+	public function filterMonth(array $requested, array $values, array $ids) {
+		return $this->filterDate($requested, $values, $ids, 'm');
+	}
+
+
+	/**
+	 * Shorthand for filter by year
+	 *
+	 * @param array $requested Filtered ids of resources
+	 * @param array $values Filter data with min and max number
+	 * @param array $ids Ids of currently active resources
+	 *
+	 * @return array
+	 */
+	public function filterDay(array $requested, array $values, array $ids) {
+		return $this->filterDate($requested, $values, $ids, 'd');
+	}
+
 }

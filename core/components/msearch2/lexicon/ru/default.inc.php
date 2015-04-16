@@ -56,6 +56,19 @@ $_lang['mse2_filter_total'] = 'Всего результатов:';
 $_lang['mse2_filter_msoption_color'] = 'Цвета';
 $_lang['mse2_filter_msoption_size'] = 'Размеры';
 
+$_lang['mse2_filter_month_01'] = 'Январь';
+$_lang['mse2_filter_month_02'] = 'Февраль';
+$_lang['mse2_filter_month_03'] = 'Март';
+$_lang['mse2_filter_month_04'] = 'Апрель';
+$_lang['mse2_filter_month_05'] = 'Май';
+$_lang['mse2_filter_month_06'] = 'Июнь';
+$_lang['mse2_filter_month_07'] = 'Июль';
+$_lang['mse2_filter_month_08'] = 'Август';
+$_lang['mse2_filter_month_09'] = 'Сентябрь';
+$_lang['mse2_filter_month_10'] = 'Октябрь';
+$_lang['mse2_filter_month_11'] = 'Ноябрь';
+$_lang['mse2_filter_month_12'] = 'Декабрь';
+
 $_lang['mse2_sort'] = 'Сортировка:';
 $_lang['mse2_sort_asc'] = 'по возрастанию';
 $_lang['mse2_sort_desc'] = 'по убыванию';

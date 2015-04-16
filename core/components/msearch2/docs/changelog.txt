@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.2.8 pl
+==============
+- [mFilter2] Added filters "month" and "day".
+
 1.2.7 pl
 ==============
 - [mFilter2] Fixed search with &parents parameter.
