@@ -347,19 +347,22 @@ else {
 		if (empty($data) || !is_array($data)) {
 			continue;
 		}
-
-		$tplOuter = !empty($scriptProperties['tplFilter.outer.'.$filter]) ? $scriptProperties['tplFilter.outer.'.$filter] : $scriptProperties['tplFilter.outer.default'];
-		$tplRow = !empty($scriptProperties['tplFilter.row.'.$filter]) ? $scriptProperties['tplFilter.row.'.$filter] : $scriptProperties['tplFilter.row.default'];
-		$tplEmpty = !empty($scriptProperties['tplFilter.empty.'.$filter]) ? $scriptProperties['tplFilter.empty.'.$filter] : '';
-
-		// Caching chunk for quick placeholders
-		$pdoFetch->getChunk($tplRow);
-
 		$rows = $has_active = '';
 		list($table, $method) = explode($mSearch2->config['filter_delimeter'], $filter);
 		$filter_key = !empty($aliases[$filter])
 			? $aliases[$filter]
 			: $filter;
+
+		$tplOuter = !empty($scriptProperties['tplFilter.outer.' . $filter_key])
+			? $scriptProperties['tplFilter.outer.' . $filter_key]
+			: $scriptProperties['tplFilter.outer.default'];
+		$tplRow = !empty($scriptProperties['tplFilter.row.' . $filter_key])
+			? $scriptProperties['tplFilter.row.' . $filter_key]
+			: $scriptProperties['tplFilter.row.default'];
+		$tplEmpty = !empty($scriptProperties['tplFilter.empty.' . $filter_key])
+			? $scriptProperties['tplFilter.empty.' . $filter_key]
+			: '';
+
 		$idx = 0;
 		foreach ($data as $v) {
 			if (empty($v)) {continue;}

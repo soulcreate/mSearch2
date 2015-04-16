@@ -652,10 +652,6 @@ class mse2FiltersHandler {
 	 * @return array Prepared values
 	 */
 	public function buildDateFilter(array $values, $name = '', $format = 'Y-m-d', $sort = 'desc') {
-		if (count($values) < 2 && empty($this->config['showEmptyFilters'])) {
-			return array();
-		}
-
 		$results = array();
 		foreach ($values as $value => $ids) {
 			if (!is_numeric($value)) {
@@ -678,12 +674,17 @@ class mse2FiltersHandler {
 			}
 		}
 
+		if (count(array_keys($results)) < 2 && empty($this->config['showEmptyFilters'])) {
+			return array();
+		}
+
 		if (strtolower($sort) == 'asc') {
 			ksort($results);
 		}
 		else {
 			krsort($results);
 		}
+
 		return $results;
 	}
 
@@ -745,11 +746,32 @@ class mse2FiltersHandler {
 	public function getSortFields($sort) {
 		$data = array();
 
+		$aliases = array();
+		if (!empty($this->config['aliases'])) {
+			$tmp = array_map('trim', explode(',', $this->config['aliases']));
+			foreach ($tmp as $v) {
+				if (strpos($v, '==') !== false) {
+					$tmp2 = array_map('trim', explode('==', $v));
+					$aliases[$tmp2[1]] = $tmp2[0];
+				}
+			}
+		}
+
 		$sort = explode(',', strtolower(trim($sort)));
 		$resource_fields = array_keys($this->modx->getFieldMeta('modResource'));
 		foreach ($sort as $string) {
 			$table = '';
 			$order = 'asc';
+
+			$tmp = explode($this->config['method_delimeter'], $string);
+			if (!empty($tmp[1])) {
+				$string = $tmp[0];
+				$order = $tmp[1];
+			}
+
+			if (!empty($aliases[$string])) {
+				$string = $aliases[$string];
+			}
 
 			$tmp = explode($this->config['filter_delimeter'], $string);
 			if (!empty($tmp[1])) {
@@ -758,12 +780,6 @@ class mse2FiltersHandler {
 			}
 			else {
 				$field = $tmp[0];
-			}
-
-			$tmp = explode($this->config['method_delimeter'], $field);
-			if (!empty($tmp[1])) {
-				$field = $tmp[0];
-				$order = $tmp[1];
 			}
 
 			if (isset($this->config['sortAliases'][$table])) {
