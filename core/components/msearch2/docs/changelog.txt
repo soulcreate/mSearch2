@@ -1,8 +1,11 @@
 Changelog for mSearch2.
 
-1.2.8 pl
+1.3.0 pl
 ==============
 - [mFilter2] Added filters "month" and "day".
+- [mFilter2] Ability to use one field multiple times in filters.
+- [mFilter2] Improved suggestions for more optimal processing.
+- [mFilter2] Fixed suggestions for dates filters.
 
 1.2.7 pl
 ==============

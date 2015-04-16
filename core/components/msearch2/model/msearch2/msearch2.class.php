@@ -183,6 +183,7 @@ class mSearch2 {
 		$files = scandir($this->config['customPath'] . $dir);
 		foreach ($files as $file) {
 			if (preg_match('/.*?\.class\.php$/i', $file)) {
+				/** @noinspection PhpIncludeInspection */
 				include_once($this->config['customPath'] . $dir . '/' . $file);
 			}
 		}
@@ -196,6 +197,7 @@ class mSearch2 {
 	 */
 	public function loadPhpMorphy() {
 		if (!class_exists('phpMorphy_Exception')) {
+			/** @noinspection PhpIncludeInspection */
 			require_once $this->config['corePath'] . 'phpmorphy/src/common.php';
 		}
 
@@ -718,58 +720,99 @@ class mSearch2 {
 		if (!is_array($ids)) {
 			$ids = array_map('trim', explode(',', $ids));
 		}
-		if (empty($ids)) {return false;}
+		if (empty($ids)) {
+			return false;
+		}
 
 		// Return results from cache
-		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']))) {
+		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']))) {
 			return $prepared;
 		}
 		elseif (!$build && !empty($this->filters)) {
 			return $this->filters;
 		}
-		elseif (!$build && $this->filters = $this->modx->cacheManager->get('msearch2/fltr_' . md5(implode(',',$ids)))) {
+		elseif (!$build && $this->filters = $this->modx->cacheManager->get('msearch2/fltr_' . md5(implode(',', $ids)))) {
 			return $this->filters;
 		}
 
-		if (!is_object($this->filtersHandler)) {$this->loadHandler();}
-
-		// Preparing filters
-		$filters = $built = array();
-		$tmp_filters = array_map('trim', explode(',', $this->config['filters']));
-		foreach ($tmp_filters as $v) {
-			$v = strtolower($v);
-			if (empty($v)) {
-				continue;
-			}
-			elseif (strpos($v, $this->config['filter_delimeter']) !== false) {
-				@list($table, $filter) = explode($this->config['filter_delimeter'], $v);
-			}
-			else {
-				$table = 'resource';
-				$filter = $v;
-			}
-
-			$tmp = explode($this->config['method_delimeter'], $filter);
-			$filters[$table][$tmp[0]] = array();
-			$built[$table.$this->config['filter_delimeter'].$tmp[0]] = !empty($tmp[1]) ? $tmp[1] : 'default';
+		if (!is_object($this->filtersHandler)) {
+			$this->loadHandler();
 		}
+		if (empty($this->filters) || empty($this->methods)) {
+			// Preparing filters
+			$filters = $built = $duplicates = array();
+			$tmp_filters = array_map('trim', explode(',', $this->config['filters']));
+			foreach ($tmp_filters as $v) {
+				$v = strtolower($v);
+				if (empty($v)) {
+					continue;
+				}
+				elseif (strpos($v, $this->config['filter_delimeter']) !== false) {
+					@list($table, $filter) = explode($this->config['filter_delimeter'], $v);
+				}
+				else {
+					$table = 'resource';
+					$filter = $v;
+				}
 
-		// Retrieving filters
-		foreach ($filters as $table => &$fields) {
-			$method = 'get'.ucfirst($table).'Values';
-			$keys = array_keys($fields);
-			if (method_exists($this->filtersHandler, $method)) {
-				$fields = call_user_func_array(array($this->filtersHandler, $method), array($keys, $ids));
+				$tmp = explode($this->config['method_delimeter'], $filter);
+				$name = $tmp[0];
+				$filter = !empty($tmp[1])
+					? $tmp[1]
+					: 'default';
+				// Duplicates
+				if (isset($filters[$table][$name])) {
+					$old_filter = $built[$table . $this->config['filter_delimeter'] . $name];
+					$new_name = $name . '-' . $old_filter;
+					$built[$table . $this->config['filter_delimeter'] . $new_name] = $old_filter;
+					$filters[$table][$new_name] = $filters[$table][$name];
+					$duplicates[$table][$new_name] = $name;
+
+					$new_name = $name . '-' . $filter;
+					$duplicates[$table][$new_name] = $name;
+					$name = $new_name;
+				}
+				$filters[$table][$name] = array();
+				$built[$table . $this->config['filter_delimeter'] . $name] = $filter;
 			}
-			else {
-				$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not retrieve filters from "'.$table.'"');
+
+			// Retrieving filters
+			foreach ($filters as $table => &$fields) {
+				$method = 'get' . ucfirst($table) . 'Values';
+				$keys = !empty($duplicates[$table])
+					? array_diff(array_keys($fields), array_keys($duplicates[$table]))
+					: array_keys($fields);
+				if (method_exists($this->filtersHandler, $method)) {
+					$fields = call_user_func_array(array($this->filtersHandler, $method), array($keys, $ids));
+					if (!empty($duplicates[$table])) {
+						foreach ($duplicates[$table] as $key => $field) {
+							$fields[$key] = $fields[$field];
+						}
+					}
+				}
+				else {
+					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "' . $method . '" not exists in class "' . get_class($this->filtersHandler) . '". Could not retrieve filters from "' . $table . '"');
+				}
 			}
+
+			// Remove duplicates
+			foreach ($duplicates as $table => $fields) {
+				$tmp = array_unique($fields);
+				foreach ($tmp as $tmp2) {
+					unset($filters[$table][$tmp2]);
+					unset($built[$table . $this->config['filter_delimeter'] . $tmp2]);
+				}
+			}
+
+			$this->filters = $filters;
+			$this->methods = $built;
 		}
 
 		if (!$build) {
-			return $filters;
+			return $this->filters;
 		}
-		$this->filters = $filters;
+		$built = $this->methods;
+
 		$prepared = array();
 		foreach ($this->filters as $table => $filters) {
 			foreach ($filters as $key => $values) {
@@ -782,7 +825,7 @@ class mSearch2 {
 					$method = 'buildTVsFilter';
 				}
 				else {
-					$method = 'build'.ucfirst($filter).'Filter';
+					$method = 'build' . ucfirst($filter) . 'Filter';
 				}
 				if (method_exists($this->filtersHandler, $method)) {
 					$prepared[$new_key] = call_user_func_array(array($this->filtersHandler, $method), array($values, $filter));
@@ -791,7 +834,7 @@ class mSearch2 {
 					$prepared[$new_key] = call_user_func_array(array($this->filtersHandler, 'buildDefaultFilter'), array($values, $filter));
 				}
 				else {
-					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "'.$method.'" not exists in class "'.get_class($this->filtersHandler).'". Could not build filter for "'. $new_key .'"');
+					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "' . $method . '" not exists in class "' . get_class($this->filtersHandler) . '". Could not build filter for "' . $new_key . '"');
 					$prepared[$new_key] = $values;
 				}
 			}
@@ -808,7 +851,7 @@ class mSearch2 {
 		$built = array_merge($built, $prepared);
 
 		// Set cache
-		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',',$ids) . $this->config['filters']), $built, $this->config['cacheTime']);
+		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']), $built, $this->config['cacheTime']);
 
 		return $built;
 	}
@@ -823,15 +866,24 @@ class mSearch2 {
 	 * @return array
 	 */
 	public function Filter($ids, array $request) {
-		if (!is_array($ids)) {$ids = explode(',', $ids);}
-		if (!is_object($this->filtersHandler)) {$this->loadHandler();}
+		if (!is_array($ids)) {
+			$ids = explode(',', $ids);
+		}
+		if (!is_object($this->filtersHandler)) {
+			$this->loadHandler();
+		}
 
-		$filters = $this->getFilters($ids, false);
-		$methods = $this->getMethods();
+		$this->getFilters($ids, false);
+		$filters = $this->filters;
+		$methods = $this->methods;
 
 		foreach ($request as $filter => $requested) {
-			if (!preg_match('/(.*?)'.preg_quote($this->config['filter_delimeter'],'/').'(.*?)/', $filter)) {continue;}
-			$method = !empty($methods[$filter]) ? 'filter' . ucfirst($methods[$filter]) : 'filterDefault';
+			if (!preg_match('/(.*?)' . preg_quote($this->config['filter_delimeter'], '/') . '(.*?)/', $filter)) {
+				continue;
+			}
+			$method = !empty($methods[$filter])
+				? 'filter' . ucfirst($methods[$filter])
+				: 'filterDefault';
 
 			list($table, $filter) = explode($this->config['filter_delimeter'], $filter);
 			if (isset($filters[$table][$filter])) {
@@ -863,8 +915,12 @@ class mSearch2 {
 	 * @return array
 	 */
 	public function getSuggestions($ids, array $request, array $current = array()) {
-		if (!is_array($ids)) {$ids = explode(',', $ids);}
-		if (!is_object($this->filtersHandler)) {$this->loadHandler();}
+		if (!is_array($ids)) {
+			$ids = explode(',', $ids);
+		}
+		if (!is_object($this->filtersHandler)) {
+			$this->loadHandler();
+		}
 
 		if (method_exists($this->filtersHandler, 'getSuggestions')) {
 			return $this->filtersHandler->getSuggestions($ids, $request, $current);
@@ -872,14 +928,18 @@ class mSearch2 {
 		else {
 			$current = array_flip($current);
 			$filters = $this->getFilters($ids, false);
+			$built = $this->getFilters($ids, true);
 			$radio = $this->config['suggestionsRadio'];
 
 			$suggestions = array();
 			foreach ($filters as $table => $fields) {
 				foreach ($fields as $field => $values) {
-					foreach ($values as $value => $resources) {
+					$key = $table . $this->config['filter_delimeter'] . $field;
+
+					$values = $built[$key];
+					foreach ($values as $tmp) {
+						$value = $tmp['value'];
 						$suggest = $request;
-						$key = $table.$this->config['filter_delimeter'].$field;
 
 						$added = 0;
 						if (isset($request[$key])) {
@@ -897,7 +957,7 @@ class mSearch2 {
 							$res = $this->Filter($ids, $suggest);
 							if ($added && !empty($res)) {
 								foreach ($res as $k => $v) {
-									if(isset($current[$v])) {
+									if (isset($current[$v])) {
 										unset($res[$k]);
 									}
 								}
@@ -925,32 +985,6 @@ class mSearch2 {
 		}
 	}
 
-
-	/**
-	 * Returns methods names, that will filter values
-	 *
-	 * @return array
-	 */
-	public function getMethods() {
-		if (!empty($this->methods)) {return $this->methods;}
-
-		$tmp_filters = array_map('trim', explode(',', $this->config['filters']));
-		foreach ($tmp_filters as $v) {
-			$v = strtolower($v);
-			if (strpos($v, $this->config['filter_delimeter']) !== false) {
-				@list($table, $filter) = explode($this->config['filter_delimeter'], $v);
-			}
-			else {
-				$table = 'resource';
-				$filter = $v;
-			}
-
-			$tmp = explode($this->config['method_delimeter'], $filter);
-			$this->methods[$table.$this->config['filter_delimeter'].$tmp[0]] = !empty($tmp[1]) ? $tmp[1] : 'default';
-		}
-
-		return $this->methods;
-	}
 
 	/**
 	 * Method for transform array to placeholders
