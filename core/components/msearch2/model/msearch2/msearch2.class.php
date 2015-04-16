@@ -16,10 +16,12 @@ class mSearch2 {
 	public $filtersHandler = null;
 	/** @var array $phpMorphy */
 	public $phpMorphy = array();
-	/** Cache for filters methods */
+	/** @var array $methods */
 	public $methods = array();
-	/** Cache for filters values */
+	/** @var array $filters */
 	public $filters = array();
+	/** @var array $aliases */
+	public $aliases = array();
 	/** @var integer Total number of filter operations */
 	public $filter_operations = 0;
 	/** @var string Current search query */
@@ -725,8 +727,11 @@ class mSearch2 {
 		}
 
 		// Return results from cache
-		if ($build && $prepared = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']))) {
-			return $prepared;
+		if ($build && $cache = $this->modx->cacheManager->get('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']))) {
+			$this->methods = $cache['methods'];
+			$this->aliases = $cache['aliases'];
+
+			return $cache['filters'];
 		}
 		elseif (!$build && !empty($this->filters)) {
 			return $this->filters;
@@ -794,6 +799,7 @@ class mSearch2 {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, '[mSearch2] Method "' . $method . '" not exists in class "' . get_class($this->filtersHandler) . '". Could not retrieve filters from "' . $table . '"');
 				}
 			}
+			unset($fields);
 
 			// Remove duplicates
 			foreach ($duplicates as $table => $fields) {
@@ -802,6 +808,19 @@ class mSearch2 {
 					unset($filters[$table][$tmp2]);
 					unset($built[$table . $this->config['filter_delimeter'] . $tmp2]);
 				}
+			}
+
+			// Prepare aliases
+			$aliases = array();
+			if (!empty($this->config['aliases'])) {
+				$tmp = array_map('trim', explode(',', $this->config['aliases']));
+				foreach ($tmp as $v) {
+					if (strpos($v, '==') !== false) {
+						$tmp2 = array_map('trim', explode('==', $v));
+						$aliases[$tmp2[0]] = $tmp2[1];
+					}
+				}
+				$this->aliases = $aliases;
 			}
 
 			$this->filters = $filters;
@@ -849,9 +868,13 @@ class mSearch2 {
 		}
 		// Add new generated filters to the end of list
 		$built = array_merge($built, $prepared);
-
+		$cache = array(
+			'filters' => $built,
+			'methods' => $this->methods,
+			'aliases' => $this->aliases,
+		);
 		// Set cache
-		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']), $built, $this->config['cacheTime']);
+		$this->modx->cacheManager->set('msearch2/prep_' . md5(implode(',', $ids) . $this->config['filters']), $cache, $this->config['cacheTime']);
 
 		return $built;
 	}
@@ -876,8 +899,12 @@ class mSearch2 {
 		$this->getFilters($ids, false);
 		$filters = $this->filters;
 		$methods = $this->methods;
+		$aliases = array_flip($this->aliases);
 
 		foreach ($request as $filter => $requested) {
+			if (!empty($aliases[$filter])) {
+				$filter = $aliases[$filter];
+			}
 			if (!preg_match('/(.*?)' . preg_quote($this->config['filter_delimeter'], '/') . '(.*?)/', $filter)) {
 				continue;
 			}
@@ -930,11 +957,16 @@ class mSearch2 {
 			$filters = $this->getFilters($ids, false);
 			$built = $this->getFilters($ids, true);
 			$radio = $this->config['suggestionsRadio'];
+			$aliases = $this->aliases;
 
 			$suggestions = array();
 			foreach ($filters as $table => $fields) {
 				foreach ($fields as $field => $values) {
-					$key = $table . $this->config['filter_delimeter'] . $field;
+					$key = $alias = $table . $this->config['filter_delimeter'] . $field;
+					if (!empty($aliases[$key])) {
+						$alias = $aliases[$key];
+					}
+					//echo $key,"<br/>";
 
 					$values = $built[$key];
 					foreach ($values as $tmp) {
@@ -942,15 +974,15 @@ class mSearch2 {
 						$suggest = $request;
 
 						$added = 0;
-						if (isset($request[$key])) {
+						if (isset($request[$alias])) {
 							// Types of suggestion can depend from method
 							if (!empty($radio) && in_array($key, $radio)) {
-								$suggest[$key] = $value;
+								$suggest[$alias] = $value;
 							}
 							else {
-								$tmp2 = explode($this->config['values_delimeter'], $request[$key]);
+								$tmp2 = explode($this->config['values_delimeter'], $request[$alias]);
 								if (!in_array($value, $tmp2)) {
-									$suggest[$key] .= $this->config['values_delimeter'] . $value;
+									$suggest[$alias] .= $this->config['values_delimeter'] . $value;
 									$added = 1;
 								}
 							}
@@ -971,12 +1003,12 @@ class mSearch2 {
 							}
 						}
 						else {
-							$suggest[$key] = $value;
+							$suggest[$alias] = $value;
 							$res = $this->Filter($ids, $suggest);
 							$count = count($res);
 						}
 
-						$suggestions[$key][$value] = $count;
+						$suggestions[$alias][$value] = $count;
 					}
 				}
 			}

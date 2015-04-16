@@ -26,6 +26,10 @@ $tmp = array(
 		'type' => 'textarea'
 		,'value' => 'resource|parent:parents'
 	),
+	'aliases' => array(
+		'type' => 'textarea'
+		,'value' => ''
+	),
 	'showEmptyFilters' => array(
 		'type' => 'combo-boolean'
 		,'value' => true

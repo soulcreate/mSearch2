@@ -6,6 +6,7 @@ Changelog for mSearch2.
 - [mFilter2] Ability to use one field multiple times in filters.
 - [mFilter2] Improved suggestions for more optimal processing.
 - [mFilter2] Fixed suggestions for dates filters.
+- [mFilter2] Ability to set aliases for filters.
 
 1.2.7 pl
 ==============

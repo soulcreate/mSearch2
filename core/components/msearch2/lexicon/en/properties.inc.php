@@ -46,7 +46,8 @@ $_lang['mse2_prop_element'] = 'Snippet, which will be called to output the resul
 $_lang['mse2_prop_resources'] = 'List of resources for output, separated by commas. This list can be filtered by other parameters such as "parents", "showDeleted", "showHidden" and "showUnpublished".';
 $_lang['mse2_prop_showEmptyFilters'] = 'Show filters when it has the only one item.';
 $_lang['mse2_prop_sort'] = 'Comma separated list for sorting resources. It must be set in the form "table|field:direction". Default is "resource:publisedon:desc".';
-$_lang['mse2_prop_filters'] = 'Comma separated list of filters. It must be set in the form "table|field:method". Default is "resource|parent:parents".';
+$_lang['mse2_prop_filters'] = 'Comma separated list of filters. It must be set as "table|field:method". Default is "resource|parent:parents".';
+$_lang['mse2_prop_aliases'] = 'Comma separated list of aliases for filters that will be used in page URL. It must be set as "table|field==alias". For example: "resource|parent==category".';
 $_lang['mse2_prop_suggestions'] = 'If false, this option will disable the estimated number of results, which is displayed next to each filter. You can disable it if you are unhappy with filtration rate.';
 $_lang['mse2_prop_suggestionsMaxFilters'] = 'The maximum number of filters, which are preliminary results. If the filter would be more suggestions are turned off.';
 $_lang['mse2_prop_suggestionsMaxResults'] = 'The maximum number of resources for which preliminary results of the work. If resources will more suggestions are turned off.';

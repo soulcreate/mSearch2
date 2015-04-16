@@ -288,7 +288,7 @@ if (!empty($ids)) {
 		$savedProperties['paginatorProperties'] = $paginatorProperties;
 
 		// We have a delimeters in $_GET, so need to filter resources
-		if (strpos(implode(array_keys($_GET)), $mSearch2->config['filter_delimeter']) !== false) {
+		if (strpos(implode(array_keys($_GET)), $mSearch2->config['filter_delimeter']) !== false || !empty($mSearch2->aliases)) {
 			$matched = $mSearch2->Filter($ids, $_REQUEST);
 			$matched = array_intersect($ids, $matched);
 			if ($scriptProperties['suggestions']) {
@@ -342,8 +342,12 @@ else {
 		$request[$k] = explode($mSearch2->config['values_delimeter'], $v);
 	}
 
+	$aliases = $mSearch2->aliases;
 	foreach ($filters as $filter => $data) {
-		if (empty($data) || !is_array($data)) {continue;}
+		if (empty($data) || !is_array($data)) {
+			continue;
+		}
+
 		$tplOuter = !empty($scriptProperties['tplFilter.outer.'.$filter]) ? $scriptProperties['tplFilter.outer.'.$filter] : $scriptProperties['tplFilter.outer.default'];
 		$tplRow = !empty($scriptProperties['tplFilter.row.'.$filter]) ? $scriptProperties['tplFilter.row.'.$filter] : $scriptProperties['tplFilter.row.default'];
 		$tplEmpty = !empty($scriptProperties['tplFilter.empty.'.$filter]) ? $scriptProperties['tplFilter.empty.'.$filter] : '';
@@ -352,44 +356,64 @@ else {
 		$pdoFetch->getChunk($tplRow);
 
 		$rows = $has_active = '';
-		list($table,$filter2) = explode($mSearch2->config['filter_delimeter'], $filter);
+		list($table, $method) = explode($mSearch2->config['filter_delimeter'], $filter);
+		$filter_key = !empty($aliases[$filter])
+			? $aliases[$filter]
+			: $filter;
 		$idx = 0;
 		foreach ($data as $v) {
 			if (empty($v)) {continue;}
-			$checked = isset($request[$filter]) && in_array($v['value'], $request[$filter]) && isset($v['type']) && $v['type'] != 'number';
+			$checked = isset($request[$filter_key]) && in_array($v['value'], $request[$filter_key]) && isset($v['type']) && $v['type'] != 'number';
 			if ($scriptProperties['suggestions']) {
-				if ($checked) {$num = ''; $has_active = 'has_active';}
-				else if (isset($suggestions[$filter][$v['value']])) {
-					$num = $suggestions[$filter][$v['value']];
+				if ($checked) {
+					$num = '';
+					$has_active = 'has_active';
+				}
+				elseif (isset($suggestions[$filter_key][$v['value']])) {
+					$num = $suggestions[$filter_key][$v['value']];
 				}
 				else {
-					$num = !empty($v['resources']) ? count($v['resources']) : '';
+					$num = !empty($v['resources'])
+						? count($v['resources'])
+						: '';
 				}
-			} else {$num = '';}
+			}
+			else {
+				$num = '';
+			}
 
 			$rows .= $pdoFetch->getChunk($tplRow, array(
-				'filter' => $filter2
-				,'table' => $table
-				,'title' => $v['title']
-				,'value' => $v['value']
-				,'type' => $v['type']
-				,'checked' => $checked ? 'checked' : ''
-				,'selected' => $checked ? 'selected' : ''
-				,'disabled' => !$checked && empty($num) && $scriptProperties['suggestions'] ? 'disabled' : ''
-				,'delimeter' => $mSearch2->config['filter_delimeter']
-				,'idx' => $idx++
-				,'num' => $num
+				'filter' => $method,
+				'table' => $table,
+				'title' => $v['title'],
+				'value' => $v['value'],
+				'type' => $v['type'],
+				'checked' => $checked
+					? 'checked'
+					: '',
+				'selected' => $checked
+					? 'selected'
+					: '',
+				'disabled' => !$checked && empty($num) && $scriptProperties['suggestions']
+					? 'disabled'
+					: '',
+				'delimeter' => $mSearch2->config['filter_delimeter'],
+				'idx' => $idx++,
+				'num' => $num,
+				'filter_key' => $filter_key,
 			), $fastMode);
 		}
 
 		$tpl = empty($rows) ? $tplEmpty : $tplOuter;
-		if (!isset($output['filters'][$filter])) {$output['filters'][$filter] = '';}
+		if (!isset($output['filters'][$filter])) {
+			$output['filters'][$filter] = '';
+		}
 		$output['filters'][$filter] .= $pdoFetch->getChunk($tpl, array(
-			'filter' => $filter2
-			,'table' => $table
-			,'rows' => $rows
-			,'has_active' => $has_active
-			,'delimeter' => $mSearch2->config['filter_delimeter']
+			'filter' => $method,
+			'table' => $table,
+			'rows' => $rows,
+			'has_active' => $has_active,
+			'delimeter' => $mSearch2->config['filter_delimeter'],
 		), $fastMode);
 	}
 
@@ -439,6 +463,7 @@ $config = array(
 	'pageId' => !empty($pageId) ? (integer) $pageId : $modx->resource->id,
 	$queryVar => isset($_REQUEST[$queryVar]) ? $_REQUEST[$queryVar] : '',
 	$parentsVar => isset($_REQUEST[$parentsVar]) ? $_REQUEST[$parentsVar] : '',
+	'aliases' => array_flip($mSearch2->aliases),
 );
 
 $modx->regClientStartupScript('

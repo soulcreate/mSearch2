@@ -357,9 +357,13 @@ var mSearch2 = {
 	}
 
 	,setSuggestions: function(suggestions) {
+		var aliases = mse2Config.aliases || {};
 		for (var filter in suggestions) {
 			if (suggestions.hasOwnProperty(filter)) {
 				var arr = suggestions[filter];
+				if (typeof(aliases[filter]) != 'undefined') {
+					filter = aliases[filter];
+				}
 				for (var value in arr) {
 					if (arr.hasOwnProperty(value)) {
 						var count = arr[value];
