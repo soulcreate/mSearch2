@@ -417,6 +417,7 @@ else {
 			'rows' => $rows,
 			'has_active' => $has_active,
 			'delimeter' => $mSearch2->config['filter_delimeter'],
+			'filter_key' => $filter_key,
 		), $fastMode);
 	}
 
