@@ -236,9 +236,16 @@ class mseIndexCreateProcessor extends modProcessor {
 			$lang = $phpMorphy->getLocale();
 			foreach ($bulk_words as $word => $count) {
 				$base = $phpMorphy->getBaseForm(array($word));
-				foreach ($base as $form) {
-					if (empty($form)) {continue;}
-					$form = current($form);
+				foreach ($base as $forms) {
+					if (!$forms) {
+						if (!$this->mSearch2->config['index_all']) {
+							continue;
+						}
+						else {
+							$forms = array($word);
+						}
+					}
+					$form = current($forms);
 					if ($lang == 'en_EN') {
 						$form = iconv('UTF-8', 'ASCII//TRANSLIT', $word);
 					}

@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.3.2 pl
+==============
+- [mSearch2] Added new system option "mse2_index_all".
+
 1.3.1 pl
 ==============
 - [mFilter2] Fixed "filter_key" placeholder in outer chunks.

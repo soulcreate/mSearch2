@@ -70,6 +70,7 @@ class mSearch2 {
 			'values_delimeter' => ',',
 			'split_words' => $this->modx->getOption('mse2_search_split_words', null, '#\s#', true),
 			'split_all' => '#\s|[,.:;!?"\'(){}\\/\#]#',
+			'index_all' => $this->modx->getOption('mse2_index_all', null, false),
 			'suggestionsRadio' => array(),
 
 			'autocomplete' => 0,
@@ -320,8 +321,14 @@ class mSearch2 {
 			foreach ($base_forms as $lang => $array) {
 				if (!empty($array)) {
 					foreach ($array as $word => $forms) {
-						//if (!$forms) {$forms = array($word);}
-						if (!$forms) {continue;}
+						if (!$forms) {
+							if (!$this->config['index_all']) {
+								continue;
+							}
+							else {
+								$forms = array($word);
+							}
+						}
 						foreach ($forms as $form) {
 							if (preg_match('/^[0-9]{2,}$/', $form) || mb_strlen($form,'UTF-8') >= $this->config['min_word_length']) {
 								$result[$form] = $lang == 'en_EN'

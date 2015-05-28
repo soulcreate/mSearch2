@@ -34,6 +34,11 @@ $tmp = array(
 		,'value' => 4
 		,'area' => 'mse2_index'
 	)
+	,'index_all' => array(
+		'xtype' => 'combo-boolean'
+		,'value' => false
+		,'area' => 'mse2_index'
+	)
 
 	,'search_exact_match_bonus' => array(
 		'xtype' => 'numberfield'
