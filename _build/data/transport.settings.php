@@ -39,6 +39,11 @@ $tmp = array(
 		,'value' => false
 		,'area' => 'mse2_index'
 	)
+	,'index_split_words' => array(
+		'xtype' => 'textfield'
+		,'value' => '#\s|[,.:;!?"\'(){}\\/\#]#'
+		,'area' => 'mse2_index'
+	)
 
 	,'search_exact_match_bonus' => array(
 		'xtype' => 'numberfield'

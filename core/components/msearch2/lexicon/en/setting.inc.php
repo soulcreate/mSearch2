@@ -20,6 +20,8 @@ $_lang['setting_mse2_index_min_words_length'] = 'Minimum length of words';
 $_lang['setting_mse2_index_min_words_length_desc'] = 'Specify the minimum length of words that will be in index. Default value "4".';
 $_lang['setting_mse2_index_all'] = 'Add all words to index';
 $_lang['setting_mse2_index_all_desc'] = 'This option adds all unusual words to index, even if they were not found in dictionaries.';
+$_lang['setting_mse2_index_split_words'] = 'Split words of index';
+$_lang['setting_mse2_index_split_words_desc'] = 'Regular expression for php function preg_split(), which breaks the indexing text to words. Do not touch it if you don`t know what you doing.';
 
 $_lang['setting_mse2_search_exact_match_bonus'] = 'Bonus for an exact match';
 $_lang['setting_mse2_search_exact_match_bonus_desc'] = 'Specify the number of points added for an exact match the search phrase and the result. Default is "5".';

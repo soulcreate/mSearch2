@@ -69,7 +69,7 @@ class mSearch2 {
 			'method_delimeter' => ':',
 			'values_delimeter' => ',',
 			'split_words' => $this->modx->getOption('mse2_search_split_words', null, '#\s#', true),
-			'split_all' => '#\s|[,.:;!?"\'(){}\\/\#]#',
+			'split_all' => $this->modx->getOption('mse2_index_split_words', null, '#\s|[,.:;!?"\'(){}\\/\#]#', true),
 			'index_all' => $this->modx->getOption('mse2_index_all', null, false),
 			'suggestionsRadio' => array(),
 
