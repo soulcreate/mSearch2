@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.3.3 pl1
+==============
+- Updated version of pdoTools in the installer.
+
 1.3.2 pl1
 ==============
 - [mSearch2] Added new system option "mse2_index_all".

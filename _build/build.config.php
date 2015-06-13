@@ -4,7 +4,7 @@
 define('PKG_NAME','mSearch2');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
 
-define('PKG_VERSION','1.3.2');
+define('PKG_VERSION','1.3.3');
 define('PKG_RELEASE','pl1');
 define('PKG_AUTO_INSTALL', false);
 
@@ -54,4 +54,5 @@ $BUILD_RESOLVERS = array(
 	'tables',
 	'setup',
 	'update',
+	'dictionaries',
 );
