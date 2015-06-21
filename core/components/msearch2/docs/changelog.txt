@@ -1,5 +1,9 @@
 Changelog for mSearch2.
 
+1.3.4 pl
+==============
+- Improved boolean filter.
+
 1.3.3 pl1
 ==============
 - Updated version of pdoTools in the installer.

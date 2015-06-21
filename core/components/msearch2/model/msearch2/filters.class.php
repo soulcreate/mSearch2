@@ -447,10 +447,13 @@ class mse2FiltersHandler {
 
 		$results = array();
 		foreach ($values as $value => $ids) {
-			$title = empty($value) ? $this->modx->lexicon('mse2_filter_boolean_no') : $this->modx->lexicon('mse2_filter_boolean_yes');
+			$empty = empty($value) || $value == 0;
+			$title = $empty
+				? $this->modx->lexicon('mse2_filter_boolean_no')
+				: $this->modx->lexicon('mse2_filter_boolean_yes');
 			$results[$title] = array(
 				'title' => $title
-				,'value' => $value
+				,'value' => (int)!$empty
 				,'type' => 'boolean'
 				,'resources' => $ids
 			);
@@ -983,4 +986,34 @@ class mse2FiltersHandler {
 		return $this->filterDate($requested, $values, $ids, 'd');
 	}
 
+
+	/**
+	 * Boolean filtration method
+	 *
+	 * @param array $requested Filtered ids of resources
+	 * @param array $values Filter data with value and ids of matching resources
+	 * @param array $ids Ids of currently active resources
+	 *
+	 * @return array
+	 */
+	public function filterBoolean(array $requested, array $values, array $ids) {
+		$matched = array();
+
+		$tmp = array_flip($ids);
+		foreach ($requested as $value) {
+			foreach ($values as $k => $resources) {
+				$empty = empty($k) || $k == 0;
+				if ((empty($value) && !$empty) || (!empty($value) && $empty)) {
+					continue;
+				}
+				foreach ($resources as $id) {
+					if (isset($tmp[$id])) {
+						$matched[] = $id;
+					}
+				}
+			}
+		}
+
+		return $matched;
+	}
 }
