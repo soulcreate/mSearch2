@@ -265,6 +265,11 @@ var mSearch2 = {
 				if (match && match[1]) {
 					title = match[1].replace(/(\s+$)/, '');
 				}
+				if ((title == '') || (title == ' ') || (title == '&nbsp;')){
+					title = label.find('label').contents().filter(function() {
+						return this.nodeType === 3;
+					}).text();
+				}
 				if (input.is(':checked')) {
 					elem = this.options.selected_tpl.replace('[[+id]]', id).replace('[[+title]]', title);
 					this.selected.find('span').append(elem);
